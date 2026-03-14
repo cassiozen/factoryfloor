@@ -6,19 +6,32 @@ import SwiftUI
 struct ContentView: View {
     @State private var projects: [Project] = ProjectStore.load()
     @State private var selectedWorkstreamID: UUID?
+    @State private var focusedProjectID: UUID?
     @StateObject private var surfaceCache = TerminalSurfaceCache()
+
+    /// The currently relevant project, derived from selected workstream or explicit focus.
+    private var activeProject: Project? {
+        if let wsID = selectedWorkstreamID {
+            return projects.first(where: { $0.workstreams.contains(where: { $0.id == wsID }) })
+        }
+        if let pid = focusedProjectID {
+            return projects.first(where: { $0.id == pid })
+        }
+        return nil
+    }
 
     var body: some View {
         NavigationSplitView {
             ProjectSidebar(
                 projects: $projects,
                 selectedWorkstreamID: $selectedWorkstreamID,
+                focusedProjectID: $focusedProjectID,
                 onProjectsChanged: { ProjectStore.save(projects) }
             )
             .navigationSplitViewColumnWidth(min: 160, ideal: 200, max: 350)
         } detail: {
             if let selectedWorkstreamID,
-               let project = projects.first(where: { $0.workstreams.contains(where: { $0.id == selectedWorkstreamID }) }),
+               let project = activeProject,
                let workstream = project.workstreams.first(where: { $0.id == selectedWorkstreamID }) {
                 TerminalContainerView(
                     workstreamID: selectedWorkstreamID,
@@ -27,12 +40,23 @@ struct ContentView: View {
                 .id(selectedWorkstreamID)
                 .navigationTitle(workstream.name)
                 .navigationSubtitle(project.name)
-            } else {
+            } else if let project = activeProject {
                 VStack(spacing: 12) {
                     Text("No workstream selected")
                         .font(.title2)
                         .foregroundStyle(.secondary)
-                    Text("Add a project, then create a workstream to get started.")
+                    Text("Create a workstream to get started.")
+                        .foregroundStyle(.tertiary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .navigationTitle(project.name)
+                .navigationSubtitle("ff2")
+            } else {
+                VStack(spacing: 12) {
+                    Text("No project selected")
+                        .font(.title2)
+                        .foregroundStyle(.secondary)
+                    Text("Add a project from the sidebar to get started.")
                         .foregroundStyle(.tertiary)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)

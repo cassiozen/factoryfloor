@@ -14,6 +14,7 @@ extension Notification.Name {
 struct ProjectSidebar: View {
     @Binding var projects: [Project]
     @Binding var selectedWorkstreamID: UUID?
+    @Binding var focusedProjectID: UUID?
     let onProjectsChanged: () -> Void
 
     @State private var pendingDirectory: String?
@@ -34,6 +35,7 @@ struct ProjectSidebar: View {
                         onAdd: { startAddingWorkstream(for: project.id) },
                         onDelete: { projectToDelete = project.id }
                     )
+                    .onTapGesture { focusedProjectID = project.id }
 
                     if hasChildren {
                         DisclosureGroup(
@@ -93,6 +95,7 @@ struct ProjectSidebar: View {
             guard let wsID else { return }
             if let project = projects.first(where: { $0.workstreams.contains(where: { $0.id == wsID }) }) {
                 expandedProjects.insert(project.id)
+                focusedProjectID = project.id
             }
         }
         .overlay {
@@ -125,17 +128,11 @@ struct ProjectSidebar: View {
             openDirectoryPicker()
         }
         .onReceive(NotificationCenter.default.publisher(for: .addNew)) { _ in
-            // If a workstream is selected, add to its project
+            // Only add a workstream if the user is actively in a project (has a workstream selected)
             if let wsID = selectedWorkstreamID,
                let project = projects.first(where: { $0.workstreams.contains(where: { $0.id == wsID }) }) {
                 startAddingWorkstream(for: project.id)
-            }
-            // If we have projects but nothing selected, add to the first project
-            else if let first = projects.first {
-                startAddingWorkstream(for: first.id)
-            }
-            // No projects at all, add a project
-            else {
+            } else {
                 openDirectoryPicker()
             }
         }
@@ -313,6 +310,7 @@ private struct ProjectRow: View {
                 .buttonStyle(.plain)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 2)
         .contentShape(Rectangle())
         .onHover { isHovering = $0 }
@@ -349,6 +347,7 @@ private struct WorkstreamRow: View {
                 .buttonStyle(.plain)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .contentShape(Rectangle())
         .onHover { isHovering = $0 }
     }
