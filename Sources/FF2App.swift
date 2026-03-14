@@ -10,10 +10,11 @@ extension Notification.Name {
 @main
 struct FF2App: App {
     init() {
+        // ghostty_init must happen before any ghostty API calls, but it's fast.
+        // TerminalApp.shared is lazy and deferred to first access (when a terminal is needed).
         guard ghostty_init(UInt(CommandLine.argc), CommandLine.unsafeArgv) == GHOSTTY_SUCCESS else {
             fatalError("ghostty_init failed")
         }
-        _ = TerminalApp.shared
     }
 
     /// Resolve the directory from CLI arguments.
