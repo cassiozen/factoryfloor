@@ -31,6 +31,11 @@ struct SettingsView: View {
                     version: appEnv.toolStatus.ghVersion,
                     detail: appEnv.toolStatus.ghAuthDetail
                 )
+                ToolRow(
+                    name: "git",
+                    status: appEnv.toolStatus.git,
+                    version: appEnv.toolStatus.gitVersion
+                )
             } header: {
                 HStack {
                     Text("Environment")
@@ -145,6 +150,8 @@ struct ToolStatus {
     var gh: BinaryStatus = .notFound
     var ghVersion: String?
     var ghAuthDetail: String?
+    var git: BinaryStatus = .notFound
+    var gitVersion: String?
 
     static func detect() async -> ToolStatus {
         var status = ToolStatus()
@@ -163,6 +170,11 @@ struct ToolStatus {
         if let path = status.gh.path {
             status.ghVersion = runForVersion(path, args: ["--version"])
             status.ghAuthDetail = checkGhAuth(path)
+        }
+
+        status.git = findBinary("git")
+        if let path = status.git.path {
+            status.gitVersion = runForVersion(path, args: ["--version"])
         }
 
         return status
