@@ -31,7 +31,7 @@ struct FF2App: App {
     }
 
     var body: some Scene {
-        WindowGroup {
+        Window("ff2", id: "main") {
             ContentView()
                 .onAppear {
                     if let dir = Self.launchDirectory {
@@ -40,8 +40,15 @@ struct FF2App: App {
                         }
                     }
                 }
+                .onOpenURL { url in
+                    guard url.scheme == "ff2" else { return }
+                    let path = url.path
+                    guard !path.isEmpty else { return }
+                    var isDir: ObjCBool = false
+                    guard FileManager.default.fileExists(atPath: path, isDirectory: &isDir), isDir.boolValue else { return }
+                    NotificationCenter.default.post(name: .openDirectory, object: path)
+                }
         }
-        .windowStyle(.automatic)
         .defaultSize(width: 1200, height: 800)
         .commands {
             CommandGroup(replacing: .newItem) {

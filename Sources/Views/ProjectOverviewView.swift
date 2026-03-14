@@ -36,7 +36,7 @@ struct ProjectOverviewView: View {
                             .foregroundStyle(.secondary)
                         Text("Press \(Image(systemName: "command")) N to create one.")
                             .font(.caption)
-                            .foregroundStyle(.tertiary)
+                            .foregroundStyle(.secondary)
                     }
                     .padding(.top, 24)
                 } else {

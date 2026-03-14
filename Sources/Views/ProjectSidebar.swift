@@ -115,7 +115,7 @@ struct ProjectSidebar: View {
                     .foregroundStyle(.tertiary)
                 Text("\(Image(systemName: "command"))\(Image(systemName: "shift")) N to add a project")
                     .font(.caption)
-                    .foregroundStyle(.quaternary)
+                    .foregroundStyle(.secondary)
                 Spacer()
 
                 HStack {
