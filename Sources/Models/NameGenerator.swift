@@ -18,17 +18,17 @@ enum NameGenerator {
         "clean", "valid", "buggy", "broke", "loose", "tight", "quick", "sharp",
         "solid", "hot", "warm", "cold", "light", "heavy", "clear", "dense",
         "short", "deep", "smart", "dumb", "prime", "eager", "lazy", "async",
-        "syncd", "local", "remot", "statc", "dynmc", "greed", "steep", "spiky",
+        "syncd", "local", "steep", "spiky",
     ]
 
     private static let components = [
-        "alu", "core", "l1", "l2", "l3", "simd", "mmu", "fpu", "reg", "pc",
-        "sp", "ram", "rom", "bios", "uefi", "bus", "dma", "tty", "fd", "pipe",
+        "alu", "core", "simd", "mmu", "fpu", "reg", "pc", "gpu", "cpu",
+        "ram", "rom", "bios", "uefi", "bus", "dma", "tty", "fd", "pipe",
         "fifo", "pty", "inode", "proc", "task", "thr", "lock", "mmap", "epoll",
         "kq", "dns", "tcp", "udp", "http", "https", "tls", "arp", "icmp", "ip",
-        "mac", "mtu", "ast", "ir", "ssa", "cfg", "dfa", "nfa", "byte", "word",
-        "page", "heap", "stack", "cache", "tlb", "node", "edge", "tree", "graph",
-        "table", "index", "key", "val", "blob", "log", "seg", "shard", "queue",
+        "mac", "mtu", "ast", "ssa", "cfg", "dfa", "nfa", "byte", "word",
+        "page", "heap", "stack", "cache", "node", "edge", "tree", "graph",
+        "table", "index", "key", "val", "blob", "log", "shard", "queue",
         "chan", "topic", "codec", "frame", "model",
     ]
 

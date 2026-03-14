@@ -101,8 +101,8 @@ struct ContentView: View {
                 }
             }
             projects.removeAll()
-            selection = nil
             selectionBeforeSettings = nil
+            selection = .settings
             ProjectStore.save([])
         }
         .onChange(of: projects) { _, newValue in
