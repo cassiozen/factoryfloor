@@ -70,8 +70,11 @@ struct SettingsView: View {
                     Button(action: { appEnv.refresh() }) {
                         Image(systemName: "arrow.clockwise")
                             .font(.caption)
+                            .rotationEffect(.degrees(appEnv.isDetecting ? 360 : 0))
+                            .animation(appEnv.isDetecting ? .linear(duration: 0.8).repeatForever(autoreverses: false) : .default, value: appEnv.isDetecting)
                     }
                     .buttonStyle(.plain)
+                    .disabled(appEnv.isDetecting)
                 }
             }
 

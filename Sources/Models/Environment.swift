@@ -8,8 +8,10 @@ final class AppEnvironment: ObservableObject {
     @Published var toolStatus = ToolStatus()
     @Published var installedTerminals: [AppInfo] = []
     @Published var installedBrowsers: [AppInfo] = []
+    @Published var isDetecting = false
 
     func refresh() {
+        isDetecting = true
         Task.detached {
             let tools = await ToolStatus.detect()
             let terminals = AppInfo.detectTerminals()
@@ -18,6 +20,7 @@ final class AppEnvironment: ObservableObject {
                 self.toolStatus = tools
                 self.installedTerminals = terminals
                 self.installedBrowsers = browsers
+                self.isDetecting = false
             }
         }
     }
