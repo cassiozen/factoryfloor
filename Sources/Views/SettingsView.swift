@@ -13,38 +13,6 @@ struct SettingsView: View {
 
     var body: some View {
         Form {
-            // MARK: - Terminal
-            Section("Terminal") {
-                Toggle("Tmux Mode", isOn: $tmuxMode)
-                    .disabled(!appEnv.toolStatus.tmux.isInstalled)
-                Text("Makes sessions persist across app restarts. Sessions are lost on system restart.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                if !appEnv.toolStatus.tmux.isInstalled {
-                    Text("Requires tmux to be installed.")
-                        .font(.caption)
-                        .foregroundStyle(.orange)
-                }
-
-                Picker("External Terminal", selection: $defaultTerminal) {
-                    Text("None").tag("")
-                    ForEach(appEnv.installedTerminals) { app in
-                        Text(app.name).tag(app.bundleID)
-                    }
-                }
-            }
-
-            // MARK: - Applications
-            Section("Applications") {
-                Picker("Default Browser", selection: $defaultBrowser) {
-                    Text("System Default").tag("")
-                    ForEach(appEnv.installedBrowsers) { app in
-                        Text(app.name).tag(app.bundleID)
-                    }
-                }
-            }
-
             // MARK: - Environment
             Section {
                 ToolRow(
@@ -75,6 +43,38 @@ struct SettingsView: View {
                     }
                     .buttonStyle(.plain)
                     .disabled(appEnv.isDetecting)
+                }
+            }
+
+            // MARK: - Terminal
+            Section("Terminal") {
+                Toggle("Tmux Mode", isOn: $tmuxMode)
+                    .disabled(!appEnv.toolStatus.tmux.isInstalled)
+                Text("Makes sessions persist across app restarts. Sessions are lost on system restart.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                if !appEnv.toolStatus.tmux.isInstalled {
+                    Text("Requires tmux to be installed.")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                }
+
+                Picker("External Terminal", selection: $defaultTerminal) {
+                    Text("None").tag("")
+                    ForEach(appEnv.installedTerminals) { app in
+                        Text(app.name).tag(app.bundleID)
+                    }
+                }
+            }
+
+            // MARK: - Applications
+            Section("Applications") {
+                Picker("Default Browser", selection: $defaultBrowser) {
+                    Text("System Default").tag("")
+                    ForEach(appEnv.installedBrowsers) { app in
+                        Text(app.name).tag(app.bundleID)
+                    }
                 }
             }
 

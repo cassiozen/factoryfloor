@@ -144,6 +144,7 @@ struct ProjectSidebar: View {
                 HStack {
                     Button(action: openDirectoryPicker) {
                         Image(systemName: "plus")
+                            .font(.system(size: 16))
                     }
                     .buttonStyle(.plain)
                     .padding(8)
@@ -152,6 +153,7 @@ struct ProjectSidebar: View {
 
                     Button(action: { selection = .settings }) {
                         Image(systemName: "gear")
+                            .font(.system(size: 16))
                     }
                     .buttonStyle(.plain)
                     .padding(8)
@@ -306,6 +308,7 @@ struct ProjectSidebar: View {
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
+        panel.directoryURL = FileManager.default.homeDirectoryForCurrentUser
         panel.message = NSLocalizedString("Choose a project directory", comment: "")
         panel.prompt = NSLocalizedString("Select", comment: "")
         guard panel.runModal() == .OK, let url = panel.url else { return }
