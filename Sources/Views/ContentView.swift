@@ -8,6 +8,7 @@ struct ContentView: View {
     @State private var selection: SidebarSelection? = ContentView.initialSelection()
     @State private var selectionBeforeSettings: SidebarSelection?
     @StateObject private var surfaceCache = TerminalSurfaceCache()
+    @StateObject private var appEnvironment = AppEnvironment()
     @State private var saveWork: DispatchWorkItem?
 
     private static func initialSelection() -> SidebarSelection? {
@@ -77,6 +78,8 @@ struct ContentView: View {
             }
         }
         .environmentObject(surfaceCache)
+        .environmentObject(appEnvironment)
+        .onAppear { appEnvironment.refresh() }
         .onChange(of: selection) { oldValue, newValue in
             if newValue == .settings {
                 selectionBeforeSettings = oldValue

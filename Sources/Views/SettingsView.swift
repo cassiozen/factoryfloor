@@ -1,5 +1,5 @@
 // ABOUTME: Application settings pane displayed in the detail area.
-// ABOUTME: Language, tmux mode, tool detection, default apps.
+// ABOUTME: Session, tools, default apps, and language settings.
 
 import SwiftUI
 
@@ -9,18 +9,70 @@ struct SettingsView: View {
     @AppStorage("ff2.defaultTerminal") private var defaultTerminal: String = ""
     @AppStorage("ff2.defaultBrowser") private var defaultBrowser: String = ""
 
-    @State private var toolStatus = ToolStatus()
-    @State private var installedTerminals: [AppInfo] = []
-    @State private var installedBrowsers: [AppInfo] = []
+    @EnvironmentObject private var appEnv: AppEnvironment
 
     var body: some View {
         Form {
-            // MARK: - Session
-            Section("Session") {
+            // MARK: - Terminal
+            Section("Terminal") {
                 Toggle("Tmux Mode", isOn: $tmuxMode)
+                    .disabled(!appEnv.toolStatus.tmux.isInstalled)
                 Text("Makes sessions persist across app restarts. Sessions are lost on system restart.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+
+                if !appEnv.toolStatus.tmux.isInstalled {
+                    Text("Requires tmux to be installed.")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                }
+
+                Picker("External Terminal", selection: $defaultTerminal) {
+                    Text("None").tag("")
+                    ForEach(appEnv.installedTerminals) { app in
+                        Text(app.name).tag(app.bundleID)
+                    }
+                }
+            }
+
+            // MARK: - Applications
+            Section("Applications") {
+                Picker("Default Browser", selection: $defaultBrowser) {
+                    Text("System Default").tag("")
+                    ForEach(appEnv.installedBrowsers) { app in
+                        Text(app.name).tag(app.bundleID)
+                    }
+                }
+            }
+
+            // MARK: - Environment
+            Section {
+                ToolRow(
+                    name: "tmux",
+                    status: appEnv.toolStatus.tmux,
+                    version: appEnv.toolStatus.tmuxVersion
+                )
+                ToolRow(
+                    name: "claude",
+                    status: appEnv.toolStatus.claude,
+                    version: appEnv.toolStatus.claudeVersion
+                )
+                ToolRow(
+                    name: "gh",
+                    status: appEnv.toolStatus.gh,
+                    version: appEnv.toolStatus.ghVersion,
+                    detail: appEnv.toolStatus.ghAuthDetail
+                )
+            } header: {
+                HStack {
+                    Text("Environment")
+                    Spacer()
+                    Button(action: { appEnv.refresh() }) {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.caption)
+                    }
+                    .buttonStyle(.plain)
+                }
             }
 
             // MARK: - Language
@@ -40,54 +92,10 @@ struct SettingsView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-
-            // MARK: - Installed Tools
-            Section("Installed Tools") {
-                ToolRow(name: "tmux", status: toolStatus.tmux)
-                ToolRow(name: "claude", status: toolStatus.claude)
-                ToolRow(name: "gh", status: toolStatus.gh, detail: toolStatus.ghAuth)
-            }
-
-            // MARK: - Default Terminal
-            Section("Default Terminal") {
-                if installedTerminals.isEmpty {
-                    Text("No supported terminals found")
-                        .foregroundStyle(.secondary)
-                } else {
-                    Picker("Terminal", selection: $defaultTerminal) {
-                        Text("None").tag("")
-                        ForEach(installedTerminals) { app in
-                            Text(app.name).tag(app.bundleID)
-                        }
-                    }
-                }
-            }
-
-            // MARK: - Default Browser
-            Section("Default Browser") {
-                if installedBrowsers.isEmpty {
-                    Text("No supported browsers found")
-                        .foregroundStyle(.secondary)
-                } else {
-                    Picker("Browser", selection: $defaultBrowser) {
-                        Text("System Default").tag("")
-                        ForEach(installedBrowsers) { app in
-                            Text(app.name).tag(app.bundleID)
-                        }
-                    }
-                }
-            }
         }
         .formStyle(.grouped)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .task {
-            toolStatus = await ToolStatus.detect()
-            installedTerminals = AppInfo.detectTerminals()
-            installedBrowsers = AppInfo.detectBrowsers()
-        }
     }
-
-    // MARK: - Language
 
     private var availableLanguages: [(code: String, name: String)] {
         var languages: [(String, String)] = [("", NSLocalizedString("System Default", comment: ""))]
@@ -113,7 +121,7 @@ struct SettingsView: View {
 
 enum BinaryStatus {
     case notFound
-    case found(String) // path
+    case found(String)
 
     var isInstalled: Bool {
         if case .found = self { return true }
@@ -128,18 +136,30 @@ enum BinaryStatus {
 
 struct ToolStatus {
     var tmux: BinaryStatus = .notFound
+    var tmuxVersion: String?
     var claude: BinaryStatus = .notFound
+    var claudeVersion: String?
     var gh: BinaryStatus = .notFound
-    var ghAuth: String?
+    var ghVersion: String?
+    var ghAuthDetail: String?
 
     static func detect() async -> ToolStatus {
         var status = ToolStatus()
-        status.tmux = findBinary("tmux")
-        status.claude = findBinary("claude")
-        status.gh = findBinary("gh")
 
-        if status.gh.isInstalled {
-            status.ghAuth = checkGhAuth()
+        status.tmux = findBinary("tmux")
+        if let path = status.tmux.path {
+            status.tmuxVersion = runForVersion(path, args: ["-V"])
+        }
+
+        status.claude = findBinary("claude")
+        if let path = status.claude.path {
+            status.claudeVersion = runForVersion(path, args: ["--version"])
+        }
+
+        status.gh = findBinary("gh")
+        if let path = status.gh.path {
+            status.ghVersion = runForVersion(path, args: ["--version"])
+            status.ghAuthDetail = checkGhAuth(path)
         }
 
         return status
@@ -147,8 +167,8 @@ struct ToolStatus {
 
     private static func findBinary(_ name: String) -> BinaryStatus {
         let searchPaths = [
-            "/usr/local/bin/\(name)",
             "/opt/homebrew/bin/\(name)",
+            "/usr/local/bin/\(name)",
             "/usr/bin/\(name)",
             "\(NSHomeDirectory())/.local/bin/\(name)",
         ]
@@ -159,42 +179,57 @@ struct ToolStatus {
             }
         }
 
-        // Try which as fallback
-        let process = Process()
-        let pipe = Pipe()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/which")
-        process.arguments = [name]
-        process.standardOutput = pipe
-        process.standardError = FileHandle.nullDevice
-        do {
-            try process.run()
-            process.waitUntilExit()
-            if process.terminationStatus == 0 {
-                let data = pipe.fileHandleForReading.readDataToEndOfFile()
-                let path = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-                if !path.isEmpty { return .found(path) }
-            }
-        } catch {}
+        // Fallback to which
+        if let output = runCommand("/usr/bin/which", args: [name]),
+           !output.isEmpty {
+            return .found(output)
+        }
 
         return .notFound
     }
 
-    private static func checkGhAuth() -> String? {
+    private static func runForVersion(_ path: String, args: [String]) -> String? {
+        guard let output = runCommand(path, args: args) else { return nil }
+        // Extract just the version number from output like "tmux 3.4" or "gh version 2.40.1"
+        let trimmed = output
+            .replacingOccurrences(of: "tmux ", with: "")
+            .replacingOccurrences(of: "gh version ", with: "")
+        // Take first line only
+        return trimmed.components(separatedBy: .newlines).first?.trimmingCharacters(in: .whitespaces)
+    }
+
+    private static func checkGhAuth(_ ghPath: String) -> String? {
+        guard let output = runCommand(ghPath, args: ["auth", "status"], includeStderr: true) else {
+            return "Not authenticated"
+        }
+        // Parse "Logged in to github.com account username"
+        if let range = output.range(of: "account ") {
+            let afterAccount = output[range.upperBound...]
+            let username = afterAccount.prefix(while: { !$0.isWhitespace && $0 != "(" })
+            if !username.isEmpty {
+                return String(username)
+            }
+        }
+        if output.contains("Logged in") {
+            return "Authenticated"
+        }
+        return "Not authenticated"
+    }
+
+    private static func runCommand(_ path: String, args: [String], includeStderr: Bool = false) -> String? {
         let process = Process()
         let pipe = Pipe()
         let errPipe = Pipe()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        process.arguments = ["gh", "auth", "status"]
+        process.executableURL = URL(fileURLWithPath: path)
+        process.arguments = args
         process.standardOutput = pipe
-        process.standardError = errPipe
+        process.standardError = includeStderr ? pipe : errPipe
         do {
             try process.run()
             process.waitUntilExit()
-            if process.terminationStatus == 0 {
-                return "Authenticated"
-            } else {
-                return "Not authenticated"
-            }
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            guard process.terminationStatus == 0 || includeStderr else { return nil }
+            return String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines)
         } catch {
             return nil
         }
@@ -204,30 +239,40 @@ struct ToolStatus {
 private struct ToolRow: View {
     let name: String
     let status: BinaryStatus
+    var version: String?
     var detail: String?
 
     var body: some View {
         HStack {
+            Image(systemName: status.isInstalled ? "checkmark.circle.fill" : "xmark.circle")
+                .foregroundStyle(status.isInstalled ? .green : .secondary)
+
             Text(name)
                 .font(.system(.body, design: .monospaced))
-            Spacer()
-            if let path = status.path {
-                if let detail {
-                    Text(detail)
-                        .font(.caption)
-                        .foregroundStyle(detail == "Authenticated" ? .green : .orange)
-                        .padding(.trailing, 4)
-                }
-                Text(path)
+
+            if let version {
+                Text(version)
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
+            }
+
+            Spacer()
+
+            if status.isInstalled {
+                if let detail {
+                    let isAuth = detail != "Not authenticated"
+                    HStack(spacing: 4) {
+                        Circle()
+                            .fill(isAuth ? .green : .orange)
+                            .frame(width: 6, height: 6)
+                        Text(detail)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
             } else {
                 Text("Not found")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
-                Image(systemName: "xmark.circle")
                     .foregroundStyle(.secondary)
             }
         }
