@@ -9,6 +9,7 @@ struct SettingsView: View {
     @AppStorage("ff2.bypassPermissions") private var bypassPermissions: Bool = false
     @AppStorage("ff2.defaultTerminal") private var defaultTerminal: String = ""
     @AppStorage("ff2.defaultBrowser") private var defaultBrowser: String = ""
+    @AppStorage("ff2.baseDirectory") private var baseDirectory: String = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first ?? ""
 
     @EnvironmentObject private var appEnv: AppEnvironment
 
@@ -50,6 +51,32 @@ struct SettingsView: View {
                     .buttonStyle(.plain)
                     .disabled(appEnv.isDetecting)
                 }
+            }
+
+            // MARK: - Projects
+            Section("Projects") {
+                HStack {
+                    Text("Base directory")
+                    Spacer()
+                    Text(abbreviatePath(baseDirectory))
+                        .font(.system(.body, design: .monospaced))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                    Button("Change...") {
+                        let panel = NSOpenPanel()
+                        panel.canChooseFiles = false
+                        panel.canChooseDirectories = true
+                        panel.allowsMultipleSelection = false
+                        panel.directoryURL = URL(fileURLWithPath: baseDirectory)
+                        panel.message = NSLocalizedString("Choose base directory for projects", comment: "")
+                        if panel.runModal() == .OK, let url = panel.url {
+                            baseDirectory = url.path
+                        }
+                    }
+                }
+                Text("Default location when adding new projects.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
             // MARK: - Terminal
@@ -112,6 +139,14 @@ struct SettingsView: View {
         }
         .formStyle(.grouped)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func abbreviatePath(_ path: String) -> String {
+        let home = FileManager.default.homeDirectoryForCurrentUser.path
+        if path.hasPrefix(home) {
+            return "~" + path.dropFirst(home.count)
+        }
+        return path
     }
 
     private var availableLanguages: [(code: String, name: String)] {

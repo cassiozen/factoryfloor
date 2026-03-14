@@ -305,12 +305,14 @@ struct ProjectSidebar: View {
         return true
     }
 
+    @AppStorage("ff2.baseDirectory") private var baseDirectory: String = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first ?? ""
+
     private func openDirectoryPicker() {
         let panel = NSOpenPanel()
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
-        panel.directoryURL = FileManager.default.homeDirectoryForCurrentUser
+        panel.directoryURL = URL(fileURLWithPath: baseDirectory)
         panel.message = NSLocalizedString("Choose a project directory", comment: "")
         panel.prompt = NSLocalizedString("Select", comment: "")
         guard panel.runModal() == .OK, let url = panel.url else { return }
