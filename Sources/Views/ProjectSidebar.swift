@@ -135,7 +135,7 @@ struct ProjectSidebar: View {
                 Image(systemName: "folder.badge.plus")
                     .font(.system(size: 28))
                     .foregroundStyle(.tertiary)
-                Text("Drop a folder here")
+                Text("Drop a directory here")
                     .font(.system(.body, weight: .medium))
                     .foregroundStyle(.tertiary)
                 (Text(Image(systemName: "command")) + Text(Image(systemName: "shift")) + Text(" N ") + Text("to add a project"))
@@ -520,13 +520,13 @@ private struct AddProjectChoiceSheet: View {
             VStack(spacing: 12) {
                 Button(action: onNewProject) {
                     HStack {
-                        Image(systemName: "folder.badge.plus")
+                        Image(systemName: "plus.rectangle.on.folder")
                             .font(.system(size: 20))
                             .frame(width: 32)
                         VStack(alignment: .leading, spacing: 2) {
                             Text("New Project")
                                 .font(.system(.body, weight: .medium))
-                            Text("Create a new directory in the base folder")
+                            Text("Create a new directory in the base directory")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -539,6 +539,7 @@ private struct AddProjectChoiceSheet: View {
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .buttonStyle(.plain)
+                .keyboardShortcut(.defaultAction)
 
                 Button(action: onExistingDirectory) {
                     HStack {

@@ -14,7 +14,7 @@
 "to create one." = "för att skapa ett.";
 
 /* Sidebar */
-"Drop a folder here" = "Släpp en mapp här";
+"Drop a directory here" = "Släpp en katalog här";
 "to add a project" = "för att lägga till ett projekt";
 "Recent" = "Senaste";
 "A-Z" = "A-Ö";
