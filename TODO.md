@@ -30,3 +30,6 @@
 ## Localization
 - [x] Extract all user-facing strings to Localizable.strings
 - [ ] Add translations (copy en.lproj to xx.lproj, translate strings)
+
+## Probably not needed
+- [ ] Claude Agent SDK integration (TypeScript): would give programmatic session control, but replaces the full CLI TUI we get for free. Only makes sense if building a custom chat UI, orchestrating multiple agents, or showing conversation metadata in the sidebar. The CLI + tmux + session-id approach covers our needs.
