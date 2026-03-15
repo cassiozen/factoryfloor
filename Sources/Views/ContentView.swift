@@ -67,17 +67,15 @@ struct ContentView: View {
                     onArchiveWorkstream: { wsID in
                         let project = projects[projectIndex]
                         if let ws = project.workstreams.first(where: { $0.id == wsID }) {
-                            GitOperations.removeWorktree(
-                                projectPath: project.directory,
-                                workstreamName: ws.name,
-                                projectName: project.name
-                            )
-                            if let tmuxPath = appEnvironment.toolStatus.tmux.path {
-                                TmuxSession.killWorkstreamSessions(
-                                    tmuxPath: tmuxPath,
-                                    project: project.name,
-                                    workstream: ws.name
-                                )
+                            let projectDir = project.directory
+                            let wsName = ws.name
+                            let projName = project.name
+                            let tmuxPath = appEnvironment.toolStatus.tmux.path
+                            Task.detached {
+                                GitOperations.removeWorktree(projectPath: projectDir, workstreamName: wsName, projectName: projName)
+                                if let tmuxPath {
+                                    TmuxSession.killWorkstreamSessions(tmuxPath: tmuxPath, project: projName, workstream: wsName)
+                                }
                             }
                         }
                         surfaceCache.removeWorkstreamSurfaces(for: wsID)

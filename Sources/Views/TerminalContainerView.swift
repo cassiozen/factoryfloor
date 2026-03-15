@@ -135,6 +135,7 @@ struct TerminalContainerView: View {
                 BrowserView(defaultURL: "http://localhost:8000")
             }
         }
+        .onAppear { prewarmSurfaces() }
         .onReceive(NotificationCenter.default.publisher(for: .switchToAgent)) { _ in
             activeTab = .claude
         }
@@ -170,6 +171,19 @@ struct TerminalContainerView: View {
                 NSWorkspace.shared.open(url)
             }
         }
+    }
+
+    /// Pre-create terminal surfaces so they're ready when tabs are switched.
+    private func prewarmSurfaces() {
+        guard let app = TerminalApp.shared.app else { return }
+        _ = surfaceCache.surface(
+            for: claudeID, app: app, workingDirectory: workingDirectory,
+            command: claudeCommand, environmentVars: envVars
+        )
+        _ = surfaceCache.surface(
+            for: workspaceID, app: app, workingDirectory: workingDirectory,
+            command: workspaceCommand, environmentVars: envVars
+        )
     }
 
     private var envVars: [String: String] {
@@ -240,7 +254,10 @@ struct SingleTerminalView: NSViewRepresentable {
             environmentVars: environmentVars
         )
 
+        // Always re-parent: with conditional rendering, the container is
+        // recreated each time the tab switches.
         if terminalView.superview !== container {
+            terminalView.removeFromSuperview()
             container.subviews.forEach { $0.removeFromSuperview() }
             container.addSubview(terminalView)
             terminalView.translatesAutoresizingMaskIntoConstraints = false
@@ -252,7 +269,8 @@ struct SingleTerminalView: NSViewRepresentable {
             ])
         }
 
-        DispatchQueue.main.async {
+        // Delay focus slightly to ensure the view is fully in the hierarchy
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
             terminalView.setFocused(isFocused)
         }
     }

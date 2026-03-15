@@ -8,7 +8,7 @@ struct WorkstreamInfoView: View {
     let workingDirectory: String
     let projectName: String
 
-    @State private var readmeContent: AttributedString?
+    @State private var readmeContent: String?
     @State private var branchName: String?
 
     var body: some View {
@@ -63,10 +63,8 @@ struct WorkstreamInfoView: View {
                         }
                         .padding(.horizontal, 24)
 
-                        Text(readme)
-                            .textSelection(.enabled)
-                            .padding(.horizontal, 24)
-                            .padding(.bottom, 24)
+                        MarkdownView(markdown: readme)
+                            .padding(.horizontal, 16)
                     }
                 }
             }
@@ -85,9 +83,8 @@ struct WorkstreamInfoView: View {
         // Load README.md
         let readmePath = URL(fileURLWithPath: workingDirectory).appendingPathComponent("README.md")
         Task.detached {
-            guard let data = try? String(contentsOfFile: readmePath.path, encoding: .utf8) else { return }
-            guard let attributed = try? AttributedString(markdown: data, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)) else { return }
-            await MainActor.run { readmeContent = attributed }
+            guard let content = try? String(contentsOfFile: readmePath.path, encoding: .utf8) else { return }
+            await MainActor.run { readmeContent = content }
         }
     }
 
