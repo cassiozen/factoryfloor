@@ -1,12 +1,17 @@
 # TODO
 
 ## Priority (next session)
-- [ ] Archive warning: warn if worktree has uncommitted changes before archiving
-- [ ] Workstream sorting in project view (by name or recent use toggle)
 - [ ] Setup scripts: run commands when a worktree is created (e.g., npm install, pip install)
+  - Decide: per-project config file (e.g., `.ff2/setup.sh`) vs UI-based script list in settings?
+  - Decide: run automatically or prompt user before running?
+  - Decide: show output in a terminal tab or as a progress indicator?
 - [ ] Run scripts: configurable ways to start dev servers (multiple per project)
+  - Decide: where to store run configs (per-project file, UserDefaults, or both)?
+  - Decide: UI for managing multiple run configs per project (add/edit/remove)
+  - Decide: run in the workspace terminal tab or spawn separate terminals?
 - [ ] Teardown scripts: cleanup commands when archiving a workstream
-- [ ] Sidebar shows branch name per workstream (refreshed periodically)
+  - Decide: same storage as setup scripts?
+  - Decide: run before or after worktree removal? Block archive until done?
 
 ## Pre-release
 - [ ] Choose final app name (currently "ff2" is a working name)
@@ -75,6 +80,9 @@
 - [x] CommandBuilder for clean shell command composition
 - [x] Poblenou skyline as SwiftUI Shape in help and empty state
 - [x] CLAUDE.md with comprehensive development workflow docs
+- [x] Archive warning: warn if worktree has uncommitted changes before archiving
+- [x] Workstream sorting in project view (by name or recent use toggle)
+- [x] Sidebar shows branch name per workstream (refreshed periodically)
 
 ## Probably not needed
 - [ ] Claude Agent SDK integration (TypeScript): CLI + tmux + session-id covers our needs
