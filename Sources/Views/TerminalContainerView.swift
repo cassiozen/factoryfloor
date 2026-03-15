@@ -55,13 +55,14 @@ struct TerminalContainerView: View {
         let basePath = appEnv.toolStatus.claude.path
         var cmd: String?
         if let basePath {
-            var args = [basePath]
-            args.append("--continue")
-            args.append("--name '\(workstreamName)'")
+            var baseArgs = [basePath]
+            baseArgs.append("--name '\(workstreamName)'")
             if bypassPermissions {
-                args.append("--dangerously-skip-permissions")
+                baseArgs.append("--dangerously-skip-permissions")
             }
-            cmd = args.joined(separator: " ")
+            let base = baseArgs.joined(separator: " ")
+            // Try --continue first, fall back to plain launch if no session exists
+            cmd = "\(base) --continue || \(base)"
         }
 
         if useTmux, let tmuxPath = appEnv.toolStatus.tmux.path {
