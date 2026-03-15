@@ -26,6 +26,7 @@ func derivedUUID(from base: UUID, salt: String) -> UUID {
 }
 
 enum WorkstreamTab: Hashable {
+    case info
     case claude
     case workspace
     case browser
@@ -43,7 +44,7 @@ struct TerminalContainerView: View {
     @AppStorage("ff2.defaultBrowser") private var defaultBrowser: String = ""
     @AppStorage("ff2.tmuxMode") private var tmuxMode: Bool = false
     @AppStorage("ff2.agentTeams") private var agentTeams: Bool = false
-    @State private var activeTab: WorkstreamTab = .claude
+    @State private var activeTab: WorkstreamTab = .info
 
     private var claudeID: UUID { workstreamID }
     private var workspaceID: UUID { derivedUUID(from: workstreamID, salt: "workspace") }
@@ -86,6 +87,9 @@ struct TerminalContainerView: View {
         VStack(spacing: 0) {
             // Tab bar
             HStack(spacing: 0) {
+                TabButton(title: "Info", icon: "info.circle", isActive: activeTab == .info) {
+                    activeTab = .info
+                }
                 TabButton(title: "Coding Agent", icon: "sparkle", isActive: activeTab == .claude) {
                     activeTab = .claude
                 }
@@ -103,8 +107,14 @@ struct TerminalContainerView: View {
 
             Divider()
 
-            // Terminal content
+            // Tab content
             switch activeTab {
+            case .info:
+                WorkstreamInfoView(
+                    workstreamName: workstreamName,
+                    workingDirectory: workingDirectory,
+                    projectName: projectName
+                )
             case .claude:
                 SingleTerminalView(
                     surfaceID: claudeID,
@@ -136,14 +146,16 @@ struct TerminalContainerView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .nextTab)) { _ in
             switch activeTab {
+            case .info: activeTab = .claude
             case .claude: activeTab = .workspace
             case .workspace: activeTab = .browser
-            case .browser: activeTab = .claude
+            case .browser: activeTab = .info
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .prevTab)) { _ in
             switch activeTab {
-            case .claude: activeTab = .browser
+            case .info: activeTab = .browser
+            case .claude: activeTab = .info
             case .workspace: activeTab = .claude
             case .browser: activeTab = .workspace
             }
