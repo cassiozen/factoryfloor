@@ -132,9 +132,11 @@ struct ProjectOverviewView: View {
                     }
                     .padding(.vertical, 8)
                 } else {
-                    ForEach(project.workstreams.sorted { $0.lastAccessedAt > $1.lastAccessedAt }) { workstream in
+                    let sorted = project.workstreams.sorted { $0.lastAccessedAt > $1.lastAccessedAt }
+                    ForEach(Array(sorted.enumerated()), id: \.element.id) { index, workstream in
                         WorkstreamRow(
                             workstream: workstream,
+                            shortcutNumber: index < 9 ? index + 1 : nil,
                             onSelect: { onSelectWorkstream(workstream.id) },
                             onArchive: { onArchiveWorkstream(workstream.id) },
                             abbreviatePath: abbreviatePath
@@ -170,6 +172,7 @@ struct ProjectOverviewView: View {
 
 private struct WorkstreamRow: View {
     let workstream: Workstream
+    var shortcutNumber: Int?
     let onSelect: () -> Void
     let onArchive: () -> Void
     let abbreviatePath: (String) -> String
@@ -192,6 +195,12 @@ private struct WorkstreamRow: View {
                     }
                 }
                 Spacer()
+                if let n = shortcutNumber {
+                    Text("\(Image(systemName: "command"))\(n)")
+                        .font(.system(size: 10))
+                        .foregroundStyle(.quaternary)
+                        .padding(.trailing, 4)
+                }
                 if isHovering {
                     Button(action: {
                         // Stop propagation to parent button

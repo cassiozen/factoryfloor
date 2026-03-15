@@ -158,6 +158,15 @@ struct ProjectSidebar: View {
                     Spacer()
 
                     Button(action: {
+                        NotificationCenter.default.post(name: .openHelp, object: nil)
+                    }) {
+                        Image(systemName: "questionmark.circle")
+                            .font(.system(size: 16))
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.trailing, 4)
+
+                    Button(action: {
                         NotificationCenter.default.post(name: .openSettings, object: nil)
                     }) {
                         Image(systemName: "gear")

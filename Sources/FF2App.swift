@@ -6,6 +6,7 @@ import SwiftUI
 extension Notification.Name {
     static let openDirectory = Notification.Name("ff2.openDirectory")
     static let openSettings = Notification.Name("ff2.openSettings")
+    static let openHelp = Notification.Name("ff2.openHelp")
     static let retryBrowser = Notification.Name("ff2.retryBrowser")
     static let switchToProject = Notification.Name("ff2.switchToProject")
     static let switchToInfo = Notification.Name("ff2.switchToInfo")
@@ -82,6 +83,11 @@ struct FF2App: App {
                     NotificationCenter.default.post(name: .openSettings, object: nil)
                 }
                 .keyboardShortcut(",", modifiers: .command)
+
+                Button("Help") {
+                    NotificationCenter.default.post(name: .openHelp, object: nil)
+                }
+                .keyboardShortcut("/", modifiers: [.command, .shift])
             }
             // Cmd+0: project view, Cmd+1-4: workstream tabs
             CommandGroup(after: .toolbar) {

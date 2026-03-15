@@ -24,7 +24,7 @@ struct ContentView: View {
             return projects.first(where: { $0.id == id })
         case .workstream(let wsID):
             return projects.first(where: { $0.workstreams.contains(where: { $0.id == wsID }) })
-        case .settings:
+        case .settings, .help:
             return nil
         }
     }
@@ -47,6 +47,10 @@ struct ContentView: View {
             if selection == .settings {
                 SettingsView()
                     .navigationTitle("Settings")
+                    .navigationSubtitle("ff2")
+            } else if selection == .help {
+                HelpView()
+                    .navigationTitle("Help")
                     .navigationSubtitle("ff2")
             } else if let workstream = activeWorkstream, let project = activeProject {
                 TerminalContainerView(
@@ -144,6 +148,14 @@ struct ContentView: View {
         .onChange(of: selection) { oldValue, newValue in
             if newValue == .settings {
                 selectionBeforeSettings = oldValue
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .openHelp)) { _ in
+            if selection == .help {
+                selection = selectionBeforeSettings
+            } else {
+                selectionBeforeSettings = selection
+                selection = .help
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .openSettings)) { _ in
