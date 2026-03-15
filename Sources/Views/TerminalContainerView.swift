@@ -93,28 +93,25 @@ struct TerminalContainerView: View {
             Divider()
 
             // Terminal content
-            ZStack {
+            switch activeTab {
+            case .claude:
                 SingleTerminalView(
                     surfaceID: claudeID,
                     workingDirectory: workingDirectory,
                     command: claudeCommand,
-                    isFocused: activeTab == .claude,
+                    isFocused: true,
                     environmentVars: envVars
                 )
-                .opacity(activeTab == .claude ? 1 : 0)
-
+            case .workspace:
                 SingleTerminalView(
                     surfaceID: workspaceID,
                     workingDirectory: workingDirectory,
                     command: workspaceCommand,
-                    initialInput: nil,
-                    isFocused: activeTab == .workspace,
+                    isFocused: true,
                     environmentVars: envVars
                 )
-                .opacity(activeTab == .workspace ? 1 : 0)
-
+            case .browser:
                 BrowserView(defaultURL: "http://localhost:8000")
-                    .opacity(activeTab == .browser ? 1 : 0)
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .switchToAgent)) { _ in
