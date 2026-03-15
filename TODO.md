@@ -7,31 +7,41 @@
 - [ ] Build and ship a standalone CLI binary (like `code` for VS Code)
 - [ ] Code signing and notarization for distribution
 - [ ] App icon
+- [ ] Credits: David Poblador i Garcia, All Tuner Labs, Poblenou skyline
 
 ## Features
 - [ ] Sidebar visual polish (custom styling beyond default SwiftUI)
 - [ ] Split panes within a workstream
-- [ ] Rename projects and workstreams inline
+- [x] Rename projects (editable alias in project overview)
 - [ ] Reorder projects via drag-and-drop in sidebar
-- [ ] Keyboard shortcuts for switching between projects/workstreams (Cmd+1, Cmd+2, etc.)
+- [x] Keyboard shortcuts for tabs (Cmd+0-4)
+- [x] Help view with shortcuts reference
 - [ ] External Chrome integration: launch Chrome with --remote-debugging-port, connect via CDP for WebMCP/Claude browser interaction
 - [ ] Setup scripts: run commands when a worktree is created (e.g., npm install, pip install)
 - [ ] Run scripts: configurable ways to start dev servers, build, or run the app (multiple per project)
 - [ ] Teardown scripts: cleanup commands when archiving a workstream
-- [ ] PR management: create, view, and manage pull requests from workstreams
-- [ ] GitHub integration: link workstreams to issues/PRs, show status
-- [ ] Branch renaming: rename worktree branches based on the task at hand
+- [x] PR management: show PRs in project overview and workstream info
+- [x] GitHub integration: repo info, open PRs, branch PR status
+- [x] Branch renaming: auto-rename via system prompt injection
+- [ ] Archive warning: warn if worktree has uncommitted changes
+- [x] Sidebar shows workstream branch name (in info tab)
 
 ## Terminal
 - [x] Terminal resize flicker on session restart
 - [ ] Sidebar toggle animation still causes minor flicker at the end
 - [ ] Occlude non-visible terminal surfaces to save GPU (reverted, needs careful timing with initial render)
+- [x] Tmux mode for session persistence
+- [x] Claude session resume via --session-id
+- [x] Auto-respawn on process exit
 
 ## Infrastructure
 - [ ] Auto-update mechanism (Sparkle or similar)
 - [ ] Crash reporting
 - [ ] Move persistence from UserDefaults to a proper file (for larger state)
 - [x] Settings panel
+- [x] Git worktrees for workstreams
+- [x] .env symlinks in worktrees
+- [x] Deterministic port allocation per workstream
 
 ## Localization
 - [x] Extract all user-facing strings to Localizable.strings
