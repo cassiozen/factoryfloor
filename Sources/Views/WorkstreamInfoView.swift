@@ -1,5 +1,5 @@
-// ABOUTME: Info tab for a workstream showing metadata and rendered README.md.
-// ABOUTME: Default tab when opening a workstream.
+// ABOUTME: Info tab for a workstream showing metadata and documentation files.
+// ABOUTME: Default tab when opening a workstream, with sub-tabs for markdown files.
 
 import SwiftUI
 
@@ -8,65 +8,93 @@ struct WorkstreamInfoView: View {
     let workingDirectory: String
     let projectName: String
 
-    @State private var readmeContent: String?
     @State private var branchName: String?
+    @State private var docFiles: [DocFile] = []
+    @State private var selectedDoc: String?
+
+    struct DocFile: Identifiable {
+        let name: String
+        let content: String
+        var id: String { name }
+    }
+
+    // Files to look for, in order
+    private static let docFileNames = ["README.md", "CLAUDE.md"]
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                // Workstream metadata
-                Form {
-                    Section("Workstream") {
-                        LabeledContent("Name") {
-                            Text(workstreamName)
-                                .font(.system(.body, design: .monospaced))
-                        }
+        VStack(spacing: 0) {
+            // Workstream metadata
+            Form {
+                Section("Workstream") {
+                    LabeledContent("Name") {
+                        Text(workstreamName)
+                            .font(.system(.body, design: .monospaced))
+                    }
 
-                        if let branch = branchName {
-                            LabeledContent("Branch") {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "arrow.triangle.branch")
-                                        .font(.caption)
-                                    Text(branch)
-                                }
-                                .foregroundStyle(.secondary)
+                    if let branch = branchName {
+                        LabeledContent("Branch") {
+                            HStack(spacing: 4) {
+                                Image(systemName: "arrow.triangle.branch")
+                                    .font(.caption)
+                                Text(branch)
                             }
-                        }
-
-                        LabeledContent("Directory") {
-                            Text(abbreviatePath(workingDirectory))
-                                .font(.system(.body, design: .monospaced))
-                                .foregroundStyle(.secondary)
-                                .lineLimit(1)
-                                .truncationMode(.middle)
-                        }
-
-                        LabeledContent("Project") {
-                            Text(projectName)
-                                .foregroundStyle(.secondary)
+                            .foregroundStyle(.secondary)
                         }
                     }
-                }
-                .formStyle(.grouped)
-                .scrollDisabled(true)
-                .frame(maxHeight: 200)
 
-                // README
-                if let readme = readmeContent {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Image(systemName: "doc.text")
-                                .foregroundStyle(.secondary)
-                            Text("README.md")
-                                .font(.system(.body, weight: .medium))
-                                .foregroundStyle(.secondary)
-                        }
-                        .padding(.horizontal, 24)
+                    LabeledContent("Directory") {
+                        Text(abbreviatePath(workingDirectory))
+                            .font(.system(.body, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
 
-                        MarkdownView(markdown: readme)
-                            .padding(.horizontal, 16)
+                    LabeledContent("Project") {
+                        Text(projectName)
+                            .foregroundStyle(.secondary)
                     }
                 }
+            }
+            .formStyle(.grouped)
+            .scrollDisabled(true)
+            .frame(maxHeight: 200)
+
+            // Document tabs
+            if !docFiles.isEmpty {
+                HStack(spacing: 0) {
+                    ForEach(docFiles) { doc in
+                        DocTabButton(
+                            name: doc.name,
+                            isActive: selectedDoc == doc.name,
+                            action: { selectedDoc = doc.name }
+                        )
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+
+                Divider()
+                    .padding(.horizontal, 16)
+
+                // Rendered document
+                if let selected = selectedDoc,
+                   let doc = docFiles.first(where: { $0.name == selected }) {
+                    MarkdownView(markdown: doc.content)
+                        .id(selected)
+                } else {
+                    Spacer()
+                }
+            } else {
+                VStack(spacing: 8) {
+                    Image(systemName: "doc.text")
+                        .font(.system(size: 28))
+                        .foregroundStyle(.tertiary)
+                    Text("No documentation files found")
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -74,17 +102,24 @@ struct WorkstreamInfoView: View {
     }
 
     private func loadInfo() {
-        // Load branch name
         Task.detached {
             let branch = GitOperations.repoInfo(at: workingDirectory).branch
             await MainActor.run { branchName = branch }
         }
 
-        // Load README.md
-        let readmePath = URL(fileURLWithPath: workingDirectory).appendingPathComponent("README.md")
+        let dir = workingDirectory
         Task.detached {
-            guard let content = try? String(contentsOfFile: readmePath.path, encoding: .utf8) else { return }
-            await MainActor.run { readmeContent = content }
+            var found: [DocFile] = []
+            for name in Self.docFileNames {
+                let path = URL(fileURLWithPath: dir).appendingPathComponent(name).path
+                if let content = try? String(contentsOfFile: path, encoding: .utf8) {
+                    found.append(DocFile(name: name, content: content))
+                }
+            }
+            await MainActor.run {
+                docFiles = found
+                selectedDoc = found.first?.name
+            }
         }
     }
 
@@ -94,5 +129,31 @@ struct WorkstreamInfoView: View {
             return "~" + path.dropFirst(home.count)
         }
         return path
+    }
+}
+
+private struct DocTabButton: View {
+    let name: String
+    let isActive: Bool
+    let action: () -> Void
+
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 4) {
+                Image(systemName: "doc.text")
+                    .font(.system(size: 10))
+                Text(name)
+                    .font(.system(size: 12, weight: isActive ? .semibold : .regular, design: .monospaced))
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(isActive ? Color.accentColor.opacity(0.15) : (isHovering ? Color.primary.opacity(0.05) : .clear))
+            .clipShape(RoundedRectangle(cornerRadius: 5))
+            .foregroundStyle(isActive ? .primary : .secondary)
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovering = $0 }
     }
 }

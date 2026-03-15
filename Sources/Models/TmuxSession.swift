@@ -18,7 +18,9 @@ enum TmuxSession {
         set -g status off
         set -g prefix None
         unbind-key -a
-        set -g mouse off
+        set -g mouse on
+        # Disable mouse drag for selection (let ghostty handle it)
+        unbind -n MouseDrag1Pane
         set -g history-limit 50000
         set -g escape-time 0
         set -g allow-passthrough on

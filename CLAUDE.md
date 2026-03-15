@@ -94,6 +94,11 @@ grep -rn 'Button("' Sources/ | grep -v '//'
 grep -rn 'Label("' Sources/ | grep -v '//'
 ```
 
+## Task Tracking
+- **TODO.md**: Track bugs, features, and future work. Add items when you discover issues or defer work.
+- **next.md**: Parked feature requests to tackle in the next session.
+- When you notice something that should be done later, add it to the appropriate file immediately.
+
 ## Naming
 - The app ID is `ff2` (working name, will change). Use `AppConstants.appID` not hardcoded strings.
 - Use "directory" not "folder" in all user-facing text.
