@@ -40,13 +40,18 @@ struct TerminalContainerView: View {
     @EnvironmentObject var surfaceCache: TerminalSurfaceCache
     @EnvironmentObject var appEnv: AppEnvironment
     @AppStorage("ff2.defaultBrowser") private var defaultBrowser: String = ""
+    @AppStorage("ff2.bypassPermissions") private var bypassPermissions: Bool = false
     @State private var activeTab: WorkstreamTab = .claude
 
     private var claudeID: UUID { workstreamID }
     private var workspaceID: UUID { derivedUUID(from: workstreamID, salt: "workspace") }
 
-    private var claudePath: String? {
-        appEnv.toolStatus.claude.path
+    private var claudeCommand: String? {
+        guard let path = appEnv.toolStatus.claude.path else { return nil }
+        if bypassPermissions {
+            return "\(path) --dangerously-skip-permissions"
+        }
+        return path
     }
 
     var body: some View {
@@ -75,7 +80,7 @@ struct TerminalContainerView: View {
                 SingleTerminalView(
                     surfaceID: claudeID,
                     workingDirectory: workingDirectory,
-                    command: claudePath,
+                    command: claudeCommand,
                     isFocused: activeTab == .claude,
                     environmentVars: envVars
                 )

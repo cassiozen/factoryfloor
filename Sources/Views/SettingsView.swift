@@ -80,8 +80,11 @@ struct SettingsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                TextField("Branch prefix", text: $branchPrefix)
-                    .textFieldStyle(.roundedBorder)
+                LabeledContent("Branch prefix") {
+                    TextField("", text: $branchPrefix)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(maxWidth: 150)
+                }
                 Text("e.g. \(branchPrefix.isEmpty ? "ff2" : branchPrefix)/deploy-ludicrous-speed")
                     .font(.system(.caption, design: .monospaced))
                     .foregroundStyle(.tertiary)
