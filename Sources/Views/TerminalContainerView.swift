@@ -55,7 +55,13 @@ struct TerminalContainerView: View {
         let basePath = appEnv.toolStatus.claude.path
         var cmd: String?
         if let basePath {
-            cmd = bypassPermissions ? "\(basePath) --dangerously-skip-permissions" : basePath
+            var args = [basePath]
+            args.append("--continue")
+            args.append("--name '\(workstreamName)'")
+            if bypassPermissions {
+                args.append("--dangerously-skip-permissions")
+            }
+            cmd = args.joined(separator: " ")
         }
 
         if useTmux, let tmuxPath = appEnv.toolStatus.tmux.path {
