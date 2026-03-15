@@ -85,6 +85,12 @@ struct ContentView: View {
         .onAppear {
             appEnvironment.refresh()
             appEnvironment.refreshAllRepoInfo(projects: projects)
+            // Apply saved appearance
+            switch UserDefaults.standard.string(forKey: "ff2.appearance") ?? "system" {
+            case "light": NSApp.appearance = NSAppearance(named: .aqua)
+            case "dark": NSApp.appearance = NSAppearance(named: .darkAqua)
+            default: NSApp.appearance = nil
+            }
         }
         .onReceive(Timer.publish(every: 15, on: .main, in: .common).autoconnect()) { _ in
             appEnvironment.refreshAllRepoInfo(projects: projects)

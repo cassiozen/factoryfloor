@@ -10,6 +10,7 @@ struct SettingsView: View {
     @AppStorage("ff2.defaultTerminal") private var defaultTerminal: String = ""
     @AppStorage("ff2.defaultBrowser") private var defaultBrowser: String = ""
     @AppStorage("ff2.branchPrefix") private var branchPrefix: String = "ff2"
+    @AppStorage("ff2.appearance") private var appearance: String = "system"
     @AppStorage("ff2.baseDirectory") private var baseDirectory: String = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first ?? ""
 
     @EnvironmentObject private var appEnv: AppEnvironment
@@ -130,6 +131,18 @@ struct SettingsView: View {
                 }
             }
 
+            // MARK: - Appearance
+            Section("Appearance") {
+                Picker("Theme", selection: $appearance) {
+                    Text("System").tag("system")
+                    Text("Light").tag("light")
+                    Text("Dark").tag("dark")
+                }
+                .onChange(of: appearance) { _, newValue in
+                    applyAppearance(newValue)
+                }
+            }
+
             // MARK: - Language
             Section("Language") {
                 Picker("Language", selection: $languageOverride) {
@@ -173,6 +186,14 @@ struct SettingsView: View {
             }
         } message: {
             Text("This will remove all projects and workstreams from the sidebar. No files on disk will be deleted. This cannot be undone.")
+        }
+    }
+
+    private func applyAppearance(_ mode: String) {
+        switch mode {
+        case "light": NSApp.appearance = NSAppearance(named: .aqua)
+        case "dark": NSApp.appearance = NSAppearance(named: .darkAqua)
+        default: NSApp.appearance = nil
         }
     }
 
