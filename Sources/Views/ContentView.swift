@@ -72,6 +72,13 @@ struct ContentView: View {
                                 workstreamName: ws.name,
                                 projectName: project.name
                             )
+                            if let tmuxPath = appEnvironment.toolStatus.tmux.path {
+                                TmuxSession.killWorkstreamSessions(
+                                    tmuxPath: tmuxPath,
+                                    project: project.name,
+                                    workstream: ws.name
+                                )
+                            }
                         }
                         surfaceCache.removeWorkstreamSurfaces(for: wsID)
                         projects[projectIndex].workstreams.removeAll { $0.id == wsID }

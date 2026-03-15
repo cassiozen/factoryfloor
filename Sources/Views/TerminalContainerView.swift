@@ -41,17 +41,34 @@ struct TerminalContainerView: View {
     @EnvironmentObject var surfaceCache: TerminalSurfaceCache
     @EnvironmentObject var appEnv: AppEnvironment
     @AppStorage("ff2.defaultBrowser") private var defaultBrowser: String = ""
+    @AppStorage("ff2.tmuxMode") private var tmuxMode: Bool = false
     @State private var activeTab: WorkstreamTab = .claude
 
     private var claudeID: UUID { workstreamID }
     private var workspaceID: UUID { derivedUUID(from: workstreamID, salt: "workspace") }
 
+    private var useTmux: Bool {
+        tmuxMode && appEnv.toolStatus.tmux.isInstalled
+    }
+
     private var claudeCommand: String? {
-        guard let path = appEnv.toolStatus.claude.path else { return nil }
-        if bypassPermissions {
-            return "\(path) --dangerously-skip-permissions"
+        let basePath = appEnv.toolStatus.claude.path
+        var cmd: String?
+        if let basePath {
+            cmd = bypassPermissions ? "\(basePath) --dangerously-skip-permissions" : basePath
         }
-        return path
+
+        if useTmux, let tmuxPath = appEnv.toolStatus.tmux.path {
+            let session = TmuxSession.sessionName(project: projectName, workstream: workstreamName, role: "agent")
+            return TmuxSession.wrapCommand(tmuxPath: tmuxPath, sessionName: session, command: cmd)
+        }
+        return cmd
+    }
+
+    private var workspaceCommand: String? {
+        guard useTmux, let tmuxPath = appEnv.toolStatus.tmux.path else { return nil }
+        let session = TmuxSession.sessionName(project: projectName, workstream: workstreamName, role: "terminal")
+        return TmuxSession.wrapCommand(tmuxPath: tmuxPath, sessionName: session, command: nil)
     }
 
     var body: some View {
@@ -89,7 +106,8 @@ struct TerminalContainerView: View {
                 SingleTerminalView(
                     surfaceID: workspaceID,
                     workingDirectory: workingDirectory,
-                    initialInput: "ls\n",
+                    command: workspaceCommand,
+                    initialInput: workspaceCommand == nil ? "ls\n" : nil,
                     isFocused: activeTab == .workspace,
                     environmentVars: envVars
                 )

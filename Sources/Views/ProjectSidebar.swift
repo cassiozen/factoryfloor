@@ -282,6 +282,8 @@ struct ProjectSidebar: View {
     @EnvironmentObject private var surfaceCache: TerminalSurfaceCache
     @EnvironmentObject private var appEnv: AppEnvironment
 
+    @AppStorage("ff2.tmuxMode") private var tmuxModeForArchive: Bool = false
+
     private func archiveWorkstream(_ workstreamID: UUID, in project: inout Project) {
         if let ws = project.workstreams.first(where: { $0.id == workstreamID }) {
             GitOperations.removeWorktree(
@@ -289,6 +291,14 @@ struct ProjectSidebar: View {
                 workstreamName: ws.name,
                 projectName: project.name
             )
+            // Kill tmux sessions if tmux mode was on
+            if let tmuxPath = appEnv.toolStatus.tmux.path {
+                TmuxSession.killWorkstreamSessions(
+                    tmuxPath: tmuxPath,
+                    project: project.name,
+                    workstream: ws.name
+                )
+            }
         }
         surfaceCache.removeWorkstreamSurfaces(for: workstreamID)
         project.workstreams.removeAll { $0.id == workstreamID }
