@@ -33,16 +33,12 @@ struct HelpView: View {
 
                     Section {
                         ShortcutRow(keys: "0", description: "Back to project view")
-                        ShortcutRow(keys: "1", description: "Info tab")
-                        ShortcutRow(keys: "2", description: "Coding Agent tab")
-                        ShortcutRow(keys: "3", description: "Terminal tab")
-                        ShortcutRow(keys: "4", description: "Browser tab")
-                        ShortcutRow(keys: "5", description: "Setup tab (if configured)")
-                        ShortcutRow(keys: "6", description: "Run tab (if configured)")
-                        ShortcutRow(keys: "[", shift: true, description: "Previous tab")
-                        ShortcutRow(keys: "]", shift: true, description: "Next tab")
+                        ShortcutRow(keys: "Return", description: "Focus Coding Agent")
+                        ShortcutRow(keys: "I", description: "Toggle Info panel")
+                        ShortcutRow(keys: "T", description: "Toggle Terminal split")
+                        ShortcutRow(keys: "B", description: "Toggle Browser")
                     } header: {
-                        ShortcutSectionHeader(title: "Workstream Tabs", description: "When a workstream is active")
+                        ShortcutSectionHeader(title: "Workstream", description: "When a workstream is active")
                     }
 
                     Section {

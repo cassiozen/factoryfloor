@@ -14,6 +14,7 @@ struct SettingsView: View {
     @AppStorage("factoryfloor.branchPrefix") private var branchPrefix: String = "ff"
     @AppStorage("factoryfloor.appearance") private var appearance: String = "system"
     @AppStorage("factoryfloor.symlinkEnv") private var symlinkEnv: Bool = true
+    @AppStorage("factoryfloor.bleedingEdge") private var bleedingEdge: Bool = false
     @AppStorage("factoryfloor.baseDirectory") private var baseDirectory: String = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first ?? ""
 
     @EnvironmentObject private var appEnv: AppEnvironment
@@ -180,6 +181,14 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+            }
+
+            // MARK: - Updates
+            Section("Updates") {
+                Toggle("Bleeding edge", isOn: $bleedingEdge)
+                Text("Receive pre-release builds with the latest features. These may be less stable.")
+                    .font(.caption)
+                    .foregroundStyle(bleedingEdge ? .orange : .secondary)
             }
 
             // MARK: - Danger

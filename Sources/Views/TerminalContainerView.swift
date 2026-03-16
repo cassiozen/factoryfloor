@@ -1,10 +1,14 @@
-// ABOUTME: Hosts a workstream's two terminals: claude (main) and workspace (secondary).
-// ABOUTME: Manages the lifecycle of terminal surfaces, caching them for fast switching.
+// ABOUTME: Agent-centric workspace view for a workstream.
+// ABOUTME: Coding Agent is always the main view; Info, Terminal, Browser open on demand.
 
 import SwiftUI
 
 extension Notification.Name {
     static let terminalSurfaceClosed = Notification.Name("factoryfloor.terminalSurfaceClosed")
+    static let toggleInfo = Notification.Name("factoryfloor.toggleInfo")
+    static let toggleTerminal = Notification.Name("factoryfloor.toggleTerminal")
+    static let toggleBrowser = Notification.Name("factoryfloor.toggleBrowser")
+    static let focusAgent = Notification.Name("factoryfloor.focusAgent")
 }
 
 /// Deterministic UUID derived from a base UUID and a salt string.
@@ -13,7 +17,6 @@ func derivedUUID(from base: UUID, salt: String) -> UUID {
     hasher.combine(base)
     hasher.combine(salt)
     let hash = hasher.finalize()
-    // Build a deterministic UUID from the hash
     var bytes = UUID().uuid
     withUnsafeMutableBytes(of: &bytes) { buf in
         withUnsafeBytes(of: hash) { hashBuf in
@@ -23,15 +26,6 @@ func derivedUUID(from base: UUID, salt: String) -> UUID {
         }
     }
     return UUID(uuid: bytes)
-}
-
-enum WorkstreamTab: Hashable, CaseIterable {
-    case info
-    case claude
-    case workspace
-    case browser
-    case setup
-    case run
 }
 
 struct TerminalContainerView: View {
@@ -48,14 +42,14 @@ struct TerminalContainerView: View {
     @AppStorage("factoryfloor.tmuxMode") private var tmuxMode: Bool = false
     @AppStorage("factoryfloor.agentTeams") private var agentTeams: Bool = false
     @AppStorage("factoryfloor.autoRenameBranch") private var autoRenameBranch: Bool = false
-    @State private var activeTab: WorkstreamTab = .info
+    @State private var showingInfo = true
+    @State private var showingTerminal = false
+    @State private var showingBrowser = false
     @State private var scriptConfig: ScriptConfig = .empty
     @State private var branchPR: GitHubPR?
 
     private var claudeID: UUID { workstreamID }
-    private var workspaceID: UUID { derivedUUID(from: workstreamID, salt: "workspace") }
-    private var setupID: UUID { derivedUUID(from: workstreamID, salt: "setup") }
-    private var runID: UUID { derivedUUID(from: workstreamID, salt: "run") }
+    private var terminalID: UUID { derivedUUID(from: workstreamID, salt: "terminal") }
 
     private var useTmux: Bool {
         tmuxMode && appEnv.toolStatus.tmux.isInstalled
@@ -69,7 +63,6 @@ struct TerminalContainerView: View {
         guard let basePath = appEnv.toolStatus.claude.path else { return nil }
         let sessionID = workstreamID.uuidString.lowercased()
 
-        // Common flags for both resume and new session
         var resume = CommandBuilder(basePath)
         resume.option("--resume", sessionID)
         resume.option("--name", workstreamName)
@@ -79,7 +72,6 @@ struct TerminalContainerView: View {
             resume.option("--append-system-prompt", SystemPrompts.autoRenameBranchPrompt)
         }
 
-        // New session gets extra flags
         var fresh = CommandBuilder(basePath)
         fresh.option("--session-id", sessionID)
         fresh.option("--name", workstreamName)
@@ -101,163 +93,105 @@ struct TerminalContainerView: View {
         return cmd
     }
 
-    private var workspaceCommand: String? {
-        nil
-    }
-
-    private var setupCommand: String? {
-        guard let cmd = scriptConfig.setup else { return nil }
-        if useTmux, let tmuxPath = appEnv.toolStatus.tmux.path {
-            let session = TmuxSession.sessionName(project: projectName, workstream: workstreamName, role: "setup")
-            return TmuxSession.wrapCommand(tmuxPath: tmuxPath, sessionName: session, command: cmd)
-        }
-        return cmd
-    }
-
-    private var runCommand: String? {
-        guard let cmd = scriptConfig.run else { return nil }
-        if useTmux, let tmuxPath = appEnv.toolStatus.tmux.path {
-            let session = TmuxSession.sessionName(project: projectName, workstream: workstreamName, role: "run")
-            return TmuxSession.wrapCommand(tmuxPath: tmuxPath, sessionName: session, command: cmd)
-        }
-        return cmd
-    }
-
-    /// Tabs that are visible based on script config.
-    private var visibleTabs: [WorkstreamTab] {
-        var tabs: [WorkstreamTab] = [.info, .claude, .workspace, .browser]
-        if scriptConfig.setup != nil { tabs.append(.setup) }
-        if scriptConfig.run != nil { tabs.append(.run) }
-        return tabs
-    }
-
     var body: some View {
         VStack(spacing: 0) {
-            // Tab bar
-            HStack(spacing: 0) {
-                TabButton(title: "Info", icon: "info.circle", shortcut: "1", isActive: activeTab == .info) {
-                    activeTab = .info
-                }
-                TabButton(title: "Coding Agent", icon: "sparkle", shortcut: "2", isActive: activeTab == .claude) {
-                    activeTab = .claude
-                }
-                TabButton(title: "Terminal", icon: "terminal", shortcut: "3", isActive: activeTab == .workspace) {
-                    activeTab = .workspace
-                }
-                TabButton(title: "Browser", icon: "globe", shortcut: "4", isActive: activeTab == .browser) {
-                    activeTab = .browser
-                }
-                if scriptConfig.setup != nil {
-                    TabButton(title: "Setup", icon: "hammer", shortcut: "5", isActive: activeTab == .setup) {
-                        activeTab = .setup
-                    }
-                }
-                if scriptConfig.run != nil {
-                    TabButton(title: "Run", icon: "play", shortcut: "6", isActive: activeTab == .run) {
-                        activeTab = .run
-                    }
-                }
-                Spacer()
-
-                if let pr = branchPR, let url = URL(string: pr.url) {
-                    Button(action: { NSWorkspace.shared.open(url) }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "arrow.triangle.pull")
-                                .font(.system(size: 11))
-                            Text("#\(pr.number)")
-                                .font(.system(size: 11, weight: .medium, design: .monospaced))
-                        }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.accentColor.opacity(0.12))
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
-                        .foregroundStyle(.green)
-                    }
-                    .buttonStyle(.plain)
-                    .help(pr.title)
-                }
-            }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(.bar)
-
+            // Toolbar
+            toolbar
             Divider()
 
-            // Tab content
-            switch activeTab {
-            case .info:
-                WorkstreamInfoView(
-                    workstreamName: workstreamName,
-                    workingDirectory: workingDirectory,
-                    projectName: projectName,
-                    projectDirectory: projectDirectory,
-                    scriptConfig: scriptConfig
-                )
-            case .claude:
-                SingleTerminalView(
-                    surfaceID: claudeID,
-                    workingDirectory: workingDirectory,
-                    command: claudeCommand,
-                    isFocused: true,
-                    environmentVars: envVars
-                )
-            case .workspace:
-                SingleTerminalView(
-                    surfaceID: workspaceID,
-                    workingDirectory: workingDirectory,
-                    command: workspaceCommand,
-                    isFocused: true,
-                    environmentVars: envVars
-                )
-            case .browser:
-                BrowserView(defaultURL: "http://localhost:\(workstreamPort)")
-            case .setup:
-                SingleTerminalView(
-                    surfaceID: setupID,
-                    workingDirectory: workingDirectory,
-                    command: setupCommand,
-                    isFocused: true,
-                    environmentVars: envVars
-                )
-            case .run:
-                SingleTerminalView(
-                    surfaceID: runID,
-                    workingDirectory: workingDirectory,
-                    command: runCommand,
-                    isFocused: true,
-                    environmentVars: envVars
-                )
+            // Content: agent is always rendered, info/browser overlay on top
+            ZStack {
+                // Coding Agent (always present, always running)
+                VStack(spacing: 0) {
+                    SingleTerminalView(
+                        surfaceID: claudeID,
+                        workingDirectory: workingDirectory,
+                        command: claudeCommand,
+                        isFocused: !showingInfo && !showingBrowser,
+                        environmentVars: envVars
+                    )
+
+                    // Terminal split panel
+                    if showingTerminal {
+                        Divider()
+                        SingleTerminalView(
+                            surfaceID: terminalID,
+                            workingDirectory: workingDirectory,
+                            isFocused: false,
+                            environmentVars: envVars
+                        )
+                        .frame(minHeight: 120)
+                    }
+                }
+
+                // Info overlay
+                if showingInfo {
+                    WorkstreamInfoView(
+                        workstreamName: workstreamName,
+                        workingDirectory: workingDirectory,
+                        projectName: projectName,
+                        projectDirectory: projectDirectory,
+                        scriptConfig: scriptConfig
+                    )
+                    .background(.ultraThinMaterial)
+                }
+
+                // Browser overlay
+                if showingBrowser {
+                    BrowserView(defaultURL: "http://localhost:\(workstreamPort)")
+                }
             }
         }
         .onAppear {
             scriptConfig = ScriptConfig.load(from: projectDirectory)
-            prewarmSurfaces()
+            prewarmAgent()
+            runSetupIfNeeded()
             refreshBranchPR()
         }
         .onReceive(Timer.publish(every: 30, on: .main, in: .common).autoconnect()) { _ in
             refreshBranchPR()
         }
-        .onReceive(NotificationCenter.default.publisher(for: .switchByNumber)) { notification in
-            guard let n = notification.object as? Int else { return }
-            switch n {
-            case 1: activeTab = .info
-            case 2: activeTab = .claude
-            case 3: activeTab = .workspace
-            case 4: activeTab = .browser
-            case 5 where scriptConfig.setup != nil: activeTab = .setup
-            case 6 where scriptConfig.run != nil: activeTab = .run
-            default: break
+        .onReceive(NotificationCenter.default.publisher(for: .toggleInfo)) { _ in
+            withAnimation(.easeInOut(duration: 0.15)) {
+                showingInfo.toggle()
+                if showingInfo { showingBrowser = false }
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .nextTab)) { _ in
-            let tabs = visibleTabs
-            guard let idx = tabs.firstIndex(of: activeTab) else { return }
-            activeTab = tabs[(idx + 1) % tabs.count]
+        .onReceive(NotificationCenter.default.publisher(for: .toggleTerminal)) { _ in
+            withAnimation(.easeInOut(duration: 0.15)) {
+                showingTerminal.toggle()
+            }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .prevTab)) { _ in
-            let tabs = visibleTabs
-            guard let idx = tabs.firstIndex(of: activeTab) else { return }
-            activeTab = tabs[(idx - 1 + tabs.count) % tabs.count]
+        .onReceive(NotificationCenter.default.publisher(for: .toggleBrowser)) { _ in
+            withAnimation(.easeInOut(duration: 0.15)) {
+                showingBrowser.toggle()
+                if showingBrowser { showingInfo = false }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .focusAgent)) { _ in
+            withAnimation(.easeInOut(duration: 0.15)) {
+                showingInfo = false
+                showingBrowser = false
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .switchByNumber)) { notification in
+            guard let n = notification.object as? Int else { return }
+            withAnimation(.easeInOut(duration: 0.15)) {
+                switch n {
+                case 1:
+                    showingInfo.toggle()
+                    if showingInfo { showingBrowser = false }
+                case 2:
+                    showingInfo = false
+                    showingBrowser = false
+                case 3:
+                    showingTerminal.toggle()
+                case 4:
+                    showingBrowser.toggle()
+                    if showingBrowser { showingInfo = false }
+                default: break
+                }
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: .openExternalBrowser)) { _ in
             guard let url = URL(string: "http://localhost:\(workstreamPort)") else { return }
@@ -271,23 +205,88 @@ struct TerminalContainerView: View {
         }
     }
 
-    /// Pre-create terminal surfaces so they're ready when tabs are switched.
-    /// Setup runs immediately; Run is lazy (created when the user opens the tab).
-    private func prewarmSurfaces() {
+    // MARK: - Toolbar
+
+    private var toolbar: some View {
+        HStack(spacing: 8) {
+            // Workstream info
+            HStack(spacing: 6) {
+                Image(systemName: "sparkle")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+                if let branch = appEnv.branchName(for: workingDirectory) ?? Optional(workstreamName) {
+                    Text(branch)
+                        .font(.system(size: 12, weight: .medium, design: .monospaced))
+                        .lineLimit(1)
+                }
+            }
+
+            Spacer()
+
+            // Panel toggles
+            ToolbarIconButton(icon: "info.circle", isActive: showingInfo, shortcut: "I") {
+                NotificationCenter.default.post(name: .toggleInfo, object: nil)
+            }
+            .help("Toggle Info (\u{2318}1)")
+
+            ToolbarIconButton(icon: "terminal", isActive: showingTerminal, shortcut: "T") {
+                NotificationCenter.default.post(name: .toggleTerminal, object: nil)
+            }
+            .help("Toggle Terminal (\u{2318}3)")
+
+            ToolbarIconButton(icon: "globe", isActive: showingBrowser, shortcut: "B") {
+                NotificationCenter.default.post(name: .toggleBrowser, object: nil)
+            }
+            .help("Toggle Browser (\u{2318}4)")
+
+            // PR badge
+            if let pr = branchPR, let url = URL(string: pr.url) {
+                Button(action: { NSWorkspace.shared.open(url) }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "arrow.triangle.pull")
+                            .font(.system(size: 11))
+                        Text("#\(pr.number)")
+                            .font(.system(size: 11, weight: .medium, design: .monospaced))
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.green.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                    .foregroundStyle(.green)
+                }
+                .buttonStyle(.plain)
+                .help(pr.title)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(.bar)
+    }
+
+    // MARK: - Actions
+
+    /// Only prewarm the Coding Agent. Everything else is on demand.
+    private func prewarmAgent() {
         guard let app = TerminalApp.shared.app else { return }
         _ = surfaceCache.surface(
             for: claudeID, app: app, workingDirectory: workingDirectory,
             command: claudeCommand, environmentVars: envVars
         )
-        _ = surfaceCache.surface(
-            for: workspaceID, app: app, workingDirectory: workingDirectory,
-            command: workspaceCommand, environmentVars: envVars
-        )
-        if scriptConfig.setup != nil {
-            _ = surfaceCache.surface(
-                for: setupID, app: app, workingDirectory: workingDirectory,
-                command: setupCommand, environmentVars: envVars
-            )
+    }
+
+    /// Run setup script in the background if configured.
+    private func runSetupIfNeeded() {
+        guard let setup = scriptConfig.setup else { return }
+        let dir = workingDirectory
+        Task.detached {
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/bin/sh")
+            process.arguments = ["-c", setup]
+            process.currentDirectoryURL = URL(fileURLWithPath: dir)
+            process.standardOutput = FileHandle.nullDevice
+            process.standardError = FileHandle.nullDevice
+            try? process.run()
+            process.waitUntilExit()
         }
     }
 
@@ -317,38 +316,31 @@ struct TerminalContainerView: View {
     }
 }
 
-private struct TabButton: View {
-    let title: String
+// MARK: - Toolbar icon button
+
+private struct ToolbarIconButton: View {
     let icon: String
+    var isActive: Bool = false
     var shortcut: String? = nil
-    let isActive: Bool
     let action: () -> Void
 
     @State private var isHovering = false
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 4) {
-                Image(systemName: icon)
-                    .font(.system(size: 11))
-                Text(title)
-                    .font(.system(size: 12, weight: isActive ? .semibold : .regular))
-                if let shortcut {
-                    Text("\(Image(systemName: "command"))\(shortcut)")
-                        .font(.system(size: 9))
-                        .foregroundStyle(.tertiary)
-                }
-            }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
-            .background(isActive ? Color.accentColor.opacity(0.15) : (isHovering ? Color.primary.opacity(0.05) : .clear))
-            .clipShape(RoundedRectangle(cornerRadius: 5))
-            .foregroundStyle(isActive ? .primary : .secondary)
+            Image(systemName: icon)
+                .font(.system(size: 12))
+                .frame(width: 28, height: 24)
+                .background(isActive ? Color.accentColor.opacity(0.15) : (isHovering ? Color.primary.opacity(0.05) : .clear))
+                .clipShape(RoundedRectangle(cornerRadius: 5))
+                .foregroundStyle(isActive ? .primary : .secondary)
         }
         .buttonStyle(.plain)
         .onHover { isHovering = $0 }
     }
 }
+
+// MARK: - SingleTerminalView
 
 /// NSViewRepresentable for a single terminal surface.
 struct SingleTerminalView: NSViewRepresentable {
@@ -379,8 +371,6 @@ struct SingleTerminalView: NSViewRepresentable {
             environmentVars: environmentVars
         )
 
-        // Always re-parent: with conditional rendering, the container is
-        // recreated each time the tab switches.
         if terminalView.superview !== container {
             terminalView.removeFromSuperview()
             container.subviews.forEach { $0.removeFromSuperview() }
@@ -394,12 +384,13 @@ struct SingleTerminalView: NSViewRepresentable {
             ])
         }
 
-        // Delay focus slightly to ensure the view is fully in the hierarchy
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
             terminalView.setFocused(isFocused)
         }
     }
 }
+
+// MARK: - Surface cache
 
 /// Caches terminal surfaces so switching workstreams doesn't destroy/recreate them.
 final class TerminalSurfaceCache: ObservableObject {
@@ -444,9 +435,7 @@ final class TerminalSurfaceCache: ObservableObject {
     /// Remove all surfaces for a workstream.
     func removeWorkstreamSurfaces(for workstreamID: UUID) {
         removeSurface(for: workstreamID)
-        removeSurface(for: derivedUUID(from: workstreamID, salt: "workspace"))
-        removeSurface(for: derivedUUID(from: workstreamID, salt: "setup"))
-        removeSurface(for: derivedUUID(from: workstreamID, salt: "run"))
+        removeSurface(for: derivedUUID(from: workstreamID, salt: "terminal"))
     }
 
     private func handleSurfaceClosed(_ closedView: TerminalView) {

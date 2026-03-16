@@ -16,8 +16,6 @@ extension Notification.Name {
     static let openExternalBrowser = Notification.Name("factoryfloor.openExternalBrowser")
     static let clearProjects = Notification.Name("factoryfloor.clearProjects")
     static let openExternalTerminal = Notification.Name("factoryfloor.openExternalTerminal")
-    static let nextTab = Notification.Name("factoryfloor.nextTab")
-    static let prevTab = Notification.Name("factoryfloor.prevTab")
 }
 
 @main
@@ -99,15 +97,25 @@ struct FF2App: App {
 
                 Divider()
 
-                Button("Next Tab") {
-                    NotificationCenter.default.post(name: .nextTab, object: nil)
+                Button("Toggle Info") {
+                    NotificationCenter.default.post(name: .toggleInfo, object: nil)
                 }
-                .keyboardShortcut("]", modifiers: [.command, .shift])
+                .keyboardShortcut("i", modifiers: .command)
 
-                Button("Previous Tab") {
-                    NotificationCenter.default.post(name: .prevTab, object: nil)
+                Button("Toggle Terminal") {
+                    NotificationCenter.default.post(name: .toggleTerminal, object: nil)
                 }
-                .keyboardShortcut("[", modifiers: [.command, .shift])
+                .keyboardShortcut("t", modifiers: .command)
+
+                Button("Toggle Browser") {
+                    NotificationCenter.default.post(name: .toggleBrowser, object: nil)
+                }
+                .keyboardShortcut("b", modifiers: .command)
+
+                Button("Focus Agent") {
+                    NotificationCenter.default.post(name: .focusAgent, object: nil)
+                }
+                .keyboardShortcut(.return, modifiers: .command)
 
                 Divider()
 
