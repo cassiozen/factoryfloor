@@ -181,7 +181,7 @@ struct TerminalContainerView: View {
                     surfaceID: id,
                     workingDirectory: workingDirectory,
                     isFocused: true,
-                    environmentVars: envVars
+                    environmentVars: terminalEnvVars
                 )
             case .browser(let id):
                 BrowserView(defaultURL: "http://localhost:\(workstreamPort)")
@@ -324,6 +324,14 @@ struct TerminalContainerView: View {
                 self.branchPR = pr
             }
         }
+    }
+
+    /// Env vars for plain terminal tabs. Clears tmux vars to prevent inheritance.
+    private var terminalEnvVars: [String: String] {
+        var vars = envVars
+        vars["TMUX"] = ""
+        vars["TMUX_PANE"] = ""
+        return vars
     }
 
     private var envVars: [String: String] {
