@@ -36,6 +36,20 @@ struct ScriptConfig {
         setup != nil || run != nil || teardown != nil
     }
 
+    /// Run the teardown script synchronously in the given directory.
+    static func runTeardown(in directory: String, projectDirectory: String) {
+        let config = load(from: projectDirectory)
+        guard let teardown = config.teardown else { return }
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/bin/sh")
+        process.arguments = ["-c", teardown]
+        process.currentDirectoryURL = URL(fileURLWithPath: directory)
+        process.standardOutput = FileHandle.nullDevice
+        process.standardError = FileHandle.nullDevice
+        try? process.run()
+        process.waitUntilExit()
+    }
+
     // MARK: - Loaders
 
     /// .ff2.json / .ff2/config.json format:

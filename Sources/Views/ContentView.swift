@@ -269,10 +269,12 @@ struct ContentView: View {
         let project = projects[projectIndex]
         if let ws = project.workstreams.first(where: { $0.id == wsID }) {
             let projectDir = project.directory
+            let worktreeDir = ws.worktreePath ?? projectDir
             let wsName = ws.name
             let projName = project.name
             let tmuxPath = appEnvironment.toolStatus.tmux.path
             Task.detached {
+                ScriptConfig.runTeardown(in: worktreeDir, projectDirectory: projectDir)
                 GitOperations.removeWorktree(projectPath: projectDir, workstreamName: wsName, projectName: projName)
                 if let tmuxPath {
                     TmuxSession.killWorkstreamSessions(tmuxPath: tmuxPath, project: projName, workstream: wsName)

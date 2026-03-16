@@ -341,8 +341,10 @@ struct ProjectSidebar: View {
             let projectDir = project.directory
             let wsName = ws.name
             let projName = project.name
+            let worktreeDir = ws.worktreePath ?? projectDir
             let tmuxPath = appEnv.toolStatus.tmux.path
             Task.detached {
+                ScriptConfig.runTeardown(in: worktreeDir, projectDirectory: projectDir)
                 GitOperations.removeWorktree(projectPath: projectDir, workstreamName: wsName, projectName: projName)
                 if let tmuxPath {
                     TmuxSession.killWorkstreamSessions(tmuxPath: tmuxPath, project: projName, workstream: wsName)
