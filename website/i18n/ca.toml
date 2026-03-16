@@ -10,11 +10,11 @@ other = "Configuració"
 [hero_badge]
 other = "macOS natiu · Terminal Ghostty · Claude Code"
 [hero_title_1]
-other = "El teu"
+other = "El teu entorn"
 [hero_title_accent]
-other = "espai de treball"
-[hero_title_2]
 other = "amb IA."
+[hero_title_2]
+other = ""
 [hero_desc]
 other = "Una app nativa de macOS construïda sobre el terminal renderitzat per GPU de <a href=\"https://ghostty.org\" class=\"text-wine-light hover:underline\">Ghostty</a>. Gestiona git worktrees, sessions de Claude Code i servidors de desenvolupament des d'una sola finestra. Cada workstream té la seva pròpia branca, terminal i agent d'IA — tot en paral·lel, tot a velocitat nativa."
 [hero_download]
