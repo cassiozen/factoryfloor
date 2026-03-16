@@ -1,7 +1,5 @@
 # TODO
 
-## Priority (next session)
-
 ## Pre-release
 - [ ] Choose final app name (currently "ff2" is a working name)
 - [ ] Update bundle ID (`com.ff2.app` in project.yml), URL scheme, AppConstants
@@ -9,24 +7,18 @@
 - [ ] Homebrew cask for installation
 - [ ] Code signing and notarization for distribution
 - [ ] All Tuner Labs logo image in help view (needs asset)
-
-## Features
+- [ ] Occlude non-visible terminal surfaces to save GPU (reverted, needs careful timing)
+- [ ] GitHub Pages deploy workflow for website
 - [ ] Sidebar visual polish (custom styling beyond default SwiftUI)
+
+## Future
 - [ ] Split panes within a workstream
 - [ ] External Chrome integration: launch with --remote-debugging-port for WebMCP/CDP
 - [ ] PR management: create and manage PRs from workstreams (currently view-only)
-
-## Terminal
-- [ ] Occlude non-visible terminal surfaces to save GPU (reverted, needs careful timing)
 - [ ] CommandBuilder withFallback quoting needs more testing with edge cases
-
-## Infrastructure
-- [ ] GitHub Pages deploy workflow for website
 - [ ] Auto-update mechanism (Sparkle or similar)
 - [ ] Crash reporting
 - [ ] Move persistence from UserDefaults to a proper file (for larger state)
-
-## Localization
 - [ ] Add more translations (copy en.lproj to xx.lproj, translate strings)
 
 ## Done
