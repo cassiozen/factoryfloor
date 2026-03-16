@@ -197,6 +197,7 @@ struct ContentView: View {
         .onReceive(Timer.publish(every: 15, on: .main, in: .common).autoconnect()) { _ in
             appEnvironment.refreshAllRepoInfo(projects: projects)
             appEnvironment.refreshPathValidity(projects: projects)
+            syncWorkstreamNamesFromBranches()
         }
         .onChange(of: appEnvironment.missingProjectIDs) { _, missing in
             guard !missing.isEmpty else { return }
@@ -250,6 +251,27 @@ struct ContentView: View {
             if let appleScript = NSAppleScript(source: script) {
                 appleScript.executeAndReturnError(nil)
             }
+        }
+    }
+
+    /// Update workstream names to match their branch name (without prefix).
+    /// Called periodically so that when the agent renames a branch, the sidebar reflects it.
+    private func syncWorkstreamNamesFromBranches() {
+        var changed = false
+        for pi in projects.indices {
+            for wi in projects[pi].workstreams.indices {
+                let ws = projects[pi].workstreams[wi]
+                guard let branch = appEnvironment.branchName(for: ws.worktreePath) else { continue }
+                // Strip the prefix (everything up to and including the last "/")
+                let shortName = branch.contains("/") ? String(branch.split(separator: "/").last ?? Substring(branch)) : branch
+                if shortName != ws.name {
+                    projects[pi].workstreams[wi].name = shortName
+                    changed = true
+                }
+            }
+        }
+        if changed {
+            ProjectStore.save(projects)
         }
     }
 
