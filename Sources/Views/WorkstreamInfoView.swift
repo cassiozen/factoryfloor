@@ -40,6 +40,9 @@ struct WorkstreamInfoView: View {
                         Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.1.0")")
                             .font(.caption)
                             .foregroundStyle(.secondary)
+                        (Text("Made with ") + Text("\u{2764}\u{FE0F}") + Text(" in Poblenou, Barcelona"))
+                            .font(.system(size: 10))
+                            .foregroundStyle(.tertiary)
                     }
                     .padding(.top, 24)
                     .padding(.bottom, 8)

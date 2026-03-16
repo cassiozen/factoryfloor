@@ -161,3 +161,6 @@ other = "Factory Floor is MIT-licensed and free to use. The source code is avail
 other = "View on GitHub"
 [oss_star]
 other = "Star the project"
+
+[footer_poblenou]
+other = "Made with ❤️ in Poblenou, Barcelona"
