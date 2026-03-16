@@ -162,7 +162,7 @@ struct ProjectSidebar: View {
                     HStack(spacing: 0) {
                         Text("Help ")
                             .foregroundStyle(.tertiary)
-                        Link("supporting", destination: URL(string: "https://factory-floor.com/fund")!)
+                        Link("supporting", destination: sponsorURL)
                             .foregroundStyle(.secondary)
                         Text(" the development.")
                             .foregroundStyle(.tertiary)
@@ -412,6 +412,12 @@ struct ProjectSidebar: View {
             }
         }
         return true
+    }
+
+    private var sponsorURL: URL {
+        let lang = Locale.current.language.languageCode?.identifier ?? "en"
+        let path = lang == "en" ? "/sponsor" : "/\(lang)/sponsor"
+        return URL(string: "https://factory-floor.com\(path)")!
     }
 
     @AppStorage("factoryfloor.baseDirectory") private var baseDirectory: String = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first ?? ""
