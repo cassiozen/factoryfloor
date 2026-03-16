@@ -22,3 +22,147 @@ jobs:
         with:
           config-file: .release-please-config.json
           manifest-file: .release-please-manifest.json
+
+  build:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    runs-on: macos-14
+    env:
+      SIGNING_IDENTITY: "Developer ID Application: ALL TUNER LABS S.L. (J5TAY75Q3F)"
+      APP_NAME: "Factory Floor"
+      SCHEME: "FactoryFloor"
+      PROJECT: "FactoryFloor.xcodeproj"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Import signing certificate
+        env:
+          CERTIFICATE_P12_BASE64: ${{ secrets.CERTIFICATE_P12_BASE64 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
+        run: |
+          CERT_PATH=$RUNNER_TEMP/certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/signing.keychain-db
+          KEYCHAIN_PASSWORD=$(uuidgen)
+
+          echo -n "$CERTIFICATE_P12_BASE64" | base64 --decode -o "$CERT_PATH"
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -P "$CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH" login.keychain-db
+
+      - name: Build release
+        run: |
+          xcodebuild -project "$PROJECT" -scheme "$SCHEME" -configuration Release \
+            -derivedDataPath build/derived \
+            DEVELOPMENT_TEAM=J5TAY75Q3F \
+            CODE_SIGN_IDENTITY="$SIGNING_IDENTITY" \
+            CODE_SIGN_STYLE=Manual \
+            build
+
+      - name: Package and sign
+        env:
+          VERSION: ${{ needs.release-please.outputs.version }}
+        run: |
+          APP_BUILT=$(find build/derived -name "${APP_NAME}.app" -type d | head -1)
+          if [ -z "$APP_BUILT" ]; then
+            echo "Error: Built app not found"
+            exit 1
+          fi
+
+          mkdir -p build/release
+          cp -R "$APP_BUILT" "build/release/${APP_NAME}.app"
+
+          codesign --deep --force --verify --verbose \
+            --sign "$SIGNING_IDENTITY" \
+            --options runtime \
+            "build/release/${APP_NAME}.app"
+
+          DMG_NAME="FactoryFloor-${VERSION}.dmg"
+          hdiutil create -volname "$APP_NAME" \
+            -srcfolder "build/release/${APP_NAME}.app" \
+            -ov -format UDZO \
+            "build/release/$DMG_NAME"
+
+          codesign --sign "$SIGNING_IDENTITY" "build/release/$DMG_NAME"
+
+          echo "DMG_NAME=$DMG_NAME" >> "$GITHUB_ENV"
+
+      - name: Notarize
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+          VERSION: ${{ needs.release-please.outputs.version }}
+        run: |
+          xcrun notarytool submit "build/release/$DMG_NAME" \
+            --apple-id "$APPLE_ID" \
+            --team-id "$APPLE_TEAM_ID" \
+            --password "$APPLE_APP_PASSWORD" \
+            --wait
+
+          xcrun stapler staple "build/release/$DMG_NAME"
+
+      - name: Upload to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.release-please.outputs.version }}
+          TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
+        run: |
+          gh release upload "$TAG_NAME" "build/release/$DMG_NAME"
+
+      - name: Update Homebrew cask
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          VERSION: ${{ needs.release-please.outputs.version }}
+        run: |
+          DMG_URL="https://github.com/alltuner/factoryfloor/releases/download/v${VERSION}/FactoryFloor-${VERSION}.dmg"
+          SHA256=$(shasum -a 256 "build/release/$DMG_NAME" | awk '{print $1}')
+
+          gh api repos/alltuner/homebrew-tap/contents/Casks/factoryfloor.rb \
+            --method GET -q '.sha' > /tmp/cask_sha.txt
+
+          CASK_CONTENT=$(cat <<RUBY
+          cask "factoryfloor" do
+            version "${VERSION}"
+            sha256 "${SHA256}"
+
+            url "${DMG_URL}"
+            name "Factory Floor"
+            desc "AI-powered development workspace for macOS"
+            homepage "https://factory-floor.com"
+
+            depends_on macos: ">= :sonoma"
+
+            app "Factory Floor.app"
+
+            zap trash: [
+              "~/.config/factoryfloor",
+              "~/.factoryfloor",
+              "~/Library/Preferences/com.alltuner.factoryfloor.plist",
+            ]
+          end
+          RUBY
+          )
+
+          echo "$CASK_CONTENT" | base64 > /tmp/cask_b64.txt
+
+          gh api repos/alltuner/homebrew-tap/contents/Casks/factoryfloor.rb \
+            --method PUT \
+            -f message="chore: update factoryfloor to v${VERSION}" \
+            -f content="$(echo "$CASK_CONTENT" | base64)" \
+            -f sha="$(cat /tmp/cask_sha.txt)"
+
+      - name: Clean up keychain
+        if: always()
+        run: security delete-keychain $RUNNER_TEMP/signing.keychain-db 2>/dev/null || true

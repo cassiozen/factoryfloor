@@ -90,21 +90,29 @@ xcrun stapler staple "FactoryFloor-0.1.0.dmg"
 
 ### CI automation (GitHub Actions)
 
-Store these as repository secrets:
-- `APPLE_CERTIFICATE_BASE64`: Base64-encoded .p12 certificate
-- `APPLE_CERTIFICATE_PASSWORD`: Password for the .p12
-- `APPLE_ID`: Your Apple ID email
-- `APPLE_TEAM_ID`: Your team ID
-- `APPLE_APP_SPECIFIC_PASSWORD`: App-specific password for notarytool
+The release workflow (`.github/workflows/release.yml`) automates the full pipeline: build, sign, notarize, DMG, upload, and Homebrew cask update. It triggers automatically when release-please creates a new release.
 
-The release workflow should:
-1. Import the certificate into a temporary keychain
-2. Build the release
-3. Sign with `codesign`
-4. Create DMG
-5. Notarize with `notarytool`
-6. Staple
-7. Upload as release asset
+**Required repository secrets** (Settings > Secrets and variables > Actions):
+
+| Secret | Description | How to get it |
+|--------|-------------|---------------|
+| `CERTIFICATE_P12_BASE64` | Developer ID Application certificate + private key | Export from Keychain Access as .p12, then `base64 -i cert.p12` |
+| `CERTIFICATE_PASSWORD` | Password for the .p12 file | Set during export |
+| `APPLE_ID` | Apple ID email for notarization | Your Apple Developer account email |
+| `APPLE_TEAM_ID` | Apple Developer team ID | `J5TAY75Q3F` (All Tuner Labs) |
+| `APPLE_APP_PASSWORD` | App-specific password for notarytool | Generate at https://appleid.apple.com > Sign-In and Security > App-Specific Passwords |
+| `HOMEBREW_TAP_TOKEN` | GitHub PAT with `repo` scope for alltuner/homebrew-tap | Generate at https://github.com/settings/tokens |
+
+**What the workflow does:**
+1. release-please creates a version bump PR and merges it
+2. On release creation, the `build` job runs on a macOS 14 runner
+3. Imports signing certificate into a temporary keychain
+4. Builds release configuration with XcodeGen + xcodebuild
+5. Signs the app and DMG with Developer ID
+6. Notarizes via `notarytool` and staples the ticket
+7. Uploads DMG to the GitHub release
+8. Updates the Homebrew cask in alltuner/homebrew-tap with new version and SHA256
+9. Cleans up the temporary keychain
 
 ## App Updates (Sparkle)
 
