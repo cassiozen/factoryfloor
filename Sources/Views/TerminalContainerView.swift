@@ -193,6 +193,7 @@ struct TerminalContainerView: View {
         }
         .onAppear {
             scriptConfig = ScriptConfig.load(from: projectDirectory)
+            surfaceCache.respawnableIDs.insert(claudeID)
             runSetupIfNeeded()
             refreshBranchPR()
         }
@@ -230,6 +231,15 @@ struct TerminalContainerView: View {
         .onReceive(NotificationCenter.default.publisher(for: .prevTab)) { _ in
             guard let idx = tabs.firstIndex(of: activeTab) else { return }
             activeTab = tabs[(idx - 1 + tabs.count) % tabs.count]
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .terminalTabExited)) { notification in
+            guard let surfaceID = notification.object as? UUID else { return }
+            if let tab = tabs.first(where: {
+                if case .terminal(let id) = $0 { return id == surfaceID }
+                return false
+            }) {
+                closeTab(tab)
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: .openExternalBrowser)) { _ in
             guard let url = URL(string: "http://localhost:\(workstreamPort)/") else { return }
@@ -484,9 +494,15 @@ struct SingleTerminalView: NSViewRepresentable {
 
 // MARK: - Surface cache
 
+extension Notification.Name {
+    static let terminalTabExited = Notification.Name("factoryfloor.terminalTabExited")
+}
+
 final class TerminalSurfaceCache: ObservableObject {
     private var surfaces: [UUID: TerminalView] = [:]
     private var surfaceParams: [UUID: SurfaceParams] = [:]
+    /// Surface IDs that should respawn when closed (e.g., the agent).
+    var respawnableIDs: Set<UUID> = []
 
     struct SurfaceParams {
         let workingDirectory: String
@@ -540,14 +556,20 @@ final class TerminalSurfaceCache: ObservableObject {
 
     private func handleSurfaceClosed(_ closedView: TerminalView) {
         guard let (id, _) = surfaces.first(where: { $0.value === closedView }) else { return }
-        guard let params = surfaceParams[id],
-              let app = TerminalApp.shared.app else { return }
 
-        surfaces.removeValue(forKey: id)
-        let newView = TerminalView(app: app, workingDirectory: params.workingDirectory, command: params.command, initialInput: params.initialInput, environmentVars: params.environmentVars)
-        newView.workstreamID = id
-        surfaces[id] = newView
-
-        objectWillChange.send()
+        if respawnableIDs.contains(id) {
+            // Agent: respawn the surface
+            guard let params = surfaceParams[id],
+                  let app = TerminalApp.shared.app else { return }
+            surfaces.removeValue(forKey: id)
+            let newView = TerminalView(app: app, workingDirectory: params.workingDirectory, command: params.command, initialInput: params.initialInput, environmentVars: params.environmentVars)
+            newView.workstreamID = id
+            surfaces[id] = newView
+            objectWillChange.send()
+        } else {
+            // Terminal/browser tabs: close the tab
+            removeSurface(for: id)
+            NotificationCenter.default.post(name: .terminalTabExited, object: id)
+        }
     }
 }

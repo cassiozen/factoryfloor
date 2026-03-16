@@ -59,6 +59,16 @@ struct SettingsView: View {
                     .buttonStyle(.plain)
                     .disabled(appEnv.isDetecting)
                 }
+
+                LabeledContent("Install 'ff' command") {
+                    Button(cliInstalled ? "Installed" : "Install...", action: installCLI)
+                        .disabled(cliInstalled)
+                }
+                Text(cliInstalled
+                    ? "The 'ff' command is available at /usr/local/bin/ff."
+                    : "Install the 'ff' command to open directories in Factory Floor from any terminal. Usage: ff [directory]")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
             // MARK: - Projects
@@ -182,19 +192,6 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-            }
-
-            // MARK: - CLI
-            Section("Command Line") {
-                LabeledContent("Install 'ff' command") {
-                    Button(cliInstalled ? "Installed" : "Install...", action: installCLI)
-                        .disabled(cliInstalled)
-                }
-                Text(cliInstalled
-                    ? "The 'ff' command is available at /usr/local/bin/ff."
-                    : "Installs the 'ff' command to /usr/local/bin so you can open directories with 'ff .' from any terminal.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
             }
 
             // MARK: - Danger
