@@ -165,6 +165,21 @@ All strings are localized. To add a language:
 2. Translate all values in `Localizable.strings`
 3. Add the path to `project.yml` and run `xcodegen generate`
 
+## Credits
+
+Factory Floor is built on the shoulders of these projects:
+
+- **[Ghostty](https://ghostty.org)** — GPU-accelerated terminal engine (Metal-rendered via libghostty)
+- **[Claude Code](https://claude.ai/claude-code)** — AI coding agent by Anthropic
+- **[XcodeGen](https://github.com/yonaskolb/XcodeGen)** — Xcode project generation from `project.yml`
+- **[cmark-gfm](https://github.com/github/cmark-gfm)** — GitHub Flavored Markdown rendering (via [swift-cmark](https://github.com/swiftlang/swift-cmark))
+- **[Hugo](https://gohugo.io)** + **[Tailwind CSS](https://tailwindcss.com)** — Website
+- **[Umami](https://umami.is)** — Privacy-friendly website analytics
+
+## License
+
+[MIT](LICENSE)
+
 ---
 
 <p align="center">
