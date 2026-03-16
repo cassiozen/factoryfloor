@@ -150,16 +150,22 @@ struct ProjectSidebar: View {
                     .foregroundStyle(.secondary)
                 Spacer()
 
-                // Credit line
+                // Credit
                 VStack(spacing: 3) {
-                    Link("David Poblador i Garcia", destination: URL(string: "https://davidpoblador.com/")!)
-                        .font(.system(size: 10))
-                        .foregroundStyle(.secondary)
-                        .underline()
-                    Link("Support the development", destination: URL(string: "https://factory-floor.com/fund")!)
-                        .font(.system(size: 10))
-                        .foregroundStyle(.secondary)
-                        .underline()
+                    HStack(spacing: 0) {
+                        Text("Made by ")
+                            .foregroundStyle(.tertiary)
+                        Link("David Poblador i Garcia", destination: URL(string: "https://davidpoblador.com/")!)
+                            .foregroundStyle(.secondary)
+                    }
+                    .font(.system(size: 10))
+                    HStack(spacing: 0) {
+                        Text("If useful, help ")
+                            .foregroundStyle(.tertiary)
+                        Link("supporting the development", destination: URL(string: "https://factory-floor.com/fund")!)
+                            .foregroundStyle(.secondary)
+                    }
+                    .font(.system(size: 10))
                 }
                 .padding(.vertical, 6)
 

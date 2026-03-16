@@ -192,7 +192,6 @@ struct TerminalContainerView: View {
         }
         .onAppear {
             scriptConfig = ScriptConfig.load(from: projectDirectory)
-            prewarmAgent()
             runSetupIfNeeded()
             refreshBranchPR()
         }
@@ -270,23 +269,9 @@ struct TerminalContainerView: View {
     private func addTerminal() {
         terminalCount += 1
         let id = derivedUUID(from: workstreamID, salt: "terminal-\(terminalCount)")
-
-        // Prewarm the surface before showing the tab, giving Ghostty
-        // time to initialize the PTY (same pattern as the agent surface).
-        if let app = TerminalApp.shared.app {
-            _ = surfaceCache.surface(
-                for: id, app: app, workingDirectory: workingDirectory,
-                environmentVars: terminalEnvVars
-            )
-        }
-
         let tab = WorkspaceTab.terminal(id)
         tabs.append(tab)
-
-        // Small delay to let the surface initialize before focusing
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            activeTab = tab
-        }
+        activeTab = tab
     }
 
     private func addBrowser() {
@@ -312,14 +297,6 @@ struct TerminalContainerView: View {
     }
 
     // MARK: - Lifecycle
-
-    private func prewarmAgent() {
-        guard let app = TerminalApp.shared.app else { return }
-        _ = surfaceCache.surface(
-            for: claudeID, app: app, workingDirectory: workingDirectory,
-            command: claudeCommand, environmentVars: envVars
-        )
-    }
 
     private func runSetupIfNeeded() {
         guard let setup = scriptConfig.setup else { return }
