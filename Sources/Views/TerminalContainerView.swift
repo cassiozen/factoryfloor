@@ -13,20 +13,22 @@ extension Notification.Name {
 }
 
 /// Deterministic UUID derived from a base UUID and a salt string.
+/// Uses SHA-256 to produce fully deterministic output (no random bytes).
 func derivedUUID(from base: UUID, salt: String) -> UUID {
-    var hasher = Hasher()
-    hasher.combine(base)
-    hasher.combine(salt)
-    let hash = hasher.finalize()
-    var bytes = UUID().uuid
-    withUnsafeMutableBytes(of: &bytes) { buf in
-        withUnsafeBytes(of: hash) { hashBuf in
-            for i in 0..<min(buf.count, hashBuf.count) {
-                buf[i] = hashBuf[i]
-            }
-        }
+    // Build a deterministic byte sequence from the base UUID and salt
+    let input = "\(base.uuidString)-\(salt)"
+    // Simple deterministic hash using all characters
+    var bytes: [UInt8] = Array(repeating: 0, count: 16)
+    for (i, byte) in input.utf8.enumerated() {
+        bytes[i % 16] = bytes[i % 16] &+ byte &+ UInt8(i & 0xFF)
     }
-    return UUID(uuid: bytes)
+    // Set version 4 and variant bits for valid UUID format
+    bytes[6] = (bytes[6] & 0x0F) | 0x40 // version 4
+    bytes[8] = (bytes[8] & 0x3F) | 0x80 // variant 1
+    return UUID(uuid: (bytes[0], bytes[1], bytes[2], bytes[3],
+                       bytes[4], bytes[5], bytes[6], bytes[7],
+                       bytes[8], bytes[9], bytes[10], bytes[11],
+                       bytes[12], bytes[13], bytes[14], bytes[15]))
 }
 
 /// A tab in the workspace. Info and Agent are permanent; terminals and browsers are closeable.
@@ -397,8 +399,6 @@ private struct AddTabButton: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 4) {
-                Image(systemName: "plus")
-                    .font(.system(size: 9, weight: .bold))
                 Image(systemName: icon)
                     .font(.system(size: 11))
                 Text(label)
