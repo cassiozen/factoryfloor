@@ -65,7 +65,7 @@ struct SettingsView: View {
                         .disabled(cliInstalled)
                 }
                 Text(cliInstalled
-                    ? "The 'ff' command is available at /usr/local/bin/ff."
+                    ? "The 'ff' command is installed and ready to use."
                     : "Install the 'ff' command to open directories in Factory Floor from any terminal. Usage: ff [directory]")
                     .font(.caption)
                     .foregroundStyle(.secondary)
