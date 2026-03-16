@@ -10,15 +10,19 @@
       <div class="flex items-center gap-4">
         <!-- Language switcher -->
         <div class="flex items-center gap-2 text-xs font-mono">
-          {{ range .Site.Languages }}
-            {{ if eq .Lang $.Site.Language.Lang }}
-              <span class="text-fg uppercase">{{ .Lang }}</span>
+          {{ $currentLang := .Site.Language.Lang }}
+          {{ $defaultLang := .Site.Language.Lang }}
+          {{ if .Site.Params.defaultContentLanguage }}{{ $defaultLang = .Site.Params.defaultContentLanguage }}{{ end }}
+          {{ $langs := sort .Site.Languages ".Weight" "asc" }}
+          {{ range $i, $lang := $langs }}
+            {{ if eq $lang.Lang $currentLang }}
+              <span class="text-fg uppercase font-semibold">{{ $lang.Lang }}</span>
             {{ else }}
-              <a href="{{ "" | relLangURL }}" class="text-fg-muted no-underline hover:text-fg transition-colors uppercase">{{ .Lang }}</a>
+              {{ $href := "/" }}
+              {{ if ne $lang.Lang "en" }}{{ $href = printf "/%s/" $lang.Lang }}{{ end }}
+              <a href="{{ $href }}" class="text-fg-muted no-underline hover:text-fg transition-colors uppercase">{{ $lang.Lang }}</a>
             {{ end }}
-            {{ if ne .Lang (index (last 1 (sort $.Site.Languages ".Weight" "asc")) 0).Lang }}
-              <span class="text-fg-faint">|</span>
-            {{ end }}
+            {{ if lt $i (sub (len $langs) 1) }}<span class="text-fg-faint">|</span>{{ end }}
           {{ end }}
         </div>
         <span class="text-fg-faint">|</span>
