@@ -132,13 +132,6 @@ struct FF2App: App {
                 }
                 .keyboardShortcut(.return, modifiers: .command)
 
-                Button("Close Terminal") {
-                    NotificationCenter.default.post(name: .closeTerminal, object: nil)
-                }
-                .keyboardShortcut("w", modifiers: .command)
-
-                Divider()
-
                 Button("Open in External Browser") {
                     NotificationCenter.default.post(name: .openExternalBrowser, object: nil)
                 }

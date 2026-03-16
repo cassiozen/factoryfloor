@@ -230,6 +230,16 @@ struct ContentView: View {
             }
             return .ignored
         }
+        .onAppear {
+            // Intercept Cmd+W at the app level to close tabs instead of the window
+            NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+                if event.modifierFlags.contains(.command) && event.charactersIgnoringModifiers == "w" {
+                    NotificationCenter.default.post(name: .closeTerminal, object: nil)
+                    return nil // swallow the event
+                }
+                return event
+            }
+        }
     }
 
     private func openExternalTerminal() {
