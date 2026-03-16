@@ -11,11 +11,9 @@
 - [ ] Split panes within a workstream
 - [ ] External Chrome integration: launch with --remote-debugging-port for WebMCP/CDP
 - [ ] PR management: create and manage PRs from workstreams (currently view-only)
-- [ ] CommandBuilder withFallback quoting needs more testing with edge cases
 - [ ] Auto-update mechanism (Sparkle or similar)
 - [ ] Crash reporting
 - [ ] Move persistence from UserDefaults to a proper file (for larger state)
-- [ ] Add more translations (copy en.lproj to xx.lproj, translate strings)
 
 ## Done
 - [x] Embedded Ghostty terminals (Metal GPU-rendered via libghostty)
@@ -80,6 +78,18 @@
 - [x] Distribution guide (Homebrew, notarization, Sparkle)
 - [x] Umami analytics integration
 - [x] GitHub repo at alltuner/factoryfloor
+- [x] CommandBuilder withFallback quoting fixed with 25 tests
+- [x] All app strings translated (en, ca, es, sv)
+- [x] Dynamic workspace tabs (terminal/browser on demand, closeable)
+- [x] Terminal tabs auto-close on shell exit, agent respawns
+- [x] Multi-terminal support with proper Ghostty focus management
+- [x] PR badge in workspace toolbar
+- [x] Browser loading indicator, Cmd+L address bar
+- [x] Workstream name syncs from branch rename
+- [x] Sidebar state persisted across restarts
+- [x] Install CLI (ff) from Settings
+- [x] Sponsor page with contribution options
+- [x] Website: Hugo i18n (en/ca/es/sv), language switcher, open source section
 
 ## Probably not needed
 - [ ] Claude Agent SDK integration (TypeScript): CLI + tmux + session-id covers our needs
