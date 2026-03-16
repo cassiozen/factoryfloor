@@ -16,6 +16,7 @@ extension Notification.Name {
     static let openExternalBrowser = Notification.Name("factoryfloor.openExternalBrowser")
     static let clearProjects = Notification.Name("factoryfloor.clearProjects")
     static let openExternalTerminal = Notification.Name("factoryfloor.openExternalTerminal")
+    static let switchToWorkstream = Notification.Name("factoryfloor.switchToWorkstream")
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -169,8 +170,12 @@ struct FF2App: App {
                 Button("Back to Project") { NotificationCenter.default.post(name: .switchToProject, object: nil) }
                     .keyboardShortcut("0", modifiers: .command)
                 ForEach(1...9, id: \.self) { n in
-                    Button("Switch to \(n)") { NotificationCenter.default.post(name: .switchByNumber, object: n) }
+                    Button("Switch to Tab \(n)") { NotificationCenter.default.post(name: .switchByNumber, object: n) }
                         .keyboardShortcut(KeyEquivalent(Character("\(n)")), modifiers: .command)
+                }
+                ForEach(1...9, id: \.self) { n in
+                    Button("Switch to Workstream \(n)") { NotificationCenter.default.post(name: .switchToWorkstream, object: n) }
+                        .keyboardShortcut(KeyEquivalent(Character("\(n)")), modifiers: [.command, .shift])
                 }
             }
         }

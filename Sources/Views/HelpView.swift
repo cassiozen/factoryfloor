@@ -76,9 +76,9 @@ struct HelpView: View {
                     }
 
                     Section {
-                        ShortcutRow(keys: "1-9", description: "Open workstream by position")
+                        ShortcutRow(keys: "1-9", shift: true, description: "Switch workstream")
                     } header: {
-                        ShortcutSectionHeader(title: "Project View", description: "When viewing a project")
+                        ShortcutSectionHeader(title: "Navigation", description: "Works from any view in a project")
                     }
 
                     Section {
