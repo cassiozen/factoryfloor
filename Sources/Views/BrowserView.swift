@@ -64,7 +64,15 @@ struct BrowserView: View {
             .padding(.vertical, 6)
             .background(.bar)
 
-            Divider()
+            // Loading indicator
+            if isLoading {
+                ProgressView()
+                    .progressViewStyle(.linear)
+                    .tint(.accentColor)
+                    .frame(height: 2)
+            } else {
+                Divider()
+            }
 
             // Content
             ZStack {
