@@ -10,8 +10,10 @@
 - [ ] Confirm before quit (Cmd+Q) when workstreams are active
 - [ ] Browser tab: show page title in tab label
 - [ ] Terminal tab: show last command in tab label
-- [ ] Drag-and-drop to reorder tabs
-- [ ] Website: favicon, OG image, SEO meta tags
+- [ ] Restore full app state on launch (active tab within workstream; sidebar selection and expanded state already persisted)
+- [ ] Change workstream navigation shortcuts from Cmd+1-9 to Cmd+Shift+1-9 (Cmd+1-9 collides with terminal tab switching); make it work from within any workspace tab
+- [ ] Website: legal/privacy policy page
+- [ ] Funding: add Buy Me a Coffee and GitHub Sponsors options (website + FUNDING.yml)
 
 ## Future
 - [ ] External Chrome integration: launch with --remote-debugging-port for WebMCP/CDP
@@ -19,7 +21,10 @@
 - [ ] Auto-update mechanism (Sparkle or similar)
 - [ ] Crash reporting
 - [ ] Move persistence from UserDefaults to a proper file (for larger state)
-- [ ] Horizontal terminal splits within a tab
+- [ ] Horizontal terminal splits within a tab (ghostty C API supports splits via action_cb, but surface lifecycle needs investigation; Cmd+D/Cmd+Shift+D keybinds conflict with ghostty's own keybind processing)
+- [ ] Preload Coding Agent terminal in background so it's ready when the user switches from Info tab
+- [ ] Drag-and-drop to reorder tabs
+- [ ] Website: favicon, OG image, SEO meta tags
 - [ ] Pin ghostty submodule update to CI (auto-test against new Ghostty releases)
 
 ## Done

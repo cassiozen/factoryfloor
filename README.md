@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Resources/Assets.xcassets/AppIcon.appiconset/icon_256x256.png" width="128" height="128" alt="Factory Floor">
+  <img src="https://raw.githubusercontent.com/alltuner/factoryfloor/main/Resources/Assets.xcassets/AppIcon.appiconset/icon_256x256.png" width="128" height="128" alt="Factory Floor">
 </p>
 
 <h1 align="center">Factory Floor</h1>

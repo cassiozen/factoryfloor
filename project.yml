@@ -17,9 +17,9 @@ settings:
     CODE_SIGNING_REQUIRED: "NO"
 
 packages:
-  MarkdownView:
-    url: https://github.com/LiYanan2004/MarkdownView
-    from: "1.0.0"
+  swift-cmark:
+    url: https://github.com/swiftlang/swift-cmark
+    from: "0.6.0"
 
 targets:
   FactoryFloor:
@@ -75,7 +75,10 @@ targets:
           PRODUCT_NAME: Factory Floor
           FF_URL_SCHEME: factoryfloor
     dependencies:
-      - package: MarkdownView
+      - package: swift-cmark
+        product: cmark-gfm
+      - package: swift-cmark
+        product: cmark-gfm-extensions
 
   FactoryFloorTests:
     type: bundle.unit-test
