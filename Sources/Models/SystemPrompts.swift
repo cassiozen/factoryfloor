@@ -1,5 +1,5 @@
 // ABOUTME: System prompts injected into claude sessions based on settings.
-// ABOUTME: Written to ~/.ff/prompts/ and referenced via --system-prompt-file.
+// ABOUTME: Passed inline via --append-system-prompt.
 
 import Foundation
 
