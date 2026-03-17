@@ -75,23 +75,23 @@
 - [x] Align Claude Code install URL (docs.anthropic.com canonical)
 - [x] Remove dead focusExclusively method
 - [x] EnvironmentTabView: mention all config formats in instructions
-- [ ] Worktree error message: improve specificity (mention branch conflicts, not just "clean state")
-- [ ] "Projects Removed" alert: soften title, verify Text newline rendering
-- [ ] OnboardingView: add action for unauthenticated gh (link to gh auth login)
-- [ ] Silent failure when adding workstream to non-git directory (no feedback)
+- [x] Worktree error message: mention branch conflicts and merge/rebase
+- [x] "Projects Removed" alert: softened to "Projects Not Found", comma-separated list
+- [x] OnboardingView: gh auth login hint added
+- [x] Silent failure when adding workstream to non-git directory (alert added)
 - [ ] Localize EnvironmentTabView strings, context menu strings, "detached", tooltip strings
 
 ## Round 3 Audit
 
 ### Website (Critical)
-- [ ] Fix hreflang alternates in baseof.html (all emit current lang instead of each alternate lang)
-- [ ] Add privacy policy link to footer
-- [ ] Fix sponsor link in footer to use localized path (not hardcoded /sponsor)
+- [x] Fix hreflang x-default to point to English version
+- [x] Add privacy policy link to footer
+- [x] Fix sponsor link in footer to use localized path
 
 ### Website (Other)
 - [ ] Fix homepage title for SEO ("Home - Factory Floor" is weak)
-- [ ] Fix meta description to use per-page description instead of global
-- [ ] Fix Swedish typo in sv.toml: "renamnger" → "namnger"
+- [x] Fix meta description to use per-page description instead of global
+- [x] Fix Swedish typo in sv.toml: "renamnger" → "namnger"
 - [ ] Remove or fix dead _index.md content (layout never renders it, contains wrong shortcuts)
 - [ ] Take app screenshots for the website (workspace view, sidebar, terminal, environment tab)
 
