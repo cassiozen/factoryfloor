@@ -86,3 +86,88 @@
 "Quit" = "Quit";
 "Confirm before quitting" = "Confirm before quitting";
 "Show a confirmation dialog when quitting with active workstreams." = "Show a confirmation dialog when quitting with active workstreams.";
+
+/* Settings - Environment */
+"Environment" = "Environment";
+"Installed" = "Installed";
+"Install..." = "Install...";
+
+/* Settings - Projects */
+"Projects" = "Projects";
+"Base directory" = "Base directory";
+"Change..." = "Change...";
+"Choose base directory for projects" = "Choose base directory for projects";
+"Default location when adding new projects." = "Default location when adding new projects.";
+"Branch prefix" = "Branch prefix";
+
+/* Settings - Terminal & Browser */
+"Terminal & Browser" = "Terminal & Browser";
+"External Browser" = "External Browser";
+
+/* Settings - Coding Agent */
+"Agent Teams" = "Agent Teams";
+"Enables experimental multi-agent coordination. Agents can spawn teammates, delegate tasks, and collaborate across workstreams." = "Enables experimental multi-agent coordination. Agents can spawn teammates, delegate tasks, and collaborate across workstreams.";
+"Auto-rename branch" = "Auto-rename branch";
+"The agent will rename the worktree branch to match the task on the first request (e.g., fix-login-timeout)." = "The agent will rename the worktree branch to match the task on the first request (e.g., fix-login-timeout).";
+
+/* Settings - Appearance */
+"Appearance" = "Appearance";
+"Theme" = "Theme";
+"System" = "System";
+"Light" = "Light";
+"Dark" = "Dark";
+
+/* Settings - Danger Zone */
+"Danger Zone" = "Danger Zone";
+"Bleeding edge" = "Bleeding edge";
+"Receive pre-release builds with the latest features. These may be less stable." = "Receive pre-release builds with the latest features. These may be less stable.";
+"Clear project list" = "Clear project list";
+"Clear All..." = "Clear All...";
+"Clear All" = "Clear All";
+"Removes all projects and workstreams from the sidebar. No files or directories on disk will be deleted." = "Removes all projects and workstreams from the sidebar. No files or directories on disk will be deleted.";
+"Clear project list?" = "Clear project list?";
+"This will remove all projects and workstreams from the sidebar. No files on disk will be deleted. This cannot be undone." = "This will remove all projects and workstreams from the sidebar. No files on disk will be deleted. This cannot be undone.";
+
+/* HelpView - Shortcuts */
+"Shortcuts" = "Shortcuts";
+"Global" = "Global";
+"Available everywhere" = "Available everywhere";
+"Help" = "Help";
+"New workstream or project" = "New workstream or project";
+"New project" = "New project";
+"Workstream" = "Workstream";
+"When a workstream is active" = "When a workstream is active";
+"Focus Coding Agent" = "Focus Coding Agent";
+"Info panel" = "Info panel";
+"New Terminal" = "New Terminal";
+"New Browser" = "New Browser";
+"Close tab" = "Close tab";
+"Address bar" = "Address bar";
+"Back to project" = "Back to project";
+"Switch tab" = "Switch tab";
+"Previous tab" = "Previous tab";
+"Next tab" = "Next tab";
+"Navigation" = "Navigation";
+"Works from any view in a project" = "Works from any view in a project";
+"Switch workstream" = "Switch workstream";
+"External Apps" = "External Apps";
+"Opens the current workstream directory" = "Opens the current workstream directory";
+"Open in external browser" = "Open in external browser";
+"Open in external terminal" = "Open in external terminal";
+
+/* BrowserView */
+"Server not responding" = "Server not responding";
+"Retry" = "Retry";
+
+/* ProjectOverviewView */
+"Repository" = "Repository";
+"GitHub" = "GitHub";
+"Branch" = "Branch";
+"Commits" = "Commits";
+"Remote" = "Remote";
+"Status" = "Status";
+"Stars" = "Stars";
+"Open Issues" = "Open Issues";
+"Open PRs" = "Open PRs";
+"Not a git repository" = "Not a git repository";
+"Description" = "Description";

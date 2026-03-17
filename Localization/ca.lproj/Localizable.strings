@@ -86,3 +86,88 @@
 "Quit" = "Sortir";
 "Confirm before quitting" = "Confirma abans de sortir";
 "Show a confirmation dialog when quitting with active workstreams." = "Mostra un diàleg de confirmació en sortir amb fluxos de treball actius.";
+
+/* Settings - Environment */
+"Environment" = "Entorn";
+"Installed" = "Instal·lat";
+"Install..." = "Instal·la...";
+
+/* Settings - Projects */
+"Projects" = "Projectes";
+"Base directory" = "Directori base";
+"Change..." = "Canvia...";
+"Choose base directory for projects" = "Tria el directori base per als projectes";
+"Default location when adding new projects." = "Ubicació per defecte en afegir nous projectes.";
+"Branch prefix" = "Prefix de branca";
+
+/* Settings - Terminal & Browser */
+"Terminal & Browser" = "Terminal i navegador";
+"External Browser" = "Navegador extern";
+
+/* Settings - Coding Agent */
+"Agent Teams" = "Equips d'agents";
+"Enables experimental multi-agent coordination. Agents can spawn teammates, delegate tasks, and collaborate across workstreams." = "Activa la coordinació experimental multi-agent. Els agents poden crear companys d'equip, delegar tasques i col·laborar entre fluxos de treball.";
+"Auto-rename branch" = "Canvia el nom de la branca automàticament";
+"The agent will rename the worktree branch to match the task on the first request (e.g., fix-login-timeout)." = "L'agent canviarà el nom de la branca de l'arbre de treball per coincidir amb la tasca a la primera sol·licitud (p. ex., fix-login-timeout).";
+
+/* Settings - Appearance */
+"Appearance" = "Aparença";
+"Theme" = "Tema";
+"System" = "Sistema";
+"Light" = "Clar";
+"Dark" = "Fosc";
+
+/* Settings - Danger Zone */
+"Danger Zone" = "Zona de perill";
+"Bleeding edge" = "Últimes novetats";
+"Receive pre-release builds with the latest features. These may be less stable." = "Rep versions preliminars amb les últimes funcions. Poden ser menys estables.";
+"Clear project list" = "Esborra la llista de projectes";
+"Clear All..." = "Esborra-ho tot...";
+"Clear All" = "Esborra-ho tot";
+"Removes all projects and workstreams from the sidebar. No files or directories on disk will be deleted." = "Elimina tots els projectes i fluxos de treball de la barra lateral. No s'esborrarà cap fitxer ni directori del disc.";
+"Clear project list?" = "Esborrar la llista de projectes?";
+"This will remove all projects and workstreams from the sidebar. No files on disk will be deleted. This cannot be undone." = "Això eliminarà tots els projectes i fluxos de treball de la barra lateral. No s'esborrarà cap fitxer del disc. Aquesta acció no es pot desfer.";
+
+/* HelpView - Shortcuts */
+"Shortcuts" = "Dreceres";
+"Global" = "Global";
+"Available everywhere" = "Disponible a tot arreu";
+"Help" = "Ajuda";
+"New workstream or project" = "Nou flux de treball o projecte";
+"New project" = "Nou projecte";
+"Workstream" = "Flux de treball";
+"When a workstream is active" = "Quan un flux de treball és actiu";
+"Focus Coding Agent" = "Enfoca l'agent de codi";
+"Info panel" = "Panell d'informació";
+"New Terminal" = "Nou terminal";
+"New Browser" = "Nou navegador";
+"Close tab" = "Tanca la pestanya";
+"Address bar" = "Barra d'adreces";
+"Back to project" = "Torna al projecte";
+"Switch tab" = "Canvia de pestanya";
+"Previous tab" = "Pestanya anterior";
+"Next tab" = "Pestanya següent";
+"Navigation" = "Navegació";
+"Works from any view in a project" = "Funciona des de qualsevol vista d'un projecte";
+"Switch workstream" = "Canvia de flux de treball";
+"External Apps" = "Aplicacions externes";
+"Opens the current workstream directory" = "Obre el directori del flux de treball actual";
+"Open in external browser" = "Obre al navegador extern";
+"Open in external terminal" = "Obre al terminal extern";
+
+/* BrowserView */
+"Server not responding" = "El servidor no respon";
+"Retry" = "Reintenta";
+
+/* ProjectOverviewView */
+"Repository" = "Repositori";
+"GitHub" = "GitHub";
+"Branch" = "Branca";
+"Commits" = "Commits";
+"Remote" = "Remot";
+"Status" = "Estat";
+"Stars" = "Estrelles";
+"Open Issues" = "Incidències obertes";
+"Open PRs" = "PRs obertes";
+"Not a git repository" = "No és un repositori git";
+"Description" = "Descripció";

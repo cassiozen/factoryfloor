@@ -86,3 +86,88 @@
 "Quit" = "Salir";
 "Confirm before quitting" = "Confirmar antes de salir";
 "Show a confirmation dialog when quitting with active workstreams." = "Muestra un diálogo de confirmación al salir con flujos de trabajo activos.";
+
+/* Settings - Environment */
+"Environment" = "Entorno";
+"Installed" = "Instalado";
+"Install..." = "Instalar...";
+
+/* Settings - Projects */
+"Projects" = "Proyectos";
+"Base directory" = "Directorio base";
+"Change..." = "Cambiar...";
+"Choose base directory for projects" = "Elige el directorio base para los proyectos";
+"Default location when adding new projects." = "Ubicación predeterminada al añadir nuevos proyectos.";
+"Branch prefix" = "Prefijo de rama";
+
+/* Settings - Terminal & Browser */
+"Terminal & Browser" = "Terminal y navegador";
+"External Browser" = "Navegador externo";
+
+/* Settings - Coding Agent */
+"Agent Teams" = "Equipos de agentes";
+"Enables experimental multi-agent coordination. Agents can spawn teammates, delegate tasks, and collaborate across workstreams." = "Activa la coordinación experimental multi-agente. Los agentes pueden crear compañeros, delegar tareas y colaborar entre flujos de trabajo.";
+"Auto-rename branch" = "Renombrar rama automáticamente";
+"The agent will rename the worktree branch to match the task on the first request (e.g., fix-login-timeout)." = "El agente renombrará la rama del árbol de trabajo para coincidir con la tarea en la primera solicitud (p. ej., fix-login-timeout).";
+
+/* Settings - Appearance */
+"Appearance" = "Apariencia";
+"Theme" = "Tema";
+"System" = "Sistema";
+"Light" = "Claro";
+"Dark" = "Oscuro";
+
+/* Settings - Danger Zone */
+"Danger Zone" = "Zona de peligro";
+"Bleeding edge" = "Últimas novedades";
+"Receive pre-release builds with the latest features. These may be less stable." = "Recibe versiones preliminares con las últimas funciones. Pueden ser menos estables.";
+"Clear project list" = "Borrar lista de proyectos";
+"Clear All..." = "Borrar todo...";
+"Clear All" = "Borrar todo";
+"Removes all projects and workstreams from the sidebar. No files or directories on disk will be deleted." = "Elimina todos los proyectos y flujos de trabajo de la barra lateral. No se borrará ningún archivo ni directorio del disco.";
+"Clear project list?" = "¿Borrar la lista de proyectos?";
+"This will remove all projects and workstreams from the sidebar. No files on disk will be deleted. This cannot be undone." = "Esto eliminará todos los proyectos y flujos de trabajo de la barra lateral. No se borrará ningún archivo del disco. Esta acción no se puede deshacer.";
+
+/* HelpView - Shortcuts */
+"Shortcuts" = "Atajos";
+"Global" = "Global";
+"Available everywhere" = "Disponible en todas partes";
+"Help" = "Ayuda";
+"New workstream or project" = "Nuevo flujo de trabajo o proyecto";
+"New project" = "Nuevo proyecto";
+"Workstream" = "Flujo de trabajo";
+"When a workstream is active" = "Cuando un flujo de trabajo está activo";
+"Focus Coding Agent" = "Enfocar agente de código";
+"Info panel" = "Panel de información";
+"New Terminal" = "Nuevo terminal";
+"New Browser" = "Nuevo navegador";
+"Close tab" = "Cerrar pestaña";
+"Address bar" = "Barra de direcciones";
+"Back to project" = "Volver al proyecto";
+"Switch tab" = "Cambiar pestaña";
+"Previous tab" = "Pestaña anterior";
+"Next tab" = "Pestaña siguiente";
+"Navigation" = "Navegación";
+"Works from any view in a project" = "Funciona desde cualquier vista de un proyecto";
+"Switch workstream" = "Cambiar flujo de trabajo";
+"External Apps" = "Aplicaciones externas";
+"Opens the current workstream directory" = "Abre el directorio del flujo de trabajo actual";
+"Open in external browser" = "Abrir en navegador externo";
+"Open in external terminal" = "Abrir en terminal externo";
+
+/* BrowserView */
+"Server not responding" = "El servidor no responde";
+"Retry" = "Reintentar";
+
+/* ProjectOverviewView */
+"Repository" = "Repositorio";
+"GitHub" = "GitHub";
+"Branch" = "Rama";
+"Commits" = "Commits";
+"Remote" = "Remoto";
+"Status" = "Estado";
+"Stars" = "Estrellas";
+"Open Issues" = "Incidencias abiertas";
+"Open PRs" = "PRs abiertas";
+"Not a git repository" = "No es un repositorio git";
+"Description" = "Descripción";

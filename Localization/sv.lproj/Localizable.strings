@@ -86,3 +86,88 @@
 "Quit" = "Avsluta";
 "Confirm before quitting" = "Bekräfta innan avslut";
 "Show a confirmation dialog when quitting with active workstreams." = "Visa en bekräftelsedialog vid avslut med aktiva arbetsflöden.";
+
+/* Settings - Environment */
+"Environment" = "Miljö";
+"Installed" = "Installerad";
+"Install..." = "Installera...";
+
+/* Settings - Projects */
+"Projects" = "Projekt";
+"Base directory" = "Baskatalog";
+"Change..." = "Ändra...";
+"Choose base directory for projects" = "Välj baskatalog för projekt";
+"Default location when adding new projects." = "Standardplats när nya projekt läggs till.";
+"Branch prefix" = "Grenprefix";
+
+/* Settings - Terminal & Browser */
+"Terminal & Browser" = "Terminal och webbläsare";
+"External Browser" = "Extern webbläsare";
+
+/* Settings - Coding Agent */
+"Agent Teams" = "Agentteam";
+"Enables experimental multi-agent coordination. Agents can spawn teammates, delegate tasks, and collaborate across workstreams." = "Aktiverar experimentell multi-agentkoordinering. Agenter kan skapa teammedlemmar, delegera uppgifter och samarbeta mellan arbetsflöden.";
+"Auto-rename branch" = "Byt namn på gren automatiskt";
+"The agent will rename the worktree branch to match the task on the first request (e.g., fix-login-timeout)." = "Agenten byter namn på arbetsträdsgrenen för att matcha uppgiften vid den första förfrågan (t.ex. fix-login-timeout).";
+
+/* Settings - Appearance */
+"Appearance" = "Utseende";
+"Theme" = "Tema";
+"System" = "System";
+"Light" = "Ljust";
+"Dark" = "Mörkt";
+
+/* Settings - Danger Zone */
+"Danger Zone" = "Riskzon";
+"Bleeding edge" = "Senaste versionen";
+"Receive pre-release builds with the latest features. These may be less stable." = "Ta emot förhandsversioner med de senaste funktionerna. Dessa kan vara mindre stabila.";
+"Clear project list" = "Rensa projektlistan";
+"Clear All..." = "Rensa allt...";
+"Clear All" = "Rensa allt";
+"Removes all projects and workstreams from the sidebar. No files or directories on disk will be deleted." = "Tar bort alla projekt och arbetsflöden från sidofältet. Inga filer eller kataloger på disken raderas.";
+"Clear project list?" = "Rensa projektlistan?";
+"This will remove all projects and workstreams from the sidebar. No files on disk will be deleted. This cannot be undone." = "Detta tar bort alla projekt och arbetsflöden från sidofältet. Inga filer på disken raderas. Detta kan inte ångras.";
+
+/* HelpView - Shortcuts */
+"Shortcuts" = "Kortkommandon";
+"Global" = "Globalt";
+"Available everywhere" = "Tillgängligt överallt";
+"Help" = "Hjälp";
+"New workstream or project" = "Nytt arbetsflöde eller projekt";
+"New project" = "Nytt projekt";
+"Workstream" = "Arbetsflöde";
+"When a workstream is active" = "När ett arbetsflöde är aktivt";
+"Focus Coding Agent" = "Fokusera kodningsagenten";
+"Info panel" = "Informationspanel";
+"New Terminal" = "Ny terminal";
+"New Browser" = "Ny webbläsare";
+"Close tab" = "Stäng flik";
+"Address bar" = "Adressfält";
+"Back to project" = "Tillbaka till projekt";
+"Switch tab" = "Byt flik";
+"Previous tab" = "Föregående flik";
+"Next tab" = "Nästa flik";
+"Navigation" = "Navigering";
+"Works from any view in a project" = "Fungerar från alla vyer i ett projekt";
+"Switch workstream" = "Byt arbetsflöde";
+"External Apps" = "Externa appar";
+"Opens the current workstream directory" = "Öppnar det aktuella arbetsflödets katalog";
+"Open in external browser" = "Öppna i extern webbläsare";
+"Open in external terminal" = "Öppna i extern terminal";
+
+/* BrowserView */
+"Server not responding" = "Servern svarar inte";
+"Retry" = "Försök igen";
+
+/* ProjectOverviewView */
+"Repository" = "Repository";
+"GitHub" = "GitHub";
+"Branch" = "Gren";
+"Commits" = "Commits";
+"Remote" = "Fjärr";
+"Status" = "Status";
+"Stars" = "Stjärnor";
+"Open Issues" = "Öppna ärenden";
+"Open PRs" = "Öppna PRs";
+"Not a git repository" = "Inte ett git-repository";
+"Description" = "Beskrivning";
