@@ -88,14 +88,25 @@ struct EnvironmentTabView: View {
                 Color.clear
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if let script {
-                SingleTerminalView(
-                    surfaceID: surfaceID,
-                    workingDirectory: workingDirectory,
-                    initialInput: buildCommand(script: script, role: tmuxRole) + "; exec tail -f /dev/null\n",
-                    isFocused: false,
-                    environmentVars: environmentVars
-                )
-                .id(surfaceID)
+                if useTmux {
+                    SingleTerminalView(
+                        surfaceID: surfaceID,
+                        workingDirectory: workingDirectory,
+                        command: buildCommand(script: script, role: tmuxRole),
+                        isFocused: false,
+                        environmentVars: environmentVars
+                    )
+                    .id(surfaceID)
+                } else {
+                    SingleTerminalView(
+                        surfaceID: surfaceID,
+                        workingDirectory: workingDirectory,
+                        initialInput: script + "; exec tail -f /dev/null\n",
+                        isFocused: false,
+                        environmentVars: environmentVars
+                    )
+                    .id(surfaceID)
+                }
             } else {
                 scriptInstructions(title: title)
             }
@@ -140,14 +151,25 @@ struct EnvironmentTabView: View {
 
             if let script = scriptConfig.run {
                 if runStarted && !runRestarting {
-                    SingleTerminalView(
-                        surfaceID: runID,
-                        workingDirectory: workingDirectory,
-                        initialInput: buildCommand(script: script, role: "run") + "; exec tail -f /dev/null\n",
-                        isFocused: false,
-                        environmentVars: environmentVars
-                    )
-                    .id(runID)
+                    if useTmux {
+                        SingleTerminalView(
+                            surfaceID: runID,
+                            workingDirectory: workingDirectory,
+                            command: buildCommand(script: script, role: "run"),
+                            isFocused: false,
+                            environmentVars: environmentVars
+                        )
+                        .id(runID)
+                    } else {
+                        SingleTerminalView(
+                            surfaceID: runID,
+                            workingDirectory: workingDirectory,
+                            initialInput: script + "; exec tail -f /dev/null\n",
+                            isFocused: false,
+                            environmentVars: environmentVars
+                        )
+                        .id(runID)
+                    }
                 } else if !runStarted {
                     VStack(spacing: 12) {
                         Button(action: { runStarted = true }) {
@@ -156,11 +178,11 @@ struct EnvironmentTabView: View {
                         }
                         .buttonStyle(.borderless)
                         Text(script)
-                            .font(.system(size: 11, design: .monospaced))
+                            .font(.system(size: 12, design: .monospaced))
                             .foregroundStyle(.tertiary)
                         Text(shortcut)
-                            .font(.system(size: 10, design: .monospaced))
-                            .foregroundStyle(.quaternary)
+                            .font(.system(size: 13, design: .monospaced))
+                            .foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -253,7 +275,7 @@ private struct EnvActionButton: View {
                     .font(.system(size: 11))
                 Text(shortcut)
                     .font(.system(size: 9, design: .monospaced))
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(.secondary)
             }
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
