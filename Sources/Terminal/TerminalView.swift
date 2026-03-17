@@ -42,6 +42,7 @@ final class TerminalView: NSView, NSTextInputClient {
         config.scale_factor = Double(NSScreen.main?.backingScaleFactor ?? 2.0)
         config.font_size = 0 // inherit from ghostty config
         config.context = GHOSTTY_SURFACE_CONTEXT_WINDOW
+        config.wait_after_command = false
 
         // Build C env vars array. Keep the strings alive until surface is created.
         var envKeys = environmentVars.map { $0.key.utf8CString }

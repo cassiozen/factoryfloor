@@ -17,6 +17,8 @@ struct EnvironmentTabView: View {
     @State private var setupGeneration = 0
     @State private var runGeneration = 0
     @State private var runStarted = false
+    @State private var setupRestarting = false
+    @State private var runRestarting = false
 
     private var setupID: UUID {
         derivedUUID(from: workstreamID, salt: "env-setup-\(setupGeneration)")
@@ -35,6 +37,7 @@ struct EnvironmentTabView: View {
                 script: scriptConfig.setup,
                 surfaceID: setupID,
                 tmuxRole: "setup",
+                restarting: setupRestarting,
                 onRestart: restartSetup
             )
 
@@ -43,7 +46,7 @@ struct EnvironmentTabView: View {
     }
 
     @ViewBuilder
-    private func scriptPane(title: String, icon: String, restartLabel: String, script: String?, surfaceID: UUID, tmuxRole: String, onRestart: @escaping () -> Void) -> some View {
+    private func scriptPane(title: String, icon: String, restartLabel: String, script: String?, surfaceID: UUID, tmuxRole: String, restarting: Bool, onRestart: @escaping () -> Void) -> some View {
         VStack(spacing: 0) {
             // Header bar
             HStack {
@@ -83,7 +86,10 @@ struct EnvironmentTabView: View {
             Divider()
 
             // Content
-            if let script {
+            if restarting {
+                Color.clear
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let script {
                 SingleTerminalView(
                     surfaceID: surfaceID,
                     workingDirectory: workingDirectory,
@@ -222,20 +228,21 @@ struct EnvironmentTabView: View {
     private func restartSetup() {
         killTmuxSession(role: "setup")
         surfaceCache.removeSurface(for: setupID)
-        let next = setupGeneration + 1
-        // Delay generation increment so SwiftUI tears down the old view before creating the new one
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            setupGeneration = next
+        setupRestarting = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            setupGeneration += 1
+            setupRestarting = false
         }
     }
 
     private func restartRun() {
         killTmuxSession(role: "run")
         surfaceCache.removeSurface(for: runID)
+        runRestarting = true
         runStarted = false
-        let next = runGeneration + 1
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            runGeneration = next
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            runGeneration += 1
+            runRestarting = false
             runStarted = true
         }
     }
