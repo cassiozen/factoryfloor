@@ -15,7 +15,7 @@ enum FilePersistence {
 
         let tempURL = directory.appendingPathComponent(".\(url.lastPathComponent).\(UUID().uuidString).tmp")
         do {
-            try data.write(to: tempURL, options: .atomic)
+            try data.write(to: tempURL)
             _ = try FileManager.default.replaceItemAt(url, withItemAt: tempURL)
         } catch {
             // Clean up temp file on failure
