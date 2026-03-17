@@ -583,14 +583,15 @@ final class TerminalSurfaceCache: ObservableObject {
     func removeWorkstreamSurfaces(for workstreamID: UUID) {
         // Remove agent surface
         removeSurface(for: workstreamID)
-        // Remove all derived terminal/browser surfaces.
-        // Generate IDs until we stop finding matches.
-        for prefix in ["terminal", "browser"] {
-            for i in 0... {
-                let id = derivedUUID(from: workstreamID, salt: "\(prefix)-\(i)")
-                guard surfaces[id] != nil else { break }
-                removeSurface(for: id)
+        // Build a set of all possible derived IDs and remove matches
+        var derivedIDs = Set<UUID>()
+        for prefix in ["terminal", "browser", "env-setup", "env-run"] {
+            for i in 0...99 {
+                derivedIDs.insert(derivedUUID(from: workstreamID, salt: "\(prefix)-\(i)"))
             }
+        }
+        for id in derivedIDs where surfaces[id] != nil {
+            removeSurface(for: id)
         }
     }
 
