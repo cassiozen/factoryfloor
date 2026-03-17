@@ -8,20 +8,20 @@
 ## Website
 
 - [x] Fix homepage title for SEO (now "Factory Floor - AI-powered development workspace for macOS")
-- [ ] Remove or fix dead _index.md content (layout never renders it, contains wrong shortcuts)
+- [x] Remove dead _index.md content (was never rendered by layout)
 - [ ] Take app screenshots for the website (workspace view, sidebar, terminal, environment tab)
 
 ## Code Quality
 
 - [ ] Cache projectIndex/workstreamIndex in ProjectSidebar (rebuild on every render)
 - [x] Move derivedUUID to PathUtilities.swift
-- [ ] Move retroactive String/UUID Identifiable conformances from ProjectSidebar to extensions file
-- [ ] FilePersistence: drop redundant .atomic on temp write (outer replaceItemAt provides atomicity)
+- [x] Move retroactive String/UUID Identifiable conformances to PathUtilities
+- [x] FilePersistence: drop redundant .atomic on temp write
 
 ## Pre-release
 
-- [ ] Ensure docs/distribution.md is up to date with current CI, signing, Homebrew, and release workflow
-- [ ] Document version release routine: step-by-step process for cutting a release, what release-please does, manual steps needed, how to verify
+- [x] Ensure docs/distribution.md is up to date with current CI, signing, Homebrew, and release workflow
+- [x] Document version release routine (in docs/distribution.md)
 - [ ] Plan distribution and auto-update strategy: compare Mac App Store vs Homebrew vs direct DMG vs Sparkle; document tradeoffs (Homebrew is a must regardless)
 
 ## Future
