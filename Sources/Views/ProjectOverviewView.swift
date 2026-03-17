@@ -181,7 +181,7 @@ struct ProjectOverviewView: View {
                             }
                             .foregroundStyle(.red)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.borderless)
                         .disabled(isPruning)
                     }
                 } header: {
@@ -326,23 +326,22 @@ private struct WorkstreamRow: View {
                         .foregroundStyle(.secondary)
                         .padding(.trailing, 4)
                 }
-                if isHovering {
-                    Button(action: {
-                        // Stop propagation to parent button
-                        onArchive()
-                    }) {
-                        Image(systemName: "archivebox")
-                            .font(.system(size: 12))
-                            .foregroundStyle(.secondary)
-                            .frame(width: 24, height: 24)
-                            .background(Color.primary.opacity(0.08))
-                            .clipShape(RoundedRectangle(cornerRadius: 4))
-                    }
-                    .buttonStyle(.plain)
+                Button(action: {
+                    // Stop propagation to parent button
+                    onArchive()
+                }) {
+                    Image(systemName: "archivebox")
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 24, height: 24)
+                        .background(Color.primary.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
                 }
+                .buttonStyle(.plain)
+                .opacity(isHovering ? 1 : 0)
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
         .contentShape(Rectangle())
         .onHover { isHovering = $0 }
     }

@@ -71,6 +71,7 @@ struct TerminalContainerView: View {
     @State private var branchPR: GitHubPR?
     @State private var browserTitles: [UUID: String] = [:]
     @State private var terminalTitles: [UUID: String] = [:]
+    @State private var cachedClaudeCommand: String?
 
     private var claudeID: UUID { workstreamID }
 
@@ -82,7 +83,7 @@ struct TerminalContainerView: View {
         PortAllocator.port(for: workingDirectory)
     }
 
-    private var claudeCommand: String? {
+    private func buildClaudeCommand() -> String? {
         guard let basePath = appEnv.toolStatus.claude.path else { return nil }
         let sessionID = workstreamID.uuidString.lowercased()
 
@@ -154,8 +155,10 @@ struct TerminalContainerView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 5))
                         .foregroundStyle(.green)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.borderless)
                     .help(pr.title)
+                    .accessibilityLabel("Pull request #\(pr.number)")
+                    .accessibilityHint(pr.title)
                 }
             }
             .padding(.horizontal, 8)
@@ -178,7 +181,7 @@ struct TerminalContainerView: View {
                 SingleTerminalView(
                     surfaceID: claudeID,
                     workingDirectory: workingDirectory,
-                    command: claudeCommand,
+                    command: cachedClaudeCommand,
                     isFocused: true,
                     environmentVars: envVars
                 )
@@ -195,11 +198,16 @@ struct TerminalContainerView: View {
             }
         }
         .onAppear {
+            cachedClaudeCommand = buildClaudeCommand()
             scriptConfig = ScriptConfig.load(from: projectDirectory)
             surfaceCache.respawnableIDs.insert(claudeID)
             runSetupIfNeeded()
             refreshBranchPR()
         }
+        .onChange(of: tmuxMode) { _ in cachedClaudeCommand = buildClaudeCommand() }
+        .onChange(of: bypassPermissions) { _ in cachedClaudeCommand = buildClaudeCommand() }
+        .onChange(of: autoRenameBranch) { _ in cachedClaudeCommand = buildClaudeCommand() }
+        .onReceive(appEnv.objectWillChange) { _ in cachedClaudeCommand = buildClaudeCommand() }
         .onReceive(Timer.publish(every: 30, on: .main, in: .common).autoconnect()) { _ in
             refreshBranchPR()
         }
@@ -414,6 +422,7 @@ private struct WorkspaceTabButton: View {
                             .clipShape(Circle())
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("Close tab")
                 }
             }
             .padding(.horizontal, 10)
@@ -422,7 +431,7 @@ private struct WorkspaceTabButton: View {
             .clipShape(RoundedRectangle(cornerRadius: 5))
             .foregroundStyle(isActive ? .primary : .secondary)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
         .onHover { isHovering = $0 }
     }
 }
@@ -452,7 +461,7 @@ private struct AddTabButton: View {
             .clipShape(RoundedRectangle(cornerRadius: 5))
             .foregroundStyle(.secondary)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
         .onHover { isHovering = $0 }
     }
 }

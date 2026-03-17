@@ -162,13 +162,16 @@ struct ProjectSidebar: View {
                     SidebarBottomButton(icon: "plus") {
                         showingAddProjectChoice = true
                     }
+                    .accessibilityLabel("Add project")
                     Spacer()
                     SidebarBottomButton(icon: "questionmark.circle") {
                         NotificationCenter.default.post(name: .openHelp, object: nil)
                     }
+                    .accessibilityLabel("Help")
                     SidebarBottomButton(icon: "gear") {
                         NotificationCenter.default.post(name: .openSettings, object: nil)
                     }
+                    .accessibilityLabel("Settings")
                 }
             }
             .padding(.horizontal, 4)
@@ -482,8 +485,10 @@ private struct ProjectHeaderRow: View {
                             .background(isChevronHovering ? Color.primary.opacity(0.1) : .clear)
                             .clipShape(RoundedRectangle(cornerRadius: 4))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.borderless)
                     .onHover { isChevronHovering = $0 }
+                    .accessibilityLabel(isExpanded ? "Collapse" : "Expand")
+                    .accessibilityValue(isExpanded ? "expanded" : "collapsed")
                 } else {
                     Color.clear
                 }
@@ -503,6 +508,7 @@ private struct ProjectHeaderRow: View {
                             .padding(.vertical, 1)
                             .background(.quaternary)
                             .clipShape(Capsule())
+                            .accessibilityLabel("\(project.workstreams.count) workstreams")
                     }
                 }
 
@@ -514,20 +520,21 @@ private struct ProjectHeaderRow: View {
 
             Spacer()
 
-            if isHovering {
-                HStack(spacing: 8) {
-                    SidebarIconButton(icon: "plus", action: onAdd)
-                        .contextMenu {
-                            Button(action: onAddWithPermissions) {
-                                Label("New workstream (full permissions)", systemImage: "lock.open")
-                            }
-                            Button(action: onAddWithoutPermissions) {
-                                Label("New workstream (with prompts)", systemImage: "lock.shield")
-                            }
+            HStack(spacing: 8) {
+                SidebarIconButton(icon: "plus", action: onAdd)
+                    .accessibilityLabel("Add workstream to \(project.name)")
+                    .contextMenu {
+                        Button(action: onAddWithPermissions) {
+                            Label("New workstream (full permissions)", systemImage: "lock.open")
                         }
-                    SidebarIconButton(icon: "trash", action: onDelete)
-                }
+                        Button(action: onAddWithoutPermissions) {
+                            Label("New workstream (with prompts)", systemImage: "lock.shield")
+                        }
+                    }
+                SidebarIconButton(icon: "trash", action: onDelete)
+                    .accessibilityLabel("Remove project")
             }
+            .opacity(isHovering ? 1 : 0)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 2)
@@ -571,9 +578,9 @@ private struct WorkstreamRow: View {
 
             Spacer()
 
-            if isHovering {
-                SidebarIconButton(icon: "archivebox", action: onArchive)
-            }
+            SidebarIconButton(icon: "archivebox", action: onArchive)
+                .accessibilityLabel("Archive workstream")
+                .opacity(isHovering ? 1 : 0)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .contentShape(Rectangle())
@@ -596,7 +603,7 @@ private struct SidebarIconButton: View {
                 .background(isHovering ? Color.primary.opacity(0.1) : .clear)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
         .onHover { isHovering = $0 }
     }
 }
@@ -616,7 +623,7 @@ private struct SidebarBottomButton: View {
                 .background(isHovering ? Color.primary.opacity(0.08) : .clear)
                 .clipShape(RoundedRectangle(cornerRadius: 6))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
         .onHover { hovering in
             isHovering = hovering
             if hovering {
@@ -659,7 +666,7 @@ private struct AddProjectChoiceSheet: View {
                     .background(Color.primary.opacity(0.04))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.borderless)
                 .keyboardShortcut(.defaultAction)
 
                 Button(action: onExistingDirectory) {
@@ -682,7 +689,7 @@ private struct AddProjectChoiceSheet: View {
                     .background(Color.primary.opacity(0.04))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.borderless)
             }
 
             Button("Cancel", action: onCancel)

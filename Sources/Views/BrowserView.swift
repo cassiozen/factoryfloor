@@ -30,9 +30,10 @@ struct BrowserView: View {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 12, weight: .semibold))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.borderless)
                 .disabled(!canGoBack)
                 .foregroundStyle(canGoBack ? .primary : .quaternary)
+                .accessibilityLabel("Back")
 
                 Button(action: { webView.goForward() }) {
                     Image(systemName: "chevron.right")
@@ -41,6 +42,7 @@ struct BrowserView: View {
                 .buttonStyle(.plain)
                 .disabled(!canGoForward)
                 .foregroundStyle(canGoForward ? .primary : .quaternary)
+                .accessibilityLabel("Forward")
 
                 Button(action: {
                     if isLoading { webView.stopLoading() } else { retry() }
@@ -49,12 +51,14 @@ struct BrowserView: View {
                         .font(.system(size: 11))
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(isLoading ? "Stop loading" : "Reload")
 
                 Button(action: { navigateTo(defaultURL) }) {
                     Image(systemName: "house")
                         .font(.system(size: 11))
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Home")
 
                 TextField("URL", text: $urlText)
                     .textFieldStyle(.roundedBorder)

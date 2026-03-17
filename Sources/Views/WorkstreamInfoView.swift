@@ -223,9 +223,10 @@ private struct DirectoryActionButton: View {
                 .background(isHovering ? Color.primary.opacity(0.1) : .clear)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
         .onHover { isHovering = $0 }
         .help(tooltip)
+        .accessibilityLabel(tooltip)
     }
 }
 
@@ -246,7 +247,7 @@ private struct DocTabButton: View {
                 .clipShape(RoundedRectangle(cornerRadius: 4))
                 .foregroundStyle(isActive ? .primary : .tertiary)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
         .onHover { isHovering = $0 }
     }
 }

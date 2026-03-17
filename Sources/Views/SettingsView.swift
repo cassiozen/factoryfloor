@@ -452,6 +452,7 @@ private struct ToolRow: View {
         HStack {
             Image(systemName: status.isInstalled ? "checkmark.circle.fill" : "xmark.circle")
                 .foregroundStyle(status.isInstalled ? .green : .secondary)
+                .accessibilityLabel(status.isInstalled ? "Installed" : "Not found")
 
             Text(name)
                 .font(.system(.body, design: .monospaced))
@@ -471,6 +472,7 @@ private struct ToolRow: View {
                         Circle()
                             .fill(isAuth ? .green : .orange)
                             .frame(width: 6, height: 6)
+                            .accessibilityLabel(isAuth ? "Authenticated" : "Not authenticated")
                         Text(detail)
                             .font(.caption)
                             .foregroundStyle(.secondary)
