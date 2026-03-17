@@ -35,7 +35,7 @@
 "Cancel" = "Cancelar";
 "Remove" = "Eliminar";
 "Worktree Creation Failed" = "Error al crear el árbol de trabajo";
-"Could not create a git worktree. Check that the repository is in a clean state and try again." = "No se pudo crear un árbol de trabajo git. Comprueba que el repositorio está en un estado limpio e inténtalo de nuevo.";
+"Could not create a git worktree. This can happen if the branch already exists or if there is an ongoing merge or rebase." = "No se pudo crear un árbol de trabajo git. Esto puede ocurrir si la rama ya existe o si hay una fusión o un rebase en curso.";
 "OK" = "Aceptar";
 
 /* Sheets */

@@ -285,7 +285,7 @@ struct ProjectSidebar: View {
         ) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text("Could not create a git worktree. Check that the repository is in a clean state and try again.")
+            Text("Could not create a git worktree. This can happen if the branch already exists or if there is an ongoing merge or rebase.")
         }
     }
 
