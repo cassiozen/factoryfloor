@@ -15,7 +15,7 @@
 - [x] Settings/Help persisted as selection: app reopens to Settings if quit while in Settings (fixed)
 - [x] Detached HEAD inconsistency: normalize "HEAD" to nil so all views show "detached"
 - [x] Path collision: worktree names differing only by `/` vs `-` (now uses `--` for `/`)
-- [ ] Surface cleanup in removeWorkstreamSurfaces hard-capped at 20 tabs (orphans surfaces beyond that)
+- [x] Surface cleanup in removeWorkstreamSurfaces (now iterates until no more matches instead of hard cap)
 
 ## UX
 
