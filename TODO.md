@@ -6,15 +6,15 @@
 - [ ] CI notarization: use keychain profile instead of passing Apple password as CLI arg
 - [ ] Scope CI permissions per job (release-please needs write, build only needs contents:write)
 - [x] GitOperations.sanitize: strip leading `-` to prevent git flag injection
-- [ ] .env symlink: validate source is a regular file, not itself a symlink to sensitive data
-- [ ] Remove website/node_modules from repo, add to .gitignore, install via bun in CI
+- [x] .env symlink: validate source is a regular file, not itself a symlink to sensitive data
+- [x] Remove website/node_modules from repo, add to .gitignore, install via bun in CI
 
 ## Bugs
 
 - [x] BrowserView: "Press Cmd+Shift+B to retry" hint is wrong (removed misleading hint and dead notification)
 - [x] Settings/Help persisted as selection: app reopens to Settings if quit while in Settings (fixed)
 - [x] Detached HEAD inconsistency: normalize "HEAD" to nil so all views show "detached"
-- [ ] Path collision: worktree names differing only by `/` vs `-` produce same filesystem path (sanitize converts `/` to `-`)
+- [x] Path collision: worktree names differing only by `/` vs `-` (now uses `--` for `/`)
 - [ ] Surface cleanup in removeWorkstreamSurfaces hard-capped at 20 tabs (orphans surfaces beyond that)
 
 ## UX
@@ -45,7 +45,7 @@
 - [ ] Localization: add missing strings for Settings sections, HelpView, BrowserView error UI, ProjectOverviewView
 - [ ] Remove stale unused keys from Localizable.strings files
 - [ ] surfaceRegistry thread safety: confirm ghostty callback threading contract
-- [ ] Fix derivedUUID misleading comment (says SHA-256 but uses simple byte folding)
+- [x] Fix derivedUUID misleading comment (says SHA-256 but uses simple byte folding)
 - [ ] Cache claudeCommand computed property (builds CommandBuilder on every render)
 - [ ] Consolidate polling timers (15s in ContentView + 30s in TerminalContainerView per workstream)
 - [ ] Parallelize refreshPathValidity git calls (currently 4N sequential subprocesses)

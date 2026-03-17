@@ -223,7 +223,7 @@ enum GitOperations {
     // MARK: - Private
 
     private static func sanitize(_ name: String) -> String {
-        var result = name.replacingOccurrences(of: "/", with: "-")
+        var result = name.replacingOccurrences(of: "/", with: "--")
             .replacingOccurrences(of: " ", with: "-")
         // Prevent names from being interpreted as git flags
         while result.hasPrefix("-") {
