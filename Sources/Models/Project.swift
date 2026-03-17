@@ -23,6 +23,14 @@ struct Workstream: Identifiable, Hashable, Codable, Sendable {
     func workingDirectory(projectDirectory: String) -> String {
         worktreePath ?? projectDirectory
     }
+
+    static func == (lhs: Workstream, rhs: Workstream) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }
 
 struct Project: Identifiable, Hashable, Codable, Sendable {
@@ -38,6 +46,14 @@ struct Project: Identifiable, Hashable, Codable, Sendable {
         self.directory = directory
         self.workstreams = workstreams
         self.lastAccessedAt = lastAccessedAt
+    }
+
+    static func == (lhs: Project, rhs: Project) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
 
