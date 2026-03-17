@@ -127,10 +127,9 @@ When a port is selected:
 
 5. **Timeout?**
    Less critical with FSEvents (no wasted app-side polling). The
-   launcher should still stop its libproc scanning after 60 seconds
-   with no new ports to save CPU. Once a port is selected and
-   stable, scanning stops. The launcher keeps running (it's the
-   process supervisor) but no longer writes state updates.
+   launcher polls libproc every 1s for the first 60 seconds. If no
+   port is found, drop to every 60s as a background safety net.
+   Once a port is selected and stable, scanning stops entirely.
 
 ## Effort estimate
 
