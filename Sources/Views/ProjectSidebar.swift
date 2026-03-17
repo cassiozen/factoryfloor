@@ -24,25 +24,11 @@ struct ProjectSidebar: View {
     @State private var archiveWarningDirty = false
     @State private var expandedProjects: Set<UUID> = SidebarState.loadExpanded()
     @State private var cachedSortedIDs: [UUID] = []
+    @State private var cachedProjectIndex: [UUID: Int] = [:]
+    @State private var cachedWorkstreamIndex: [UUID: (Int, Int)] = [:]
     @State private var showWorktreeError = false
     @State private var showNotGitRepoError = false
     @AppStorage("factoryfloor.sortOrder") private var sortOrder: ProjectSortOrder = .recent
-
-    /// Index from UUID to project array index for O(1) lookups.
-    private var projectIndex: [UUID: Int] {
-        Dictionary(uniqueKeysWithValues: projects.enumerated().map { ($1.id, $0) })
-    }
-
-    /// Index from workstream UUID to (project index, workstream index).
-    private var workstreamIndex: [UUID: (Int, Int)] {
-        var result: [UUID: (Int, Int)] = [:]
-        for (pi, project) in projects.enumerated() {
-            for (wi, ws) in project.workstreams.enumerated() {
-                result[ws.id] = (pi, wi)
-            }
-        }
-        return result
-    }
 
     private func recomputeSortedIDs() -> [UUID] {
         switch sortOrder {
@@ -53,14 +39,25 @@ struct ProjectSidebar: View {
         }
     }
 
+    private func rebuildIndices() {
+        cachedProjectIndex = Dictionary(uniqueKeysWithValues: projects.enumerated().map { ($1.id, $0) })
+        var wsIndex: [UUID: (Int, Int)] = [:]
+        for (pi, project) in projects.enumerated() {
+            for (wi, ws) in project.workstreams.enumerated() {
+                wsIndex[ws.id] = (pi, wi)
+            }
+        }
+        cachedWorkstreamIndex = wsIndex
+    }
+
     private func projectBinding(for id: UUID) -> Binding<Project> {
         Binding(
             get: {
-                if let idx = projectIndex[id], idx < projects.count { return projects[idx] }
+                if let idx = cachedProjectIndex[id], idx < projects.count { return projects[idx] }
                 return projects.first(where: { $0.id == id }) ?? Project(name: "", directory: "")
             },
             set: { newValue in
-                if let idx = projectIndex[id], idx < projects.count {
+                if let idx = cachedProjectIndex[id], idx < projects.count {
                     projects[idx] = newValue
                 }
             }
@@ -130,7 +127,7 @@ struct ProjectSidebar: View {
                     expandedProjects.insert(pid)
                 }
                 if case .workstream(let wsID) = sel,
-                   let (pi, _) = workstreamIndex[wsID] {
+                   let (pi, _) = cachedWorkstreamIndex[wsID] {
                     expandedProjects.insert(projects[pi].id)
                 }
                 withAnimation {
@@ -182,16 +179,22 @@ struct ProjectSidebar: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .terminalActivity)) { notification in
             guard let wsID = notification.object as? UUID else { return }
-            guard let (pi, wi) = workstreamIndex[wsID] else { return }
+            guard let (pi, wi) = cachedWorkstreamIndex[wsID] else { return }
             let now = Date()
             projects[pi].lastAccessedAt = now
             projects[pi].workstreams[wi].lastAccessedAt = now
             onProjectsChanged()
         }
-        .onAppear { cachedSortedIDs = recomputeSortedIDs() }
+        .onAppear {
+            cachedSortedIDs = recomputeSortedIDs()
+            rebuildIndices()
+        }
         .onChange(of: sortOrder) { _, _ in cachedSortedIDs = recomputeSortedIDs() }
         .onChange(of: expandedProjects) { _, newValue in SidebarState.saveExpanded(newValue) }
-        .onChange(of: projects.count) { _, _ in cachedSortedIDs = recomputeSortedIDs() }
+        .onChange(of: projects.count) { _, _ in
+            cachedSortedIDs = recomputeSortedIDs()
+            rebuildIndices()
+        }
         .overlay {
             if isDropTargeted {
                 RoundedRectangle(cornerRadius: 8)
@@ -329,6 +332,7 @@ struct ProjectSidebar: View {
         let bypass = bypassPermissions ?? defaultBypass
         let workstream = Workstream(name: name, worktreePath: worktreePath, bypassPermissions: bypass)
         projects[index].workstreams.append(workstream)
+        rebuildIndices()
         expandedProjects.insert(projectID)
         selection = .workstream(workstream.id)
         onProjectsChanged()
@@ -348,9 +352,10 @@ struct ProjectSidebar: View {
 
     private func performArchive() {
         guard let wsID = workstreamToArchive,
-              let (pi, _) = workstreamIndex[wsID] else { return }
+              let (pi, _) = cachedWorkstreamIndex[wsID] else { return }
         let projectID = projects[pi].id
         WorkstreamArchiver.archive(wsID, in: &projects[pi], surfaceCache: surfaceCache, tmuxPath: appEnv.toolStatus.tmux.path)
+        rebuildIndices()
         if case .workstream(let id) = selection, id == wsID {
             selection = projects[pi].workstreams.first.map { .workstream($0.id) } ?? .project(projectID)
         }
