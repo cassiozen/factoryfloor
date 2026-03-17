@@ -122,11 +122,7 @@ When a port is selected:
    and the user hits Rerun. State file goes stale; app validates PID
    with `kill(pid, 0)` before trusting it. No special recovery needed.
 
-4. **Should the user be able to disable port detection?**
-   Not in v1. The feature is passive (only retargets default URLs).
-   Add a setting later if users complain.
-
-5. **Timeout?**
+4. **Timeout?**
    Less critical with FSEvents (no wasted app-side polling). The
    launcher polls libproc every 1s for the first 60 seconds. If no
    port is found, drop to every 60s as a background safety net.
