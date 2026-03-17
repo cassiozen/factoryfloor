@@ -2,9 +2,16 @@
 "New" = "Nou";
 "New Project" = "Nou projecte";
 
-/* Content View */
-"No project selected" = "Cap projecte seleccionat";
-"Add a project from the sidebar to get started." = "Afegeix un projecte des de la barra lateral per començar.";
+/* Onboarding */
+"AI-powered workspaces for your codebase." = "Espais de treball amb IA per al teu codi.";
+"Prerequisites" = "Prerequisits";
+"Optional" = "Opcional";
+"Getting Started" = "Primers passos";
+"Add a project" = "Afegeix un projecte";
+"Or drag a directory to the sidebar" = "O arrossega un directori a la barra lateral";
+"Key Concepts" = "Conceptes clau";
+"An isolated workspace with its own git branch, terminal, and AI agent." = "Un espai de treball aïllat amb la seva pròpia branca git, terminal i agent d'IA.";
+"to create one inside a project." = "per crear-ne un dins d'un projecte.";
 
 /* Project Overview */
 "No workstreams yet" = "Encara no hi ha fluxos de treball";

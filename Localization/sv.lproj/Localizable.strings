@@ -2,9 +2,16 @@
 "New" = "Ny";
 "New Project" = "Nytt projekt";
 
-/* Content View */
-"No project selected" = "Inget projekt valt";
-"Add a project from the sidebar to get started." = "Lägg till ett projekt från sidofältet för att komma igång.";
+/* Onboarding */
+"AI-powered workspaces for your codebase." = "AI-drivna arbetsytor för din kodbas.";
+"Prerequisites" = "Förutsättningar";
+"Optional" = "Valfritt";
+"Getting Started" = "Kom igång";
+"Add a project" = "Lägg till ett projekt";
+"Or drag a directory to the sidebar" = "Eller dra en katalog till sidofältet";
+"Key Concepts" = "Nyckelbegrepp";
+"An isolated workspace with its own git branch, terminal, and AI agent." = "En isolerad arbetsyta med sin egen git-gren, terminal och AI-agent.";
+"to create one inside a project." = "för att skapa ett i ett projekt.";
 
 /* Project Overview */
 "No workstreams yet" = "Inga arbetsflöden ännu";

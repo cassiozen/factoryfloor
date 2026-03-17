@@ -2,9 +2,16 @@
 "New" = "New";
 "New Project" = "New Project";
 
-/* Content View */
-"No project selected" = "No project selected";
-"Add a project from the sidebar to get started." = "Add a project from the sidebar to get started.";
+/* Onboarding */
+"AI-powered workspaces for your codebase." = "AI-powered workspaces for your codebase.";
+"Prerequisites" = "Prerequisites";
+"Optional" = "Optional";
+"Getting Started" = "Getting Started";
+"Add a project" = "Add a project";
+"Or drag a directory to the sidebar" = "Or drag a directory to the sidebar";
+"Key Concepts" = "Key Concepts";
+"An isolated workspace with its own git branch, terminal, and AI agent." = "An isolated workspace with its own git branch, terminal, and AI agent.";
+"to create one inside a project." = "to create one inside a project.";
 
 /* Project Overview */
 "No workstreams yet" = "No workstreams yet";

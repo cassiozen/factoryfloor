@@ -71,23 +71,8 @@ struct ContentView: View {
             .navigationTitle(project.name)
             .navigationSubtitle(AppConstants.appName)
         } else {
-            VStack(spacing: 12) {
-                Text("No project selected")
-                    .font(.title2)
-                    .foregroundStyle(.secondary)
-                Text("Add a project from the sidebar to get started.")
-                    .foregroundStyle(.tertiary)
-                (Text(Image(systemName: "command")) + Text(Image(systemName: "shift")) + Text(" N"))
-                    .font(.system(.body, design: .monospaced))
-                    .foregroundStyle(.tertiary)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(alignment: .bottom) {
-                PoblenouSkylineView()
-                    .padding(.horizontal, 40)
-                    .padding(.bottom, 10)
-            }
-            .navigationTitle(AppConstants.appName)
+            OnboardingView(toolStatus: appEnvironment.toolStatus, isDetecting: appEnvironment.isDetecting)
+                .navigationTitle(AppConstants.appName)
         }
     }
 
