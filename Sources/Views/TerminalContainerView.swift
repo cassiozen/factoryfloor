@@ -389,24 +389,19 @@ struct TerminalContainerView: View {
         // Environment script surfaces
         if let setup = scriptConfig.setup {
             let setupID = derivedUUID(from: workstreamID, salt: "env-setup-0")
-            let cmd = buildEnvironmentCommand(script: setup, role: "setup")
+            let input: String
             if useTmux {
-                _ = surfaceCache.surface(
-                    for: setupID,
-                    app: app,
-                    workingDirectory: workingDirectory,
-                    command: cmd,
-                    environmentVars: terminalEnvVars
-                )
+                input = buildEnvironmentCommand(script: setup, role: "setup") + "\n"
             } else {
-                _ = surfaceCache.surface(
-                    for: setupID,
-                    app: app,
-                    workingDirectory: workingDirectory,
-                    initialInput: setup + "; exec tail -f /dev/null\n",
-                    environmentVars: terminalEnvVars
-                )
+                input = setup + "; exec tail -f /dev/null\n"
             }
+            _ = surfaceCache.surface(
+                for: setupID,
+                app: app,
+                workingDirectory: workingDirectory,
+                initialInput: input,
+                environmentVars: terminalEnvVars
+            )
         }
     }
 

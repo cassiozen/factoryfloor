@@ -88,25 +88,14 @@ struct EnvironmentTabView: View {
                 Color.clear
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if let script {
-                if useTmux {
-                    SingleTerminalView(
-                        surfaceID: surfaceID,
-                        workingDirectory: workingDirectory,
-                        command: buildCommand(script: script, role: tmuxRole),
-                        isFocused: false,
-                        environmentVars: environmentVars
-                    )
-                    .id(surfaceID)
-                } else {
-                    SingleTerminalView(
-                        surfaceID: surfaceID,
-                        workingDirectory: workingDirectory,
-                        initialInput: script + "; exec tail -f /dev/null\n",
-                        isFocused: false,
-                        environmentVars: environmentVars
-                    )
-                    .id(surfaceID)
-                }
+                SingleTerminalView(
+                    surfaceID: surfaceID,
+                    workingDirectory: workingDirectory,
+                    initialInput: envInput(script: script, role: tmuxRole),
+                    isFocused: false,
+                    environmentVars: environmentVars
+                )
+                .id(surfaceID)
             } else {
                 scriptInstructions(title: title)
             }
@@ -151,25 +140,14 @@ struct EnvironmentTabView: View {
 
             if let script = scriptConfig.run {
                 if runStarted && !runRestarting {
-                    if useTmux {
-                        SingleTerminalView(
-                            surfaceID: runID,
-                            workingDirectory: workingDirectory,
-                            command: buildCommand(script: script, role: "run"),
-                            isFocused: false,
-                            environmentVars: environmentVars
-                        )
-                        .id(runID)
-                    } else {
-                        SingleTerminalView(
-                            surfaceID: runID,
-                            workingDirectory: workingDirectory,
-                            initialInput: script + "; exec tail -f /dev/null\n",
-                            isFocused: false,
-                            environmentVars: environmentVars
-                        )
-                        .id(runID)
-                    }
+                    SingleTerminalView(
+                        surfaceID: runID,
+                        workingDirectory: workingDirectory,
+                        initialInput: envInput(script: script, role: "run"),
+                        isFocused: false,
+                        environmentVars: environmentVars
+                    )
+                    .id(runID)
                 } else if !runStarted {
                     VStack(spacing: 12) {
                         Button(action: { runStarted = true }) {
@@ -215,6 +193,13 @@ struct EnvironmentTabView: View {
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func envInput(script: String, role: String) -> String {
+        if useTmux {
+            return buildCommand(script: script, role: role) + "\n"
+        }
+        return script + "; exec tail -f /dev/null\n"
     }
 
     private func buildCommand(script: String, role: String) -> String {
