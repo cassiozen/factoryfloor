@@ -22,7 +22,7 @@
 
 - [x] Ensure docs/distribution.md is up to date with current CI, signing, Homebrew, and release workflow
 - [x] Document version release routine (in docs/distribution.md)
-- [ ] Plan distribution and auto-update strategy: compare Mac App Store vs Homebrew vs direct DMG vs Sparkle; document tradeoffs (Homebrew is a must regardless)
+- [x] Plan distribution and auto-update strategy (docs/distribution-strategy.md)
 
 ## Future
 
