@@ -612,7 +612,9 @@ final class TerminalSurfaceCache: ObservableObject {
     }
 
     func removeSurface(for id: UUID) {
-        surfaces.removeValue(forKey: id)
+        if let view = surfaces.removeValue(forKey: id) {
+            view.destroy()
+        }
         surfaceParams.removeValue(forKey: id)
     }
 

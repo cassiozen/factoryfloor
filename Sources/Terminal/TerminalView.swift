@@ -115,10 +115,17 @@ final class TerminalView: NSView, NSTextInputClient {
         fatalError("init(coder:) is not supported")
     }
 
+    /// Explicitly free the ghostty surface and remove from registry.
+    /// Call this before removing from the cache to ensure the process is killed immediately.
+    func destroy() {
+        guard let surface else { return }
+        Self.surfaceRegistry.removeValue(forKey: surface)
+        ghostty_surface_free(surface)
+        self.surface = nil
+    }
+
     deinit {
         if let surface {
-            // Registry is read on main thread from action_cb, so removal must be on main.
-            // NSView deinit is almost always on main thread; use async for off-main to avoid deadlock.
             if Thread.isMainThread {
                 Self.surfaceRegistry.removeValue(forKey: surface)
             } else {

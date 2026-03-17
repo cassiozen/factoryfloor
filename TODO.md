@@ -25,6 +25,8 @@
 - [ ] Drag-and-drop to reorder tabs
 - [ ] System notifications when agent needs attention (bell/urgency from Ghostty)
 - [ ] Restore full app state on launch (active tab within workstream)
+- [ ] Right-click context menu on sidebar: workstream (copy branch name, copy worktree path), project (copy project path)
+- [ ] Port detection: auto-detect when run script opens a listening port, point browser to it (scoped in docs/port-detection.md)
 
 ## Done
 
