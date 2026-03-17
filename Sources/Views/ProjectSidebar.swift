@@ -99,6 +99,7 @@ struct ProjectSidebar: View {
                             WorkstreamRow(
                                 name: workstream.name,
                                 branchName: appEnv.branchName(for: workstream.worktreePath),
+                                worktreePath: workstream.worktreePath,
                                 isPathValid: appEnv.isPathValid(workstream.worktreePath),
                                 onArchive: { confirmArchive(workstream) }
                             )
@@ -440,7 +441,7 @@ struct ProjectSidebar: View {
         }
 
         // Initialize git repo in the new directory
-        GitOperations.initRepo(at: dirURL.path)
+        _ = GitOperations.initRepo(at: dirURL.path)
 
         showingNewProjectName = false
         addProject(name: name, directory: dirURL.path)
@@ -465,6 +466,11 @@ extension FileManager {
         var isDir: ObjCBool = false
         return fileExists(atPath: url.path, isDirectory: &isDir) && isDir.boolValue
     }
+}
+
+private func copyTextToPasteboard(_ text: String) {
+    NSPasteboard.general.clearContents()
+    NSPasteboard.general.setString(text, forType: .string)
 }
 
 private struct ProjectHeaderRow: View {
@@ -546,6 +552,13 @@ private struct ProjectHeaderRow: View {
         .padding(.vertical, 2)
         .contentShape(Rectangle())
         .onHover { isHovering = $0 }
+        .contextMenu {
+            Button {
+                copyTextToPasteboard(project.directory)
+            } label: {
+                Label("Copy project path", systemImage: "doc.on.doc")
+            }
+        }
     }
 
 }
@@ -553,6 +566,7 @@ private struct ProjectHeaderRow: View {
 private struct WorkstreamRow: View {
     let name: String
     var branchName: String?
+    var worktreePath: String?
     let isPathValid: Bool
     let onArchive: () -> Void
 
@@ -591,6 +605,22 @@ private struct WorkstreamRow: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .contentShape(Rectangle())
         .onHover { isHovering = $0 }
+        .contextMenu {
+            if let branchName {
+                Button {
+                    copyTextToPasteboard(branchName)
+                } label: {
+                    Label("Copy branch name", systemImage: "arrow.triangle.branch")
+                }
+            }
+            if let worktreePath {
+                Button {
+                    copyTextToPasteboard(worktreePath)
+                } label: {
+                    Label("Copy worktree path", systemImage: "doc.on.doc")
+                }
+            }
+        }
     }
 }
 
@@ -789,5 +819,3 @@ private struct NewProjectSheet: View {
     }
 
 }
-
-

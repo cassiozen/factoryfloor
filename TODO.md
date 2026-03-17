@@ -7,9 +7,7 @@
 ## Post-release
 
 - [ ] Auto-update mechanism (Sparkle): in-app update for direct DMG users
-- [ ] Swift 6 migration (strict concurrency), scoped in docs/swift6-migration.md
-- [ ] Restore full app state on launch (active tab within workstream; if on a spawned terminal/browser, return to info)
-- [ ] Right-click context menu on sidebar: workstream (copy branch name, copy worktree path), project (copy project path)
+- [ ] Clean remaining build warnings and flip the project to Swift 6
 - [ ] Port detection: auto-detect when run script opens a listening port, point browser to it (scoped in docs/port-detection.md)
 - [ ] Crash reporting
 
@@ -18,7 +16,6 @@
 - [ ] External Chrome integration: launch with --remote-debugging-port for WebMCP/CDP
 - [ ] PR management: create and manage PRs from workstreams (currently view-only)
 - [ ] Horizontal terminal splits within a tab (ghostty C API supports splits)
-- [ ] Drag-and-drop to reorder tabs
 - [ ] System notifications when agent needs attention (bell/urgency from Ghostty)
 
 ## Done
@@ -80,3 +77,6 @@
 - [x] Error feedback: worktree creation, non-git dir, ghostty init, project removal, Claude not found
 - [x] Fix: embedded terminal mouse selection coordinates (Y axis inversion)
 - [x] Fix: env script terminal lifecycle (initialInput for non-tmux, command for tmux, explicit surface destroy)
+- [x] Restore full app state on launch (persist info/agent/environment, return spawned tabs to info)
+- [x] Right-click sidebar menu for copying project path, branch name, and worktree path
+- [x] Drag-and-drop reorder for custom terminal and browser tabs

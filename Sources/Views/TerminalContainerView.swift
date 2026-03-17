@@ -16,6 +16,77 @@ extension Notification.Name {
     static let terminalTitleChanged = Notification.Name("factoryfloor.terminalTitleChanged")
 }
 
+enum RestorableWorkspaceTab: String, Codable, Sendable {
+    case info
+    case agent
+    case environment
+
+    init(activeTab: WorkspaceTab) {
+        switch activeTab {
+        case .agent:
+            self = .agent
+        case .environment:
+            self = .environment
+        case .info, .terminal, .browser:
+            self = .info
+        }
+    }
+
+    func workspaceTab(hasEnvironmentTab: Bool) -> WorkspaceTab {
+        switch self {
+        case .info:
+            return .info
+        case .agent:
+            return .agent
+        case .environment:
+            return hasEnvironmentTab ? .environment : .info
+        }
+    }
+}
+
+enum WorkspaceStateStore {
+    private static var fileURL: URL {
+        AppConstants.configDirectory.appendingPathComponent("workspace-tabs.json")
+    }
+
+    static func load(for workstreamID: UUID) -> RestorableWorkspaceTab? {
+        guard let data = try? Data(contentsOf: fileURL),
+              let saved = try? JSONDecoder().decode([String: RestorableWorkspaceTab].self, from: data) else {
+            return nil
+        }
+        return saved[workstreamID.uuidString]
+    }
+
+    static func save(_ tab: RestorableWorkspaceTab, for workstreamID: UUID) {
+        var saved: [String: RestorableWorkspaceTab] = [:]
+        if let data = try? Data(contentsOf: fileURL),
+           let existing = try? JSONDecoder().decode([String: RestorableWorkspaceTab].self, from: data) {
+            saved = existing
+        }
+        saved[workstreamID.uuidString] = tab
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        guard let data = try? encoder.encode(saved) else { return }
+        try? FilePersistence.writeAtomically(data, to: fileURL)
+    }
+}
+
+func reorderedCustomTabs(_ tabs: [WorkspaceTab], dragging draggedTab: WorkspaceTab, to targetTab: WorkspaceTab) -> [WorkspaceTab] {
+    guard draggedTab != targetTab,
+          draggedTab.isCloseable,
+          targetTab.isCloseable,
+          let sourceIndex = tabs.firstIndex(of: draggedTab),
+          let targetIndex = tabs.firstIndex(of: targetTab) else {
+        return tabs
+    }
+
+    var reordered = tabs
+    let movedTab = reordered.remove(at: sourceIndex)
+    let insertionIndex = targetIndex > sourceIndex ? targetIndex - 1 : targetIndex
+    reordered.insert(movedTab, at: insertionIndex)
+    return reordered
+}
+
 /// A tab in the workspace. Info and Agent are permanent; terminals and browsers are closeable.
 enum WorkspaceTab: Hashable, Sendable {
     case info
@@ -72,6 +143,7 @@ struct TerminalContainerView: View {
     @State private var browserTitles: [UUID: String] = [:]
     @State private var terminalTitles: [UUID: String] = [:]
     @State private var cachedClaudeCommand: String?
+    @State private var draggedCustomTab: WorkspaceTab?
 
     private var claudeID: UUID { workstreamID }
 
@@ -144,16 +216,7 @@ struct TerminalContainerView: View {
     private var tabBar: some View {
         HStack(spacing: 0) {
             ForEach(Array(tabs.enumerated()), id: \.element) { _, tab in
-                let shortcut = tabShortcut(tab) ?? closeableTabShortcut(tab)
-                WorkspaceTabButton(
-                    tab: tab,
-                    label: tabLabel(tab),
-                    icon: tabIcon(tab),
-                    shortcut: shortcut,
-                    isActive: activeTab == tab,
-                    onSelect: { activeTab = tab },
-                    onClose: tab.isCloseable ? { closeTab(tab) } : nil
-                )
+                tabButton(for: tab)
             }
 
             Spacer()
@@ -184,6 +247,33 @@ struct TerminalContainerView: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
         .background(.bar)
+    }
+
+    @ViewBuilder
+    private func tabButton(for tab: WorkspaceTab) -> some View {
+        let shortcut = tabShortcut(tab) ?? closeableTabShortcut(tab)
+        let button = WorkspaceTabButton(
+            tab: tab,
+            label: tabLabel(tab),
+            icon: tabIcon(tab),
+            shortcut: shortcut,
+            isActive: activeTab == tab,
+            onSelect: { activeTab = tab },
+            onClose: tab.isCloseable ? { closeTab(tab) } : nil
+        )
+
+        if tab.isCloseable {
+            button
+                .onDrag {
+                    draggedCustomTab = tab
+                    return NSItemProvider(object: NSString(string: tabDragIdentifier(tab)))
+                }
+                .onDrop(of: [.text], delegate: WorkspaceTabDropDelegate {
+                    moveCustomTab(to: tab)
+                })
+        } else {
+            button
+        }
     }
 
     @ViewBuilder
@@ -263,11 +353,13 @@ struct TerminalContainerView: View {
             if scriptConfig.hasAnyScript && !tabs.contains(.environment) {
                 tabs.insert(.environment, at: 2)
             }
+            activeTab = restoredActiveTab()
             preloadSurfaces()
             surfaceCache.updateOcclusion(visibleSurfaceIDs: visibleSurfaceIDs)
         }
         .onChange(of: activeTab) {
             surfaceCache.updateOcclusion(visibleSurfaceIDs: visibleSurfaceIDs)
+            WorkspaceStateStore.save(RestorableWorkspaceTab(activeTab: activeTab), for: workstreamID)
         }
         .onChange(of: tmuxMode) { cachedClaudeCommand = buildClaudeCommand() }
         .onChange(of: bypassPermissions) { cachedClaudeCommand = buildClaudeCommand() }
@@ -377,6 +469,19 @@ struct TerminalContainerView: View {
         }
     }
 
+    private func tabDragIdentifier(_ tab: WorkspaceTab) -> String {
+        switch tab {
+        case .terminal(let id), .browser(let id):
+            return id.uuidString
+        case .info:
+            return "info"
+        case .agent:
+            return "agent"
+        case .environment:
+            return "environment"
+        }
+    }
+
     private func addTerminal() {
         terminalCount += 1
         let id = derivedUUID(from: workstreamID, salt: "terminal-\(terminalCount)")
@@ -405,6 +510,18 @@ struct TerminalContainerView: View {
             let newIndex = min(index, tabs.count - 1)
             activeTab = tabs[newIndex]
         }
+    }
+
+    private func moveCustomTab(to targetTab: WorkspaceTab) {
+        guard let currentDraggedTab = draggedCustomTab else { return }
+        tabs = reorderedCustomTabs(tabs, dragging: currentDraggedTab, to: targetTab)
+        draggedCustomTab = nil
+    }
+
+    private func restoredActiveTab() -> WorkspaceTab {
+        let hasEnvironmentTab = scriptConfig.hasAnyScript
+        guard let savedTab = WorkspaceStateStore.load(for: workstreamID) else { return .info }
+        return savedTab.workspaceTab(hasEnvironmentTab: hasEnvironmentTab)
     }
 
     /// Pre-create terminal surfaces so they start running before their tab is visible.
@@ -532,6 +649,19 @@ private struct WorkspaceTabButton: View {
     }
 }
 
+private struct WorkspaceTabDropDelegate: DropDelegate {
+    let onDropTab: () -> Void
+
+    func validateDrop(info: DropInfo) -> Bool {
+        true
+    }
+
+    func performDrop(info: DropInfo) -> Bool {
+        onDropTab()
+        return true
+    }
+}
+
 private struct AddTabButton: View {
     let label: String
     let icon: String
@@ -640,7 +770,9 @@ final class TerminalSurfaceCache: ObservableObject {
             queue: .main
         ) { [weak self] notification in
             guard let self, let closedView = notification.object as? TerminalView else { return }
-            self.handleSurfaceClosed(closedView)
+            Task { @MainActor in
+                self.handleSurfaceClosed(closedView)
+            }
         }
     }
 
