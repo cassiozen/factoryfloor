@@ -1,5 +1,5 @@
 // ABOUTME: Loads setup/run/teardown script configuration from project config files.
-// ABOUTME: Resolves from .factoryfloor.json, falling back to emdash, conductor, and superset formats.
+// ABOUTME: Resolves from .factoryfloor.json or .factoryfloor/config.json.
 
 import Foundation
 
@@ -11,20 +11,14 @@ struct ScriptConfig {
 
     static let empty = ScriptConfig(setup: nil, run: nil, teardown: nil, source: nil)
 
-    /// Load script config for a project directory, checking multiple config file formats.
+    /// Load script config for a project directory.
     static func load(from directory: String) -> ScriptConfig {
-        let resolvers: [(String, (String) -> ScriptConfig?)] = [
-            (".factoryfloor.json", loadFF2),
-            (".factoryfloor/config.json", loadFF2),
-            (".emdash.json", loadEmdash),
-            ("conductor.json", loadConductor),
-            (".superset/config.json", loadSuperset),
-        ]
+        let filenames = [".factoryfloor.json", ".factoryfloor/config.json"]
 
-        for (filename, loader) in resolvers {
+        for filename in filenames {
             let path = URL(fileURLWithPath: directory).appendingPathComponent(filename).path
             guard FileManager.default.fileExists(atPath: path) else { continue }
-            if let config = loader(path) {
+            if let config = loadFF2(path) {
                 return config
             }
         }
@@ -50,9 +44,8 @@ struct ScriptConfig {
         process.waitUntilExit()
     }
 
-    // MARK: - Loaders
+    // MARK: - Loader
 
-    /// .factoryfloor.json / .factoryfloor/config.json format:
     /// { "setup": "cmd", "run": "cmd", "teardown": "cmd" }
     private static func loadFF2(_ path: String) -> ScriptConfig? {
         guard let dict = loadJSON(path) else { return nil }
@@ -61,42 +54,6 @@ struct ScriptConfig {
         let teardown = dict["teardown"] as? String
         guard setup != nil || run != nil || teardown != nil else { return nil }
         return ScriptConfig(setup: nonEmpty(setup), run: nonEmpty(run), teardown: nonEmpty(teardown), source: URL(fileURLWithPath: path).lastPathComponent)
-    }
-
-    /// .emdash.json format:
-    /// { "scripts": { "setup": "cmd", "run": "cmd", "teardown": "cmd" } }
-    private static func loadEmdash(_ path: String) -> ScriptConfig? {
-        guard let dict = loadJSON(path),
-              let scripts = dict["scripts"] as? [String: Any] else { return nil }
-        let setup = scripts["setup"] as? String
-        let run = scripts["run"] as? String
-        let teardown = scripts["teardown"] as? String
-        guard setup != nil || run != nil || teardown != nil else { return nil }
-        return ScriptConfig(setup: nonEmpty(setup), run: nonEmpty(run), teardown: nonEmpty(teardown), source: ".emdash.json")
-    }
-
-    /// conductor.json format:
-    /// { "scripts": { "setup": "cmd", "run": "cmd", "archive": "cmd" } }
-    private static func loadConductor(_ path: String) -> ScriptConfig? {
-        guard let dict = loadJSON(path),
-              let scripts = dict["scripts"] as? [String: Any] else { return nil }
-        let setup = scripts["setup"] as? String
-        let run = scripts["run"] as? String
-        let teardown = scripts["archive"] as? String
-        guard setup != nil || run != nil || teardown != nil else { return nil }
-        return ScriptConfig(setup: nonEmpty(setup), run: nonEmpty(run), teardown: nonEmpty(teardown), source: "conductor.json")
-    }
-
-    /// .superset/config.json format:
-    /// { "setup": ["cmd1", "cmd2"], "teardown": ["cmd1"] }
-    private static func loadSuperset(_ path: String) -> ScriptConfig? {
-        guard let dict = loadJSON(path) else { return nil }
-        let setupArr = dict["setup"] as? [String]
-        let teardownArr = dict["teardown"] as? [String]
-        let setup = setupArr?.joined(separator: " && ")
-        let teardown = teardownArr?.joined(separator: " && ")
-        guard setup != nil || teardown != nil else { return nil }
-        return ScriptConfig(setup: nonEmpty(setup), run: nil, teardown: nonEmpty(teardown), source: ".superset/config.json")
     }
 
     // MARK: - Helpers
