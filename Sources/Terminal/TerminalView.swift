@@ -217,6 +217,11 @@ final class TerminalView: NSView, NSTextInputClient {
         }
     }
 
+    func setVisible(_ visible: Bool) {
+        guard let surface else { return }
+        ghostty_surface_set_occlusion(surface, visible)
+    }
+
     func surfaceClosed() {
         NotificationCenter.default.post(name: .terminalSurfaceClosed, object: self)
     }
