@@ -25,7 +25,7 @@ struct SettingsView: View {
     #else
     private static let cliName = "ff"
     #endif
-    @State private var cliInstalled = FileManager.default.fileExists(atPath: "/usr/local/bin/\(cliName)")
+    @State private var cliInstalled = Self.isCliCorrectlyInstalled()
 
     var body: some View {
         Form {
@@ -286,6 +286,18 @@ struct SettingsView: View {
 
     private func chmod(_ path: String, _ mode: mode_t) {
         Darwin.chmod(path, mode)
+    }
+
+    /// Check if the CLI is installed and points to a valid script that opens this app.
+    private static func isCliCorrectlyInstalled() -> Bool {
+        let path = "/usr/local/bin/\(cliName)"
+        let fm = FileManager.default
+        guard fm.fileExists(atPath: path),
+              fm.isExecutableFile(atPath: path),
+              let contents = try? String(contentsOfFile: path, encoding: .utf8) else {
+            return false
+        }
+        return contents.contains(AppConstants.urlScheme)
     }
 
     private func applyAppearance(_ mode: String) {
