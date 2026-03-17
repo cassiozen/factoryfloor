@@ -394,7 +394,7 @@ struct TerminalContainerView: View {
                 for: setupID,
                 app: app,
                 workingDirectory: workingDirectory,
-                initialInput: cmd + "\n",
+                initialInput: cmd + "; exec tail -f /dev/null\n",
                 environmentVars: terminalEnvVars
             )
         }
