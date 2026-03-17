@@ -205,6 +205,12 @@ struct EnvironmentTabView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
+    private func killTmuxSession(role: String) {
+        guard useTmux, let tmuxPath = appEnv.toolStatus.tmux.path else { return }
+        let session = TmuxSession.sessionName(project: projectName, workstream: workstreamName, role: role)
+        TmuxSession.killSession(tmuxPath: tmuxPath, sessionName: session)
+    }
+
     private func buildCommand(script: String, role: String) -> String {
         // Keep the terminal open after the script exits so output remains visible
         let kept = "\(script); cat"
@@ -216,11 +222,13 @@ struct EnvironmentTabView: View {
     }
 
     private func restartSetup() {
+        killTmuxSession(role: "setup")
         surfaceCache.removeSurface(for: setupID)
         setupGeneration += 1
     }
 
     private func restartRun() {
+        killTmuxSession(role: "run")
         surfaceCache.removeSurface(for: runID)
         runStarted = false
         runGeneration += 1
