@@ -38,8 +38,8 @@
 ## Code Quality
 
 - [x] Extract duplicated abbreviatePath into a shared String extension (PathUtilities.swift)
-- [ ] Remove duplicated performArchive logic between ContentView and ProjectSidebar
-- [ ] Remove dead bleedingEdge setting (toggle exists but nothing reads it, keep for future auto-update)
+- [x] Remove duplicated performArchive logic between ContentView and ProjectSidebar
+- [x] bleedingEdge setting: intentionally kept for future auto-update (Sparkle) channel selection
 - [x] Remove dead retryBrowser notification (declared and observed but never posted)
 - [x] ToolStatus.detect: remove misleading async signature (contains no await)
 - [x] Localization: add missing strings for Settings sections, HelpView, BrowserView error UI, ProjectOverviewView

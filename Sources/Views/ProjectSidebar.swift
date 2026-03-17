@@ -337,32 +337,13 @@ struct ProjectSidebar: View {
     private func performArchive() {
         guard let wsID = workstreamToArchive,
               let (pi, _) = workstreamIndex[wsID] else { return }
-        archiveWorkstream(wsID, in: &projects[pi])
-        workstreamToArchive = nil
-    }
-
-    private func archiveWorkstream(_ workstreamID: UUID, in project: inout Project) {
-        // Capture what we need for background cleanup
-        if let ws = project.workstreams.first(where: { $0.id == workstreamID }) {
-            let projectDir = project.directory
-            let wsName = ws.name
-            let projName = project.name
-            let worktreeDir = ws.worktreePath ?? projectDir
-            let tmuxPath = appEnv.toolStatus.tmux.path
-            Task.detached {
-                ScriptConfig.runTeardown(in: worktreeDir, projectDirectory: projectDir)
-                GitOperations.removeWorktree(projectPath: projectDir, workstreamName: wsName, projectName: projName)
-                if let tmuxPath {
-                    TmuxSession.killWorkstreamSessions(tmuxPath: tmuxPath, project: projName, workstream: wsName)
-                }
-            }
-        }
-        surfaceCache.removeWorkstreamSurfaces(for: workstreamID)
-        project.workstreams.removeAll { $0.id == workstreamID }
-        if case .workstream(let id) = selection, id == workstreamID {
-            selection = project.workstreams.first.map { .workstream($0.id) } ?? .project(project.id)
+        let projectID = projects[pi].id
+        WorkstreamArchiver.archive(wsID, in: &projects[pi], surfaceCache: surfaceCache, tmuxPath: appEnv.toolStatus.tmux.path)
+        if case .workstream(let id) = selection, id == wsID {
+            selection = projects[pi].workstreams.first.map { .workstream($0.id) } ?? .project(projectID)
         }
         onProjectsChanged()
+        workstreamToArchive = nil
     }
 
     // MARK: - Project management
