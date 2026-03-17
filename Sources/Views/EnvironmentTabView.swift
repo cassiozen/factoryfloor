@@ -3,8 +3,8 @@
 
 import SwiftUI
 
-func shouldRestoreRunSession(useTmux: Bool, hasRunScript: Bool, hasExistingRunSession: Bool) -> Bool {
-    useTmux && hasRunScript && hasExistingRunSession
+func shouldRestoreRunSession(useTmux: Bool, hasRunScript: Bool, hasExistingRunSession: Bool, wasStoppedManually: Bool) -> Bool {
+    useTmux && hasRunScript && hasExistingRunSession && !wasStoppedManually
 }
 
 func scriptCommand(script: String, role: String) -> String {
@@ -22,6 +22,7 @@ struct EnvironmentTabView: View {
     let scriptConfig: ScriptConfig
     let useTmux: Bool
     let environmentVars: [String: String]
+    @Binding var runStoppedManually: Bool
 
     @EnvironmentObject var surfaceCache: TerminalSurfaceCache
     @EnvironmentObject var appEnv: AppEnvironment
@@ -60,7 +61,12 @@ struct EnvironmentTabView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .rerunScript)) { _ in
             if scriptConfig.run != nil {
-                if runStarted { restartRun() } else { runStarted = true }
+                if runStarted {
+                    restartRun()
+                } else {
+                    runStoppedManually = false
+                    runStarted = true
+                }
             }
         }
         .onAppear {
@@ -143,7 +149,10 @@ struct EnvironmentTabView: View {
                         EnvActionButton(label: NSLocalizedString("Stop", comment: ""), icon: "stop.fill", shortcut: "", action: stopRun)
                         EnvActionButton(label: NSLocalizedString("Rerun", comment: ""), icon: "arrow.counterclockwise", shortcut: shortcut, action: restartRun)
                     } else {
-                        EnvActionButton(label: NSLocalizedString("Start", comment: ""), icon: "play.fill", shortcut: shortcut) { runStarted = true }
+                        EnvActionButton(label: NSLocalizedString("Start", comment: ""), icon: "play.fill", shortcut: shortcut) {
+                            runStoppedManually = false
+                            runStarted = true
+                        }
                     }
                 }
             }
@@ -165,7 +174,10 @@ struct EnvironmentTabView: View {
                     .id(runID)
                 } else if !runStarted {
                     VStack(spacing: 12) {
-                        Button(action: { runStarted = true }) {
+                        Button(action: {
+                            runStoppedManually = false
+                            runStarted = true
+                        }) {
                             Image(systemName: "play.fill")
                                 .font(.system(size: 24))
                         }
@@ -251,6 +263,7 @@ struct EnvironmentTabView: View {
     private func stopRun() {
         killTmuxSession(role: "run")
         surfaceCache.removeSurface(for: runID)
+        runStoppedManually = true
         runStarted = false
         runGeneration += 1
     }
@@ -258,6 +271,7 @@ struct EnvironmentTabView: View {
     private func restartRun() {
         killTmuxSession(role: "run")
         surfaceCache.removeSurface(for: runID)
+        runStoppedManually = false
         runRestarting = true
         runStarted = false
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -274,7 +288,7 @@ struct EnvironmentTabView: View {
               let tmuxPath = appEnv.toolStatus.tmux.path else { return }
         let session = TmuxSession.sessionName(project: projectName, workstream: workstreamName, role: "run")
         let hasExistingRunSession = TmuxSession.sessionExists(tmuxPath: tmuxPath, sessionName: session)
-        if shouldRestoreRunSession(useTmux: useTmux, hasRunScript: scriptConfig.run != nil, hasExistingRunSession: hasExistingRunSession) {
+        if shouldRestoreRunSession(useTmux: useTmux, hasRunScript: scriptConfig.run != nil, hasExistingRunSession: hasExistingRunSession, wasStoppedManually: runStoppedManually) {
             runStarted = true
         }
     }

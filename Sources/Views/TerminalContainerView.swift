@@ -145,6 +145,7 @@ struct TerminalContainerView: View {
     @State private var cachedClaudeCommand: String?
     @State private var draggedCustomTab: WorkspaceTab?
     @StateObject private var portDetector: PortDetector
+    @State private var runStoppedManually = false
 
     init(workstreamID: UUID, workingDirectory: String, projectDirectory: String, projectName: String, workstreamName: String, bypassPermissions: Bool) {
         self.workstreamID = workstreamID
@@ -340,7 +341,8 @@ struct TerminalContainerView: View {
                     workstreamName: workstreamName,
                     scriptConfig: scriptConfig,
                     useTmux: useTmux,
-                    environmentVars: terminalEnvVars
+                    environmentVars: terminalEnvVars,
+                    runStoppedManually: $runStoppedManually
                 )
             }
         case .terminal(let id):

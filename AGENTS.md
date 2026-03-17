@@ -108,6 +108,12 @@ Scripts are loaded from `.factoryfloor.json` in the project directory:
 { "setup": "cmd", "run": "cmd", "teardown": "cmd" }
 ```
 
+### Port detection
+Run scripts are wrapped in the `ff-run` launcher binary (bundled at `Contents/Helpers/ff-run`).
+The launcher monitors the child process tree for listening TCP ports using `libproc` and writes
+state to `~/.config/factoryfloor/run-state/<workstream-id>.json`. The app watches these files
+via FSEvents and retargets the embedded browser when a port is detected.
+
 ### Paths
 - Config: `~/.config/factoryfloor/` (respects `XDG_CONFIG_HOME`)
 - Data/worktrees: `~/.factoryfloor/`

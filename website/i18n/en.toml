@@ -52,7 +52,7 @@ other = "Configure setup, run, and teardown scripts per project via .factoryfloo
 [feat_browser_title]
 other = "Embedded Browser"
 [feat_browser_desc]
-other = "WKWebView browser tab with deterministic port allocation. Preview your app without leaving the workspace."
+other = "Embedded browser with auto-port detection. The run script's listening port is detected automatically and the browser navigates to it. Preview your app without leaving the workspace."
 [feat_github_title]
 other = "GitHub Integration"
 [feat_github_desc]
@@ -72,7 +72,7 @@ other = "Drop a directory on the sidebar, or create a new one. Factory Floor det
 [step2_title]
 other = "Create a workstream"
 [step2_desc]
-other = "A new git worktree with a fresh branch, a Claude Code session, a terminal, and a browser tab. All wired up and ready to go."
+other = "A new git worktree with a fresh branch, a Claude Code session, a terminal, and a browser tab. Port detection is automatic — the browser opens your dev server as soon as it starts listening."
 [step3_title]
 other = "Code with AI"
 [step3_desc]

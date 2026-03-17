@@ -49,7 +49,7 @@ other = "Konfigurera setup, run och teardown scripts per projekt via .factoryflo
 [feat_browser_title]
 other = "Inbyggd browser"
 [feat_browser_desc]
-other = "WKWebView browser tab med deterministiska portar. Previewa din app utan att lämna workspace."
+other = "Inbyggd browser med automatisk portdetektering. Run scriptets lyssningsport detekteras automatiskt och browsern navigerar dit. Previewa din app utan att lämna workspace."
 [feat_github_title]
 other = "GitHub-integration"
 [feat_github_desc]
@@ -68,7 +68,7 @@ other = "Dra en directory till sidebaren eller skapa en ny. Factory Floor detekt
 [step2_title]
 other = "Skapa en workstream"
 [step2_desc]
-other = "En ny worktree med fresh branch, Claude Code session, terminal och browser tab. Allt uppkopplat, redo att köra."
+other = "En ny worktree med fresh branch, Claude Code session, terminal och browser tab. Portdetektering är automatisk — browsern öppnar din dev server så fort den börjar lyssna."
 [step3_title]
 other = "Koda med AI"
 [step3_desc]

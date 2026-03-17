@@ -52,7 +52,7 @@ other = "Configura scripts de setup, run i teardown per projecte via .factoryflo
 [feat_browser_title]
 other = "Browser integrat"
 [feat_browser_desc]
-other = "Tab de browser WKWebView amb ports deterministes. Previsualitza l'app sense sortir del workspace."
+other = "Browser integrat amb detecció automàtica de port. El port d'escolta del run script es detecta automàticament i el browser hi navega. Previsualitza l'app sense sortir del workspace."
 [feat_github_title]
 other = "Integració GitHub"
 [feat_github_desc]
@@ -72,7 +72,7 @@ other = "Arrossega un directori al sidebar o crea'n un de nou. Factory Floor det
 [step2_title]
 other = "Crea un workstream"
 [step2_desc]
-other = "Un worktree nou amb branch, sessió de Claude Code, terminal i tab de browser. Tot connectat, llest per començar."
+other = "Un worktree nou amb branch, sessió de Claude Code, terminal i tab de browser. La detecció de port és automàtica — el browser obre el teu servidor dev tan bon punt comença a escoltar."
 [step3_title]
 other = "Programa amb IA"
 [step3_desc]

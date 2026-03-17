@@ -34,7 +34,7 @@ Factory Floor is a native macOS app built on [Ghostty](https://ghostty.org)'s GP
 - **Claude Code** &mdash; Integrated AI agent with session persistence. Resume conversations across app restarts.
 - **Tmux Persistence** &mdash; Agent sessions survive app restarts via tmux on a dedicated socket.
 - **Setup & Run Scripts** &mdash; Configure setup, run, and teardown scripts per project via `.factoryfloor.json`. Environment tab with split-pane terminals, Rebuild (⌃⇧R) and Start/Rerun (⌃⇧S).
-- **Embedded Browser** &mdash; WKWebView tab with deterministic port allocation per workstream.
+- **Embedded Browser** &mdash; WKWebView tab with automatic port detection. The browser navigates to the port your run script opens.
 - **GitHub Integration** &mdash; Repo info, open PRs, and branch PR status via the `gh` CLI.
 - **Dynamic Tabs** &mdash; Open as many terminals and browsers as you need. Close with Cmd+W or Ctrl+D.
 - **Update Notifications** &mdash; Checks for new versions and shows a badge in the sidebar.

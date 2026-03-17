@@ -2,12 +2,11 @@
 
 ## Pre-release
 
-- [ ] Take app screenshots for the website (workspace view, sidebar, terminal, environment tab)
+- [ ] Take app screenshots for the website
 
 ## Post-release
 
 - [ ] Auto-update mechanism (Sparkle): in-app update for direct DMG users
-- [ ] Port detection: polish and test ff-run launcher in real-world projects
 
 ## Future
 
@@ -40,7 +39,7 @@
 - [x] GitHub integration: repo info, open PRs, branch PR status (via gh CLI)
 - [x] Keyboard shortcuts: all documented in HelpView, README, AGENTS.md, and website
 - [x] Help view with app icon, skyline, shortcuts, credits, sponsor/bug/feature links
-- [x] Settings: environment, CLI install (auto-hidden when installed), tmux, bypass, teams, auto-rename, appearance, language, base dir, branch prefix, external apps, bleeding edge, danger zone
+- [x] Settings: environment, CLI install (auto-hidden), tmux, bypass, teams, auto-rename, appearance, language, base dir, branch prefix, external apps, bleeding edge, danger zone
 - [x] Project overview with editable name, git info, GitHub info, worktree list with prune, doc tabs
 - [x] Workstream info with project icon, branch copy, directory, PR status, scripts, docs
 - [x] Drag-and-drop directories to sidebar
@@ -56,7 +55,8 @@
 - [x] Workstream sorting in project view (recent / A-Z)
 - [x] Localization: en, ca, es, sv (all strings translated)
 - [x] Script config: .factoryfloor.json
-- [x] Environment tab: setup (auto) / run (on-demand) with Rebuild (⌃⇧R) and Start/Rerun (⌃⇧S)
+- [x] Environment tab: setup (auto) / run (on-demand) with Rebuild and Start/Rerun shortcuts
+- [x] Port detection: ff-run launcher with libproc process tree scanning and auto browser retarget
 - [x] Tmux session restore for run scripts on app relaunch
 - [x] Preload agent and setup terminals in background
 - [x] Occlude non-visible terminal surfaces (ghostty_surface_set_occlusion)
@@ -67,15 +67,13 @@
 - [x] Code signing, notarization, release-please, CI pipeline (security hardened)
 - [x] Homebrew tap (alltuner/homebrew-tap) with cask and CLI binary
 - [x] Website: Hugo + Tailwind, i18n (4 langs), sponsor page, privacy, SEO, OG image, /get page
-- [x] Distribution docs: distribution.md, distribution-strategy.md, port-detection.md, swift6-migration.md
+- [x] Distribution: docs/distribution.md with automated versions.json in release workflow
 - [x] Onboarding view with prerequisites, getting started, key concepts
-- [x] Security: WKWebView JS disabled, shell-escape tmux, surface destroy on restart, git flag injection, .env symlink validation, CI hardening
+- [x] Sentry crash reporting (EU, no PII, environment/version tags)
+- [x] Swift 6 strict concurrency migration
+- [x] Security: WKWebView JS disabled, shell-escape tmux, surface destroy, git flag injection, .env symlink validation
 - [x] Accessibility: labels, focus rings, keyboard-reachable hover actions
 - [x] Code quality: dedup, parallelized git, cached state, consolidated timers, error propagation
 - [x] Error feedback: worktree creation, non-git dir, ghostty init, project removal, Claude not found
-- [x] Fix: embedded terminal mouse selection coordinates (Y axis inversion)
-- [x] Fix: env script terminal lifecycle (initialInput for non-tmux, command for tmux, explicit surface destroy)
-- [x] Restore full app state on launch (persist info/agent/environment, return spawned tabs to info)
-- [x] Right-click sidebar menu for copying project path, branch name, and worktree path
-- [x] Drag-and-drop reorder for custom terminal and browser tabs
-- [x] Clean remaining build warnings and flip the project to Swift 6
+- [x] Fix: terminal mouse selection coordinates, env script lifecycle, proc_listchildpids count
+- [x] Restore full app state on launch, right-click sidebar menus, drag-and-drop tab reorder
