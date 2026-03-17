@@ -135,6 +135,12 @@ enum GitOperations {
             let source = URL(fileURLWithPath: projectPath).appendingPathComponent(file)
             let destination = URL(fileURLWithPath: worktreePath).appendingPathComponent(file)
             guard fm.fileExists(atPath: source.path) else { continue }
+            // Skip sources that are themselves symlinks to prevent exposing arbitrary files
+            if let attrs = try? fm.attributesOfItem(atPath: source.path),
+               let fileType = attrs[.type] as? FileAttributeType,
+               fileType != .typeRegular {
+                continue
+            }
             guard !fm.fileExists(atPath: destination.path) else { continue }
             try? fm.createSymbolicLink(at: destination, withDestinationURL: source)
         }

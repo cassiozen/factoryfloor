@@ -16,7 +16,7 @@ extension Notification.Name {
 }
 
 /// Deterministic UUID derived from a base UUID and a salt string.
-/// Uses SHA-256 to produce fully deterministic output (no random bytes).
+/// Uses simple byte-folding to produce fully deterministic output (no random bytes).
 func derivedUUID(from base: UUID, salt: String) -> UUID {
     // Build a deterministic byte sequence from the base UUID and salt
     let input = "\(base.uuidString)-\(salt)"
