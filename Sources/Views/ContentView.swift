@@ -351,15 +351,29 @@ struct ContentView: View {
 }
 
 enum ProjectStore {
-    private static let key = "factoryfloor.projects"
+    private static let userDefaultsKey = "factoryfloor.projects"
+
+    private static var fileURL: URL {
+        AppConstants.configDirectory.appendingPathComponent("projects.json")
+    }
 
     static func load() -> [Project] {
-        guard let data = UserDefaults.standard.data(forKey: key) else { return [] }
-        return (try? JSONDecoder().decode([Project].self, from: data)) ?? []
+        // Try loading from JSON file first
+        if let data = try? Data(contentsOf: fileURL) {
+            return (try? JSONDecoder().decode([Project].self, from: data)) ?? []
+        }
+        // Migrate from UserDefaults if file doesn't exist
+        if let data = UserDefaults.standard.data(forKey: userDefaultsKey),
+           let projects = try? JSONDecoder().decode([Project].self, from: data) {
+            save(projects)
+            UserDefaults.standard.removeObject(forKey: userDefaultsKey)
+            return projects
+        }
+        return []
     }
 
     static func save(_ projects: [Project]) {
         guard let data = try? JSONEncoder().encode(projects) else { return }
-        UserDefaults.standard.set(data, forKey: key)
+        FilePersistence.writeAtomically(data, to: fileURL)
     }
 }

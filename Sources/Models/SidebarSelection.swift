@@ -21,30 +21,58 @@ enum SidebarSelection: Hashable, Codable {
 
     // MARK: - Persistence
 
-    private static let key = "factoryfloor.selection"
+    private static let userDefaultsKey = "factoryfloor.selection"
+
+    private static var fileURL: URL {
+        AppConstants.configDirectory.appendingPathComponent("sidebar-selection.json")
+    }
 
     static func loadSaved() -> SidebarSelection? {
-        guard let data = UserDefaults.standard.data(forKey: key) else { return nil }
-        return try? JSONDecoder().decode(SidebarSelection.self, from: data)
+        // Try loading from JSON file first
+        if let data = try? Data(contentsOf: fileURL) {
+            return try? JSONDecoder().decode(SidebarSelection.self, from: data)
+        }
+        // Migrate from UserDefaults if file doesn't exist
+        if let data = UserDefaults.standard.data(forKey: userDefaultsKey),
+           let selection = try? JSONDecoder().decode(SidebarSelection.self, from: data) {
+            selection.save()
+            UserDefaults.standard.removeObject(forKey: userDefaultsKey)
+            return selection
+        }
+        return nil
     }
 
     func save() {
         guard let data = try? JSONEncoder().encode(self) else { return }
-        UserDefaults.standard.set(data, forKey: Self.key)
+        FilePersistence.writeAtomically(data, to: Self.fileURL)
     }
 }
 
 enum SidebarState {
-    private static let expandedKey = "factoryfloor.expandedProjects"
+    private static let userDefaultsKey = "factoryfloor.expandedProjects"
+
+    private static var fileURL: URL {
+        AppConstants.configDirectory.appendingPathComponent("sidebar-state.json")
+    }
 
     static func loadExpanded() -> Set<UUID> {
-        guard let data = UserDefaults.standard.data(forKey: expandedKey),
-              let ids = try? JSONDecoder().decode(Set<UUID>.self, from: data) else { return [] }
-        return ids
+        // Try loading from JSON file first
+        if let data = try? Data(contentsOf: fileURL),
+           let ids = try? JSONDecoder().decode(Set<UUID>.self, from: data) {
+            return ids
+        }
+        // Migrate from UserDefaults if file doesn't exist
+        if let data = UserDefaults.standard.data(forKey: userDefaultsKey),
+           let ids = try? JSONDecoder().decode(Set<UUID>.self, from: data) {
+            saveExpanded(ids)
+            UserDefaults.standard.removeObject(forKey: userDefaultsKey)
+            return ids
+        }
+        return []
     }
 
     static func saveExpanded(_ ids: Set<UUID>) {
         guard let data = try? JSONEncoder().encode(ids) else { return }
-        UserDefaults.standard.set(data, forKey: expandedKey)
+        FilePersistence.writeAtomically(data, to: fileURL)
     }
 }
