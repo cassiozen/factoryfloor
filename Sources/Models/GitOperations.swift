@@ -38,8 +38,10 @@ enum GitOperations {
             return GitRepoInfo(isRepo: false, branch: nil, remoteURL: nil, commitCount: nil, isDirty: false)
         }
 
-        let branch = run("git", args: ["rev-parse", "--abbrev-ref", "HEAD"], in: path)?
+        let rawBranch = run("git", args: ["rev-parse", "--abbrev-ref", "HEAD"], in: path)?
             .trimmingCharacters(in: .whitespacesAndNewlines)
+        // rev-parse returns literal "HEAD" when in detached state
+        let branch = (rawBranch == "HEAD") ? nil : rawBranch
 
         let remote = run("git", args: ["remote", "get-url", "origin"], in: path)?
             .trimmingCharacters(in: .whitespacesAndNewlines)

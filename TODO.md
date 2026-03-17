@@ -13,7 +13,7 @@
 
 - [x] BrowserView: "Press Cmd+Shift+B to retry" hint is wrong (removed misleading hint and dead notification)
 - [x] Settings/Help persisted as selection: app reopens to Settings if quit while in Settings (fixed)
-- [ ] Detached HEAD inconsistency: project overview shows "HEAD", worktree list shows "detached"
+- [x] Detached HEAD inconsistency: normalize "HEAD" to nil so all views show "detached"
 - [ ] Path collision: worktree names differing only by `/` vs `-` produce same filesystem path (sanitize converts `/` to `-`)
 - [ ] Surface cleanup in removeWorkstreamSurfaces hard-capped at 20 tabs (orphans surfaces beyond that)
 
