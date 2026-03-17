@@ -22,6 +22,8 @@ struct MarkdownContentView: NSViewRepresentable {
     }
 
     func updateNSView(_ webView: WKWebView, context: Context) {
+        guard context.coordinator.lastMarkdown != markdown else { return }
+        context.coordinator.lastMarkdown = markdown
         let html = renderMarkdownToHTML(markdown)
         let page = wrapInHTMLPage(html)
         let base = baseDirectory.map { URL(fileURLWithPath: $0, isDirectory: true) }
@@ -33,6 +35,8 @@ struct MarkdownContentView: NSViewRepresentable {
     }
 
     final class Coordinator: NSObject, WKNavigationDelegate {
+        var lastMarkdown: String?
+
         func webView(_ webView: WKWebView, decidePolicyFor action: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
             if action.navigationType == .linkActivated, let url = action.request.url {
                 // Only open absolute HTTP(S) links in the external browser.

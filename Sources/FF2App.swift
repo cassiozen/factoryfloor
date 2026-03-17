@@ -11,7 +11,6 @@ extension Notification.Name {
     static let switchToProject = Notification.Name("factoryfloor.switchToProject")
     static let toggleSidebar = Notification.Name("factoryfloor.toggleSidebar")
     static let switchByNumber = Notification.Name("factoryfloor.switchByNumber") // object: Int (1-9)
-    // switchToInfo, switchToAgent, switchToTerminal replaced by switchByNumber
     static let dismissOverlay = Notification.Name("factoryfloor.dismissOverlay")
     static let openExternalBrowser = Notification.Name("factoryfloor.openExternalBrowser")
     static let clearProjects = Notification.Name("factoryfloor.clearProjects")

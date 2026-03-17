@@ -268,11 +268,9 @@ struct ContentView: View {
            let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: terminalBundleID) {
             let config = NSWorkspace.OpenConfiguration()
             NSWorkspace.shared.open([URL(fileURLWithPath: dir)], withApplicationAt: appURL, configuration: config)
-        } else {
-            let script = "tell application \"Terminal\" to do script \"cd \(dir.replacingOccurrences(of: "\"", with: "\\\"")) && clear\""
-            if let appleScript = NSAppleScript(source: script) {
-                appleScript.executeAndReturnError(nil)
-            }
+        } else if let terminalURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.Terminal") {
+            let config = NSWorkspace.OpenConfiguration()
+            NSWorkspace.shared.open([URL(fileURLWithPath: dir)], withApplicationAt: terminalURL, configuration: config)
         }
     }
 

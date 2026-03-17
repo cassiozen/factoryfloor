@@ -198,12 +198,9 @@ struct DirectoryRow: View {
            let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: defaultTerminal) {
             let config = NSWorkspace.OpenConfiguration()
             NSWorkspace.shared.open([URL(fileURLWithPath: path)], withApplicationAt: appURL, configuration: config)
-        } else {
-            let escaped = path.replacingOccurrences(of: "\"", with: "\\\"")
-            let script = "tell application \"Terminal\" to do script \"cd \(escaped) && clear\""
-            if let appleScript = NSAppleScript(source: script) {
-                appleScript.executeAndReturnError(nil)
-            }
+        } else if let terminalURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.Terminal") {
+            let config = NSWorkspace.OpenConfiguration()
+            NSWorkspace.shared.open([URL(fileURLWithPath: path)], withApplicationAt: terminalURL, configuration: config)
         }
     }
 
