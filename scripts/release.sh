@@ -35,7 +35,7 @@ cp -R "$APP_BUILT" "$APP_PATH"
 
 echo "==> Verifying signature..."
 codesign --verify --verbose=2 "$APP_PATH"
-spctl --assess --type execute --verbose=2 "$APP_PATH" 2>&1 || true
+spctl --assess --type execute --verbose=2 "$APP_PATH" 2>&1
 
 echo "==> Creating DMG..."
 rm -f "$BUILD_DIR/$DMG_NAME"
