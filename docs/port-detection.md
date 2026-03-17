@@ -1,103 +1,134 @@
-# Port Detection for Run Scripts
+# Port Detection: Implementation Plan
 
-## Goal
+## Decision
 
-When the run script starts a dev server (e.g., `npm run dev`, `flask run`, `uvicorn`), detect the port it listens on and automatically point the embedded browser to it.
+Use a **bundled launcher binary** (`ff-run`) that wraps the run script,
+owns the child process tree, detects listening TCP ports via `libproc`,
+and reports results to the app via a state file.
 
-## Current State
+This supersedes the earlier tmux-only and lsof-polling approaches.
+The launcher works identically in both tmux and non-tmux modes.
 
-- Each workstream gets a deterministic port via `FF_PORT` env var (40001-49999)
-- The embedded browser defaults to `http://localhost:$FF_PORT/`
-- Users are expected to configure their dev server to use `$FF_PORT`
-- If the dev server uses a different port, the browser shows a connection error
+## How it works
 
-## Proposed Feature
-
-Monitor the run script's process for new listening TCP sockets. When a port opens, automatically update the browser URL or show a notification.
-
-## Implementation Options
-
-### Option 1: Poll `lsof` for the process tree
-
-After the run script starts, periodically run:
-```bash
-lsof -iTCP -sTCP:LISTEN -P -n -a -p <pid>
+```
+Terminal shell -> ff-run --workstream-id <uuid> -- <run command>
+                    |
+                    +-- spawns run command as child process
+                    +-- polls child tree for TCP LISTEN ports (libproc)
+                    +-- writes state to ~/.config/factoryfloor/run-state/<uuid>.json
+                    +-- forwards signals, mirrors exit code
 ```
 
-This lists all TCP LISTEN sockets for the process. Parse the output for the port number.
+The app polls or watches the state file and updates browser targets.
 
-**Pros:** Simple, no special permissions needed, works with any server.
-**Cons:** Polling (every 1-2 seconds), needs the PID of the child process, `lsof` can be slow.
+## V1 scope
 
-**Getting the PID:** Ghostty surfaces don't expose the child PID directly. We'd need to either:
-- Parse `ps` output to find processes in the working directory
-- Use the tmux session to get the pane PID (`tmux display -p -t session '#{pane_pid}'`)
-- Track process groups started in the working directory
+**In scope:**
 
-### Option 2: Monitor with `netstat` / `ss`
+- Bundled `ff-run` Swift executable target in project.yml
+- Wrap only the Environment tab run script (not setup)
+- Native `libproc` port detection (no lsof subprocess)
+- State file reporting at `~/.config/factoryfloor/run-state/<uuid>.json`
+- Conservative browser retargeting (only default URL or connection error)
+- Works in both tmux and non-tmux modes
 
-Similar to lsof but using `netstat -an -p tcp | grep LISTEN`.
+**Not in scope:**
 
-**Pros:** Slightly faster than lsof.
-**Cons:** Same PID issue, macOS `netstat` doesn't show PIDs.
+- Wrapping setup scripts
+- Auto-opening browser tabs
+- Multi-port heuristics beyond a clear single winner
+- HTTP readiness probing
+- Remote host / non-localhost detection
+- Daemonized background services
 
-### Option 3: Use `dtrace` / `libproc`
+## Launcher requirements
 
-Use macOS's `proc_pidinfo` API (libproc) to enumerate file descriptors for a process and check for listening sockets.
+The `ff-run` binary must:
 
-```swift
-import Darwin
+- Launch the run command as a child process group
+- Keep stdin/stdout/stderr attached (interactive terminal behavior)
+- Forward signals (SIGINT, SIGTERM) to the child group
+- Poll child process tree for listening TCP ports every 1 second
+- Write state file with detected ports
+- Exit with the same code as the child process
+- Clean up state file on exit
 
-func listeningPorts(for pid: pid_t) -> [UInt16] {
-    // Use proc_pidinfo with PROC_PIDLISTFDS to get file descriptors
-    // Filter for socket FDs, check if LISTEN state
+## State file format
+
+```json
+{
+  "pid": 12345,
+  "status": "running",
+  "detectedPorts": [5173],
+  "selectedPort": 5173,
+  "startedAt": "2026-03-17T12:00:00Z"
 }
 ```
 
-**Pros:** No subprocess overhead, fast, native Swift.
-**Cons:** Requires knowing the PID, needs to handle process trees (the server might be a grandchild of the shell).
+Status values: `starting`, `running`, `stopped`, `crashed`.
 
-### Option 4: Watch for port bind in the working directory
+## Port selection rules
 
-Instead of tracking a specific PID, scan all listening ports and match against the workstream's working directory by checking which process owns the socket and what its cwd is.
+1. If exactly one new listening port appears, select it
+2. If multiple appear and `FF_PORT` is among them, select `FF_PORT`
+3. Otherwise, report all but don't auto-select
 
-**Pros:** No need to know the PID upfront.
-**Cons:** Expensive scan, false positives from other processes.
+Stabilization: require the same port on 2 consecutive polls before
+reporting it as selected (avoids transient bootstrap ports).
 
-## Recommended Approach
+## Browser retargeting policy
 
-**Option 1 (lsof polling) for v1, with Option 3 (libproc) as a future upgrade.**
+When a port is selected:
 
-### v1 Implementation Plan
+- Retarget browser tabs still on the default `localhost:$FF_PORT` URL
+- Retarget tabs showing the connection error for that URL
+- Do NOT navigate tabs the user has pointed elsewhere
+- Do NOT create new browser tabs
+- Update the default URL for new tabs and "Open External Browser"
 
-1. **After the run script starts**, begin polling every 2 seconds
-2. **Get the process tree** from the tmux session or by finding the shell PID:
-   - With tmux: `tmux display -p -t <session> '#{pane_pid}'` gives the shell PID
-   - Without tmux: track the ghostty surface's child PID (needs ghostty API investigation)
-3. **Run lsof** to find LISTEN ports for the process and its children:
-   ```bash
-   lsof -iTCP -sTCP:LISTEN -P -n -a -g <pgid>
-   ```
-   (`-g` matches the process group, which catches child processes)
-4. **Detect new ports**: compare against previous scan, identify newly opened ports
-5. **Auto-navigate browser**: if a browser tab exists and shows an error or default URL, navigate to the detected port
-6. **Show notification**: if no browser tab, show a small badge "Server running on port 3000" with a click-to-open action
+## App-side changes
 
-### Files to modify
+- `EnvironmentTabView`: route run command through `ff-run` launcher
+- `TerminalContainerView`: store detected port per workstream, feed to browser tabs
+- `BrowserView`: accept external retarget when on default URL or error
 
-- `Sources/Models/PortDetector.swift` (new) - polling logic, lsof parsing
-- `Sources/Views/EnvironmentTabView.swift` - trigger detection when run starts
-- `Sources/Views/TerminalContainerView.swift` - receive detected port, update browser
-- `Sources/Views/BrowserView.swift` - accept port navigation from outside
+## File changes
 
-### Complexity estimate
+| File | Change |
+|------|--------|
+| `project.yml` | New `ff-run` executable target |
+| `Sources/Launcher/` | New directory for ff-run source |
+| `Sources/Models/PortDetector.swift` | App-side state file reader |
+| `Sources/Views/EnvironmentTabView.swift` | Build ff-run command |
+| `Sources/Views/TerminalContainerView.swift` | Store detected port |
+| `Sources/Views/BrowserView.swift` | Accept retarget requests |
+| `Tests/` | Port selection rules, retarget policy |
 
-- v1 (lsof polling): ~1 day
-- v2 (libproc native): ~2 days (needs PID tracking infrastructure)
+## Open questions
 
-### Open questions
+1. **Should ff-run be a separate executable target or a script?**
+   Decision: executable. Shell signal forwarding is fragile, and
+   libproc inspection requires Swift/C.
 
-- Should we auto-open a browser tab when a port is detected, or just update an existing one?
-- What if multiple ports are detected (e.g., API server + frontend)?
-- Should the detected port override `FF_PORT` or be shown alongside it?
-- How do we handle the case where the server takes a few seconds to start listening?
+2. **State file polling vs FSEvents watching?**
+   Polling is simpler for v1. FSEvents could replace it later.
+
+3. **What happens if ff-run crashes?**
+   State file has `startedAt` timestamp. App ignores entries with
+   stale PIDs (check `kill(pid, 0)` before trusting the file).
+
+4. **Should the user be able to disable port detection?**
+   Not in v1. The feature is passive (only retargets default URLs).
+   Add a setting later if users complain.
+
+5. **Timeout?**
+   Stop polling after 60 seconds with no new ports. The launcher
+   keeps running but stops writing state updates.
+
+## Effort estimate
+
+- Launcher binary (process management, libproc, state file): 1-2 days
+- App integration (state reader, browser retarget): 1 day
+- Testing: half day
+- **Total: ~3 days**
