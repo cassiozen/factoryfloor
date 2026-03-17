@@ -1,117 +1,33 @@
 # TODO
 
-## New stuff
+## Active
 
-- [ ] Make routines in Coding Agent (launching), and environment (setup and run (run after setup has completed only)) happen in the background when a new workspace is created (while you land in the info view)
-- [x] Footer: single line "Built by David Poblador i Garcia · All Tuner Labs"
-- [x] Sponsor link in website footer (♥ Sponsor)
+- [ ] Background launch: start Coding Agent and environment scripts while Info tab is visible
+- [ ] Localize remaining hardcoded strings (EnvironmentTabView, tab labels, context menus, CLI install, HelpView credits)
 
-## Security
+## Website
 
-- [x] Pin third-party CI actions to commit SHAs (supply chain protection)
-- [x] CI notarization: use keychain profile instead of passing Apple password as CLI arg
-- [x] Scope CI permissions per job (release-please: contents+PRs, build: contents only)
-- [x] GitOperations.sanitize: strip leading `-` to prevent git flag injection
-- [x] .env symlink: validate source is a regular file, not itself a symlink to sensitive data
-- [x] Remove website/node_modules from repo, add to .gitignore, install via bun in CI
-
-## Bugs
-
-- [x] BrowserView: "Press Cmd+Shift+B to retry" hint is wrong (removed misleading hint and dead notification)
-- [x] Settings/Help persisted as selection: app reopens to Settings if quit while in Settings (fixed)
-- [x] Detached HEAD inconsistency: normalize "HEAD" to nil so all views show "detached"
-- [x] Path collision: worktree names differing only by `/` vs `-` (now uses `--` for `/`)
-- [x] Surface cleanup in removeWorkstreamSurfaces (now iterates until no more matches instead of hard cap)
-
-## UX
-
-- [x] Show error feedback when worktree creation fails (alert instead of silent broken workstream)
-- [x] Show install prompt when Claude CLI is not found (instead of plain shell)
-- [x] Setup/run scripts: visible in Environment tab with split terminals and re-execute buttons
-- [x] Execute the `run` script from .factoryfloor.json (Environment tab, right pane)
-- [x] Notify user when a project directory is removed from disk (alert with project names)
-- [x] Onboarding: prerequisites with live status, getting started steps, key concepts
-- [x] Show error dialog when ghostty_init fails (NSAlert instead of fatalError)
-- [x] ToolRow: text already shown alongside color dot (no change needed)
-- [x] Add copy-branch-name button alongside copy-path in workstream info header
-- [x] Footer: single line "Built by David Poblador i Garcia · All Tuner Labs"
-- [x] Sponsor link in website footer (♥ Sponsor)
-
-## Accessibility
-
-- [x] Add accessibilityLabel/accessibilityHint to all interactive elements
-- [x] Make hover-only actions (archive, delete, add) visible via opacity when not hovered
-- [x] Restore focus rings on .buttonStyle(.plain) buttons (.borderless) for keyboard navigation
-
-## Code Quality
-
-- [x] Extract duplicated abbreviatePath into a shared String extension (PathUtilities.swift)
-- [x] Remove duplicated performArchive logic between ContentView and ProjectSidebar
-- [x] bleedingEdge setting: intentionally kept for future auto-update (Sparkle) channel selection
-- [x] Remove dead retryBrowser notification (declared and observed but never posted)
-- [x] ToolStatus.detect: remove misleading async signature (contains no await)
-- [x] Localization: add missing strings for Settings sections, HelpView, BrowserView error UI, ProjectOverviewView
-- [x] Remove stale unused keys from Localizable.strings files (already cleaned)
-- [x] surfaceRegistry thread safety: action_cb runs on main thread, deinit removal dispatched to main
-- [x] Fix derivedUUID misleading comment (says SHA-256 but uses simple byte folding)
-- [x] Cache claudeCommand computed property (builds CommandBuilder on every render)
-- [x] Consolidate polling timers (PR refresh moved to AppEnvironment, single 15s timer)
-- [x] Parallelize refreshPathValidity git calls (TaskGroup)
-
-## Round 2 Audit
-
-### Security
-- [x] TmuxSession.wrapCommand: shell-escape command via sh -c wrapper
-- [x] TerminalView.deinit: remove from surfaceRegistry before freeing (Thread.isMainThread guard)
-- [x] FilePersistence.writeAtomically: propagate errors (now throws, callers log warnings)
-
-### Bugs
-- [x] removeWorkstreamSurfaces: now covers all prefixes (terminal, browser, env-setup, env-run) with 0-99 range
-- [x] NSEvent.addLocalMonitorForEvents: guard against duplicate installation
-- [x] cachedClaudeCommand: workstreamName change now tracked in onChange
-
-### UX
-- [x] HelpView: add Cmd+E (Environment), update README.md and CLAUDE.md
-- [x] Align Claude Code install URL (docs.anthropic.com canonical)
-- [x] Remove dead focusExclusively method
-- [x] EnvironmentTabView: mention all config formats in instructions
-- [x] Worktree error message: mention branch conflicts and merge/rebase
-- [x] "Projects Removed" alert: softened to "Projects Not Found", comma-separated list
-- [x] OnboardingView: gh auth login hint added
-- [x] Silent failure when adding workstream to non-git directory (alert added)
-- [ ] Localize EnvironmentTabView strings, context menu strings, "detached", tooltip strings
-
-## Round 3 Audit
-
-### Website (Critical)
-- [x] Fix hreflang x-default to point to English version
-- [x] Add privacy policy link to footer
-- [x] Fix sponsor link in footer to use localized path
-
-### Website (Other)
-- [ ] Fix homepage title for SEO ("Home - Factory Floor" is weak)
-- [x] Fix meta description to use per-page description instead of global
-- [x] Fix Swedish typo in sv.toml: "renamnger" → "namnger"
+- [x] Fix homepage title for SEO (now "Factory Floor - AI-powered development workspace for macOS")
 - [ ] Remove or fix dead _index.md content (layout never renders it, contains wrong shortcuts)
 - [ ] Take app screenshots for the website (workspace view, sidebar, terminal, environment tab)
 
-### Code Quality
+## Code Quality
+
 - [ ] Cache projectIndex/workstreamIndex in ProjectSidebar (rebuild on every render)
-- [ ] Remove redundant appEnv.objectWillChange handler for cachedClaudeCommand (already covered by onChange)
-- [ ] Move derivedUUID from TerminalContainerView to a utility file
+- [x] Move derivedUUID to PathUtilities.swift
 - [ ] Move retroactive String/UUID Identifiable conformances from ProjectSidebar to extensions file
+- [ ] FilePersistence: drop redundant .atomic on temp write (outer replaceItemAt provides atomicity)
 
 ## Future
 
 - [ ] Ensure docs/distribution.md is up to date with current CI, signing, Homebrew, and release workflow
 - [ ] Document version release routine: step-by-step process for cutting a release, what release-please does, manual steps needed, how to verify
-- [ ] Plan distribution and auto-update strategy: compare Mac App Store vs Homebrew vs direct DMG vs Sparkle; document tradeoffs for code signing, sandboxing, update mechanisms, and user experience (Homebrew is a must regardless)
+- [ ] Plan distribution and auto-update strategy: compare Mac App Store vs Homebrew vs direct DMG vs Sparkle; document tradeoffs (Homebrew is a must regardless)
 - [ ] Swift 6 migration (strict concurrency)
 - [ ] External Chrome integration: launch with --remote-debugging-port for WebMCP/CDP
 - [ ] PR management: create and manage PRs from workstreams (currently view-only)
 - [ ] Auto-update mechanism (Sparkle or similar)
 - [ ] Crash reporting
-- [x] Move persistence from UserDefaults to JSON files (~/.config/factoryfloor/) with auto-migration
 - [ ] Horizontal terminal splits within a tab (ghostty C API supports splits via action_cb, but surface lifecycle needs investigation)
 - [ ] Preload Coding Agent terminal in background so it's ready when the user switches from Info tab
 - [ ] Drag-and-drop to reorder tabs
@@ -119,7 +35,6 @@
 - [ ] Pin ghostty submodule update to CI (auto-test against new Ghostty releases)
 - [ ] Occlude non-visible terminal surfaces to save GPU (needs careful timing)
 - [ ] System notifications when agent needs attention (bell/urgency from Ghostty)
-- [x] OG image: branded banner with app name, logo, and Poblenou skyline
 - [ ] Restore full app state on launch (active tab within workstream; sidebar selection and expanded state already persisted)
 
 ## Done
@@ -134,39 +49,39 @@
 - [x] Auto-rename branch via --append-system-prompt
 - [x] Per-workstream permission mode (bypass prompts, context menu on +)
 - [x] Agent Teams setting (CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS)
-- [x] Deterministic port allocation per workstream (FF_PORT env var)
-- [x] Dynamic workspace tabs (Info + Agent always, Terminal/Browser on demand)
+- [x] Deterministic port allocation per workstream (FF_PORT env var, DJB2 hash)
+- [x] Dynamic workspace tabs (Info + Agent + Environment, Terminal/Browser on demand)
 - [x] Terminal tabs auto-close on shell exit, agent respawns
 - [x] Multi-terminal support with proper Ghostty focus management
 - [x] Embedded WKWebView browser with nav bar, loading indicator
 - [x] Cmd+L address bar focus, auto-focus on new browser
 - [x] PR badge in workspace toolbar (links to GitHub PR)
-- [x] Info tab with README.md, CLAUDE.md, AGENTS.md (pinned header, scrollable docs)
+- [x] Info tab with README.md, CLAUDE.md, AGENTS.md (cmark-gfm WKWebView renderer with full HTML support)
 - [x] GitHub integration: repo info, open PRs, branch PR status (via gh CLI)
-- [x] Keyboard shortcuts: Cmd+Return (agent), Cmd+I (info), Cmd+T (terminal), Cmd+B (browser), Cmd+W (close tab), Cmd+1-9 (switch tabs), Ctrl+1-9 (switch workstreams), Cmd+Shift+[/] (cycle), Cmd+/ (help)
+- [x] Keyboard shortcuts: Cmd+Return (agent), Cmd+I (info), Cmd+E (environment), Cmd+T (terminal), Cmd+B (browser), Cmd+W (close tab), Cmd+1-9 (switch tabs), Ctrl+1-9 (switch workstreams), Cmd+Shift+[/] (cycle), Cmd+/ (help)
 - [x] Cmd+Shift+O external browser, Cmd+Shift+E external terminal
 - [x] Ctrl+Cmd+S sidebar toggle, Esc closes settings/help
 - [x] Cmd+W closes tab (overrides macOS window close)
 - [x] Help view with app icon, skyline, shortcuts, credits, sponsor link
 - [x] Settings: environment, CLI install, tmux, bypass, teams, auto-rename, appearance, language, base dir, branch prefix, external apps (with icons), bleeding edge, danger zone
 - [x] Project overview with editable name, centered header, directory with copy/terminal icons, git info, GitHub info, worktree list with prune
-- [x] Workstream info with pinned header (project name, workstream name, branch, directory), PR status, scripts, scrollable docs
+- [x] Workstream info with pinned header (project name, workstream name, branch, directory, copy branch), PR status, scripts, scrollable docs
 - [x] Drag-and-drop directories to sidebar
 - [x] factoryfloor:// URL scheme for single-instance behavior
-- [x] CLI launcher (ff) with install from Settings
+- [x] CLI launcher (ff) with install from Settings, sponsor message
 - [x] Auto-generated workstream names (operation-adjective-component)
 - [x] Workstream name syncs from branch rename (every 15s)
 - [x] Sidebar state persisted across restarts (selection + expanded)
-- [x] Async git repo info, path validity, branch names with periodic refresh
-- [x] Auto-remove projects with missing directories
+- [x] Async git repo info, path validity, branch names with periodic refresh (parallelized via TaskGroup)
+- [x] Auto-remove projects with missing directories (with user notification)
 - [x] Worktree path validation with visual feedback
 - [x] Archive warning for uncommitted changes
 - [x] Workstream sorting in project view (recent / A-Z)
 - [x] Sidebar branch names per workstream
 - [x] Sidebar credit line with sponsor link
-- [x] Localization: en, ca, es, sv (all strings translated)
+- [x] Localization: en, ca, es, sv (all strings translated, native-quality website copy)
 - [x] Script config: .factoryfloor.json with fallback to emdash/conductor/superset
-- [x] Setup script runs in background on workstream creation
+- [x] Environment tab: split-pane setup/run terminals with re-execute buttons
 - [x] Teardown script runs before worktree removal on archive
 - [x] CommandBuilder with proper shell quoting (25 tests)
 - [x] App icon with Poblenou skyline
@@ -176,20 +91,22 @@
 - [x] Code signing and notarization (scripts/release.sh)
 - [x] Release-please for automated versioning
 - [x] MIT license
-- [x] README with marketing-first layout
-- [x] Website: Hugo + Tailwind, i18n (4 languages), language switcher, skyline, sponsor page, open source section, Umami analytics, canonical/hreflang SEO
+- [x] README with marketing-first layout, credits, support section
+- [x] Website: Hugo + Tailwind, i18n (4 languages), language switcher, skyline, sponsor page, open source section, Umami analytics, canonical/hreflang SEO, privacy policy, favicon, OG image
 - [x] GitHub Pages deploy workflow
 - [x] GitHub repo (alltuner/factoryfloor, public, topics, description)
 - [x] Distribution guide (docs/distribution.md)
 - [x] Debug builds: different icon and bundle ID so debug/release can run in parallel
-- [x] Markdown info view: cmark-gfm WKWebView renderer with full HTML support
-- [x] Confirm before quit (Cmd+Q) when workstreams are active
+- [x] Confirm before quit (Cmd+Q) with setting to disable
 - [x] Browser tab: show page title in tab label
 - [x] Terminal tab: show running command in tab label (via ghostty SET_TITLE action)
 - [x] Homebrew tap (alltuner/homebrew-tap) and cask formula
-- [x] CI: automate build, sign, notarize, DMG, and release upload via GitHub Actions
+- [x] CI: automate build, sign, notarize, DMG, upload, Homebrew cask update (per-job permissions, keychain profile)
 - [x] CONTRIBUTING.md, CODE_OF_CONDUCT.md
 - [x] Funding: Buy Me a Coffee, GitHub Sponsors (website + FUNDING.yml + CLI message)
-- [x] Website: legal/privacy policy page (4 languages)
-- [x] Workstream navigation shortcuts (Ctrl+1-9, Cmd+Shift+[/] cycling)
-- [x] Security: disable JS in markdown WKWebView, restrict browser to http/https, fix AppleScript injection, fix PortAllocator hash stability, fix CI checkout version, fix CLI install path quoting
+- [x] Onboarding view with prerequisites, getting started, key concepts
+- [x] Move persistence from UserDefaults to JSON files (~/.config/factoryfloor/) with auto-migration
+- [x] Security: disable JS in markdown WKWebView, restrict browser to http/https, fix AppleScript injection, fix PortAllocator hash stability, shell-escape tmux commands, deinit race fix, git flag injection, .env symlink validation
+- [x] Accessibility: labels on all interactive elements, focus rings (.borderless), hover-only actions visible via opacity
+- [x] Code quality: deduplicated abbreviatePath, performArchive, dead code removal, parallelized git calls, cached claudeCommand, consolidated polling timers, FilePersistence error propagation
+- [x] Error feedback: worktree creation, non-git directory, ghostty init, project removal notification, Claude not found banner
