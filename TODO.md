@@ -13,7 +13,7 @@
 
 ## Code Quality
 
-- [ ] Cache projectIndex/workstreamIndex in ProjectSidebar (rebuild on every render)
+- [x] Cache projectIndex/workstreamIndex in ProjectSidebar
 - [x] Move derivedUUID to PathUtilities.swift
 - [x] Move retroactive String/UUID Identifiable conformances to PathUtilities
 - [x] FilePersistence: drop redundant .atomic on temp write
