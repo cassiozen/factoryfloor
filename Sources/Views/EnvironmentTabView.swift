@@ -28,7 +28,7 @@ struct EnvironmentTabView: View {
     var body: some View {
         HSplitView {
             scriptPane(
-                title: "Setup",
+                title: NSLocalizedString("Setup", comment: ""),
                 icon: "hammer",
                 script: scriptConfig.setup,
                 surfaceID: setupID,
@@ -37,7 +37,7 @@ struct EnvironmentTabView: View {
             )
 
             scriptPane(
-                title: "Run",
+                title: NSLocalizedString("Run", comment: ""),
                 icon: "play",
                 script: scriptConfig.run,
                 surfaceID: runID,
@@ -74,8 +74,8 @@ struct EnvironmentTabView: View {
                             .font(.system(size: 11))
                     }
                     .buttonStyle(.borderless)
-                    .help("Restart \(title.lowercased()) script")
-                    .accessibilityLabel("Restart \(title.lowercased()) script")
+                    .help(String(format: NSLocalizedString("Restart %@ script", comment: ""), title.lowercased()))
+                    .accessibilityLabel(String(format: NSLocalizedString("Restart %@ script", comment: ""), title.lowercased()))
                 }
             }
             .padding(.horizontal, 10)
@@ -105,10 +105,10 @@ struct EnvironmentTabView: View {
             Image(systemName: "doc.text")
                 .font(.system(size: 28))
                 .foregroundStyle(.tertiary)
-            Text("No \(title.lowercased()) script configured")
+            Text(String(format: NSLocalizedString("No %@ script configured", comment: ""), title.lowercased()))
                 .font(.system(size: 13))
                 .foregroundStyle(.secondary)
-            Text("Add a \(title.lowercased()) field to .factoryfloor.json:")
+            Text(String(format: NSLocalizedString("Add a %@ field to .factoryfloor.json:", comment: ""), title.lowercased()))
                 .font(.system(size: 11))
                 .foregroundStyle(.tertiary)
             Text("{ \"\(title.lowercased())\": \"your-command\" }")

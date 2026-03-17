@@ -182,3 +182,43 @@
 /* Initialization errors */
 "Factory Floor cannot start" = "Factory Floor no pot iniciar-se";
 "The terminal engine (Ghostty) failed to initialize. This may indicate a system compatibility issue." = "El motor de terminal (Ghostty) no s'ha pogut inicialitzar. Això pot indicar un problema de compatibilitat del sistema.";
+
+/* EnvironmentTabView */
+"Setup" = "Configuració inicial";
+"Run" = "Execució";
+"Restart %@ script" = "Reinicia l'script de %@";
+"No %@ script configured" = "No hi ha cap script de %@ configurat";
+"Add a %@ field to .factoryfloor.json:" = "Afegeix un camp %@ a .factoryfloor.json:";
+"Also picks up scripts from .emdash.json, conductor.json, and .superset/config.json." = "També detecta scripts de .emdash.json, conductor.json i .superset/config.json.";
+
+/* Tab labels */
+"Info" = "Informació";
+"Agent" = "Agent";
+
+/* ProjectSidebar - context menu */
+"New workstream (full permissions)" = "Nou flux de treball (permisos complets)";
+"New workstream (with prompts)" = "Nou flux de treball (amb confirmació)";
+
+/* AddProjectChoiceSheet */
+"Existing Directory" = "Directori existent";
+"Create a new directory in the base directory" = "Crea un nou directori al directori base";
+"Select an existing directory from disk" = "Selecciona un directori existent del disc";
+
+/* NewProjectSheet */
+"(change in Settings)" = "(canvia a Configuració)";
+"Create" = "Crea";
+
+/* Settings - CLI install */
+"Install '%@' command" = "Instal·la la comanda '%@'";
+"The '%@' command is installed and ready to use." = "La comanda '%@' està instal·lada i llesta per utilitzar.";
+"Install the '%@' command to open directories in %@ from any terminal." = "Instal·la la comanda '%@' per obrir directoris a %@ des de qualsevol terminal.";
+
+/* HelpView - credits */
+"Version %@" = "Versió %@";
+"Made with " = "Fet amb ";
+" in Poblenou, Barcelona" = " a Poblenou, Barcelona";
+"Built by David Poblador i Garcia" = "Creat per David Poblador i Garcia";
+"with the support of" = "amb el suport de";
+"by " = "per ";
+"Help " = "Ajuda a ";
+" the development." = "el desenvolupament.";

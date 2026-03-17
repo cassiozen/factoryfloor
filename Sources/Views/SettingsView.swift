@@ -66,13 +66,13 @@ struct SettingsView: View {
                     .disabled(appEnv.isDetecting)
                 }
 
-                LabeledContent("Install '\(Self.cliName)' command") {
+                LabeledContent(String(format: NSLocalizedString("Install '%@' command", comment: ""), Self.cliName)) {
                     Button(cliInstalled ? "Installed" : "Install...", action: installCLI)
                         .disabled(cliInstalled)
                 }
                 Text(cliInstalled
-                    ? "The '\(Self.cliName)' command is installed and ready to use."
-                    : "Install the '\(Self.cliName)' command to open directories in \(AppConstants.appName) from any terminal.")
+                    ? String(format: NSLocalizedString("The '%@' command is installed and ready to use.", comment: ""), Self.cliName)
+                    : String(format: NSLocalizedString("Install the '%@' command to open directories in %@ from any terminal.", comment: ""), Self.cliName, AppConstants.appName))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

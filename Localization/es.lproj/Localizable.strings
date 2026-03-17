@@ -182,3 +182,43 @@
 /* Initialization errors */
 "Factory Floor cannot start" = "Factory Floor no puede iniciarse";
 "The terminal engine (Ghostty) failed to initialize. This may indicate a system compatibility issue." = "El motor de terminal (Ghostty) no se pudo inicializar. Esto puede indicar un problema de compatibilidad del sistema.";
+
+/* EnvironmentTabView */
+"Setup" = "Configuración inicial";
+"Run" = "Ejecución";
+"Restart %@ script" = "Reiniciar script de %@";
+"No %@ script configured" = "No hay ningún script de %@ configurado";
+"Add a %@ field to .factoryfloor.json:" = "Añade un campo %@ a .factoryfloor.json:";
+"Also picks up scripts from .emdash.json, conductor.json, and .superset/config.json." = "También detecta scripts de .emdash.json, conductor.json y .superset/config.json.";
+
+/* Tab labels */
+"Info" = "Información";
+"Agent" = "Agente";
+
+/* ProjectSidebar - context menu */
+"New workstream (full permissions)" = "Nuevo flujo de trabajo (permisos completos)";
+"New workstream (with prompts)" = "Nuevo flujo de trabajo (con confirmación)";
+
+/* AddProjectChoiceSheet */
+"Existing Directory" = "Directorio existente";
+"Create a new directory in the base directory" = "Crea un nuevo directorio en el directorio base";
+"Select an existing directory from disk" = "Selecciona un directorio existente del disco";
+
+/* NewProjectSheet */
+"(change in Settings)" = "(cambiar en Ajustes)";
+"Create" = "Crear";
+
+/* Settings - CLI install */
+"Install '%@' command" = "Instalar comando '%@'";
+"The '%@' command is installed and ready to use." = "El comando '%@' está instalado y listo para usar.";
+"Install the '%@' command to open directories in %@ from any terminal." = "Instala el comando '%@' para abrir directorios en %@ desde cualquier terminal.";
+
+/* HelpView - credits */
+"Version %@" = "Versión %@";
+"Made with " = "Hecho con ";
+" in Poblenou, Barcelona" = " en Poblenou, Barcelona";
+"Built by David Poblador i Garcia" = "Creado por David Poblador i Garcia";
+"with the support of" = "con el apoyo de";
+"by " = "por ";
+"Help " = "Ayuda a ";
+" the development." = "el desarrollo.";

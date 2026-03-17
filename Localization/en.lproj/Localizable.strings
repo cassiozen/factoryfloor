@@ -182,3 +182,43 @@
 /* Initialization errors */
 "Factory Floor cannot start" = "Factory Floor cannot start";
 "The terminal engine (Ghostty) failed to initialize. This may indicate a system compatibility issue." = "The terminal engine (Ghostty) failed to initialize. This may indicate a system compatibility issue.";
+
+/* EnvironmentTabView */
+"Setup" = "Setup";
+"Run" = "Run";
+"Restart %@ script" = "Restart %@ script";
+"No %@ script configured" = "No %@ script configured";
+"Add a %@ field to .factoryfloor.json:" = "Add a %@ field to .factoryfloor.json:";
+"Also picks up scripts from .emdash.json, conductor.json, and .superset/config.json." = "Also picks up scripts from .emdash.json, conductor.json, and .superset/config.json.";
+
+/* Tab labels */
+"Info" = "Info";
+"Agent" = "Agent";
+
+/* ProjectSidebar - context menu */
+"New workstream (full permissions)" = "New workstream (full permissions)";
+"New workstream (with prompts)" = "New workstream (with prompts)";
+
+/* AddProjectChoiceSheet */
+"Existing Directory" = "Existing Directory";
+"Create a new directory in the base directory" = "Create a new directory in the base directory";
+"Select an existing directory from disk" = "Select an existing directory from disk";
+
+/* NewProjectSheet */
+"(change in Settings)" = "(change in Settings)";
+"Create" = "Create";
+
+/* Settings - CLI install */
+"Install '%@' command" = "Install '%@' command";
+"The '%@' command is installed and ready to use." = "The '%@' command is installed and ready to use.";
+"Install the '%@' command to open directories in %@ from any terminal." = "Install the '%@' command to open directories in %@ from any terminal.";
+
+/* HelpView - credits */
+"Version %@" = "Version %@";
+"Made with " = "Made with ";
+" in Poblenou, Barcelona" = " in Poblenou, Barcelona";
+"Built by David Poblador i Garcia" = "Built by David Poblador i Garcia";
+"with the support of" = "with the support of";
+"by " = "by ";
+"Help " = "Help ";
+" the development." = " the development.";

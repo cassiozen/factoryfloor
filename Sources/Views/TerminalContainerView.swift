@@ -57,6 +57,17 @@ struct TerminalContainerView: View {
 
     private var claudeID: UUID { workstreamID }
 
+    /// Surface IDs that should be rendering for the active tab.
+    /// Returns nil for the environment tab (env surface IDs are managed internally).
+    private var visibleSurfaceIDs: Set<UUID>? {
+        switch activeTab {
+        case .agent: return [claudeID]
+        case .terminal(let id): return [id]
+        case .info, .browser: return []
+        case .environment: return nil
+        }
+    }
+
     private var useTmux: Bool {
         tmuxMode && appEnv.toolStatus.tmux.isInstalled
     }
@@ -121,8 +132,8 @@ struct TerminalContainerView: View {
 
             Spacer()
 
-            AddTabButton(label: "Terminal", icon: "terminal", shortcut: "T", action: addTerminal)
-            AddTabButton(label: "Browser", icon: "globe", shortcut: "B", action: addBrowser)
+            AddTabButton(label: NSLocalizedString("Terminal", comment: ""), icon: "terminal", shortcut: "T", action: addTerminal)
+            AddTabButton(label: NSLocalizedString("Browser", comment: ""), icon: "globe", shortcut: "B", action: addBrowser)
 
             if let pr = branchPR, let url = URL(string: pr.url) {
                 Button(action: { NSWorkspace.shared.open(url) }) {
@@ -221,6 +232,10 @@ struct TerminalContainerView: View {
                 tabs.insert(.environment, at: 2)
             }
             preloadSurfaces()
+            surfaceCache.updateOcclusion(visibleSurfaceIDs: visibleSurfaceIDs)
+        }
+        .onChange(of: activeTab) { _ in
+            surfaceCache.updateOcclusion(visibleSurfaceIDs: visibleSurfaceIDs)
         }
         .onChange(of: tmuxMode) { _ in cachedClaudeCommand = buildClaudeCommand() }
         .onChange(of: bypassPermissions) { _ in cachedClaudeCommand = buildClaudeCommand() }
@@ -583,6 +598,15 @@ final class TerminalSurfaceCache: ObservableObject {
         ) { [weak self] notification in
             guard let self, let closedView = notification.object as? TerminalView else { return }
             self.handleSurfaceClosed(closedView)
+        }
+    }
+
+    /// Marks surfaces in the given set as visible; all others are occluded.
+    /// Pass nil to mark all surfaces as visible.
+    func updateOcclusion(visibleSurfaceIDs: Set<UUID>?) {
+        for (id, view) in surfaces {
+            let visible = visibleSurfaceIDs.map { $0.contains(id) } ?? true
+            view.setVisible(visible)
         }
     }
 
