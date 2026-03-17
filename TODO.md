@@ -21,13 +21,15 @@
 
 - [x] Show error feedback when worktree creation fails (alert instead of silent broken workstream)
 - [x] Show install prompt when Claude CLI is not found (instead of plain shell)
-- [ ] Setup script: log output or show status instead of routing to /dev/null and ignoring exit code
+- [x] Setup/run scripts: visible in Environment tab with split terminals and re-execute buttons
+- [x] Execute the `run` script from .factoryfloor.json (Environment tab, right pane)
 - [x] Notify user when a project directory is removed from disk (alert with project names)
 - [x] Onboarding: prerequisites with live status, getting started steps, key concepts
-- [ ] Execute the `run` script from .factoryfloor.json (currently loaded and displayed but never run)
 - [x] Show error dialog when ghostty_init fails (NSAlert instead of fatalError)
 - [x] ToolRow: text already shown alongside color dot (no change needed)
 - [x] Add copy-branch-name button alongside copy-path in workstream info header
+- [ ] the footer "Built by David Poblador i Garcia with the support of All Tuner Labs" should be in one line, but perhaps with a shorter wording
+- [ ] the website needs a prominent link somewhere to the sponsor page to support the development
 
 ## Accessibility
 

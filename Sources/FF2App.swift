@@ -134,6 +134,11 @@ struct FF2App: App {
                 }
                 .keyboardShortcut("i", modifiers: .command)
 
+                Button("Environment") {
+                    NotificationCenter.default.post(name: .toggleEnvironment, object: nil)
+                }
+                .keyboardShortcut("e", modifiers: .command)
+
                 Button("Toggle Terminal") {
                     NotificationCenter.default.post(name: .toggleTerminal, object: nil)
                 }

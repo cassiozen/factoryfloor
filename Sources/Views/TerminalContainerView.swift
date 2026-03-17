@@ -12,6 +12,7 @@ extension Notification.Name {
     static let closeTerminal = Notification.Name("factoryfloor.closeTerminal")
     static let nextTab = Notification.Name("factoryfloor.nextTab")
     static let prevTab = Notification.Name("factoryfloor.prevTab")
+    static let toggleEnvironment = Notification.Name("factoryfloor.toggleEnvironment")
     static let terminalTitleChanged = Notification.Name("factoryfloor.terminalTitleChanged")
 }
 
@@ -38,12 +39,13 @@ func derivedUUID(from base: UUID, salt: String) -> UUID {
 enum WorkspaceTab: Hashable {
     case info
     case agent
+    case environment
     case terminal(UUID)
     case browser(UUID)
 
     var isCloseable: Bool {
         switch self {
-        case .info, .agent: return false
+        case .info, .agent, .environment: return false
         case .terminal, .browser: return true
         }
     }
@@ -121,133 +123,145 @@ struct TerminalContainerView: View {
         return cmd
     }
 
-    var body: some View {
-        VStack(spacing: 0) {
-            // Tab bar
-            HStack(spacing: 0) {
-                ForEach(Array(tabs.enumerated()), id: \.element) { index, tab in
-                    let customIndex = index - 2 // skip Info and Agent
-                    WorkspaceTabButton(
-                        tab: tab,
-                        label: tabLabel(tab),
-                        icon: tabIcon(tab),
-                        shortcut: tabShortcut(tab) ?? (customIndex >= 0 && customIndex < 9 ? "\(customIndex + 1)" : nil),
-                        isActive: activeTab == tab,
-                        onSelect: { activeTab = tab },
-                        onClose: tab.isCloseable ? { closeTab(tab) } : nil
-                    )
-                }
-
-                Spacer()
-
-                // Add buttons
-                AddTabButton(label: "Terminal", icon: "terminal", shortcut: "T", action: addTerminal)
-                AddTabButton(label: "Browser", icon: "globe", shortcut: "B", action: addBrowser)
-
-                // PR badge
-                if let pr = branchPR, let url = URL(string: pr.url) {
-                    Button(action: { NSWorkspace.shared.open(url) }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "arrow.triangle.pull")
-                                .font(.system(size: 11))
-                            Text("#\(pr.number)")
-                                .font(.system(size: 11, weight: .medium, design: .monospaced))
-                        }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.green.opacity(0.12))
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
-                        .foregroundStyle(.green)
-                    }
-                    .buttonStyle(.borderless)
-                    .help(pr.title)
-                    .accessibilityLabel("Pull request #\(pr.number)")
-                    .accessibilityHint(pr.title)
-                }
-            }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(.bar)
-
-            Divider()
-
-            // Content
-            switch activeTab {
-            case .info:
-                WorkstreamInfoView(
-                    workstreamName: workstreamName,
-                    workingDirectory: workingDirectory,
-                    projectName: projectName,
-                    projectDirectory: projectDirectory,
-                    scriptConfig: scriptConfig
+    private var tabBar: some View {
+        HStack(spacing: 0) {
+            ForEach(Array(tabs.enumerated()), id: \.element) { _, tab in
+                let shortcut = tabShortcut(tab) ?? closeableTabShortcut(tab)
+                WorkspaceTabButton(
+                    tab: tab,
+                    label: tabLabel(tab),
+                    icon: tabIcon(tab),
+                    shortcut: shortcut,
+                    isActive: activeTab == tab,
+                    onSelect: { activeTab = tab },
+                    onClose: tab.isCloseable ? { closeTab(tab) } : nil
                 )
-            case .agent:
-                if appEnv.toolStatus.claude.path == nil {
-                    VStack(spacing: 16) {
-                        Image(systemName: "sparkle")
-                            .font(.system(size: 40))
-                            .foregroundStyle(.tertiary)
-                        Text("Claude Code not found")
-                            .font(.title3)
-                            .foregroundStyle(.secondary)
-                        Text("Install Claude Code to use the Coding Agent.")
-                            .foregroundStyle(.tertiary)
-                        Link("Install Claude Code", destination: URL(string: "https://claude.ai/claude-code")!)
-                            .buttonStyle(.bordered)
+            }
+
+            Spacer()
+
+            AddTabButton(label: "Terminal", icon: "terminal", shortcut: "T", action: addTerminal)
+            AddTabButton(label: "Browser", icon: "globe", shortcut: "B", action: addBrowser)
+
+            if let pr = branchPR, let url = URL(string: pr.url) {
+                Button(action: { NSWorkspace.shared.open(url) }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "arrow.triangle.pull")
+                            .font(.system(size: 11))
+                        Text("#\(pr.number)")
+                            .font(.system(size: 11, weight: .medium, design: .monospaced))
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    SingleTerminalView(
-                        surfaceID: claudeID,
-                        workingDirectory: workingDirectory,
-                        command: cachedClaudeCommand,
-                        isFocused: true,
-                        environmentVars: envVars
-                    )
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.green.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                    .foregroundStyle(.green)
                 }
-            case .terminal(let id):
+                .buttonStyle(.borderless)
+                .help(pr.title)
+                .accessibilityLabel("Pull request #\(pr.number)")
+                .accessibilityHint(pr.title)
+            }
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(.bar)
+    }
+
+    @ViewBuilder
+    private var tabContent: some View {
+        switch activeTab {
+        case .info:
+            WorkstreamInfoView(
+                workstreamName: workstreamName,
+                workingDirectory: workingDirectory,
+                projectName: projectName,
+                projectDirectory: projectDirectory,
+                scriptConfig: scriptConfig
+            )
+        case .agent:
+            if appEnv.toolStatus.claude.path == nil {
+                VStack(spacing: 16) {
+                    Image(systemName: "sparkle")
+                        .font(.system(size: 40))
+                        .foregroundStyle(.tertiary)
+                    Text("Claude Code not found")
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
+                    Text("Install Claude Code to use the Coding Agent.")
+                        .foregroundStyle(.tertiary)
+                    Link("Install Claude Code", destination: URL(string: "https://claude.ai/claude-code")!)
+                        .buttonStyle(.bordered)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
                 SingleTerminalView(
-                    surfaceID: id,
+                    surfaceID: claudeID,
                     workingDirectory: workingDirectory,
+                    command: cachedClaudeCommand,
                     isFocused: true,
-                    environmentVars: terminalEnvVars
+                    environmentVars: envVars
                 )
-            case .browser(let id):
-                BrowserView(defaultURL: "http://localhost:\(workstreamPort)/", tabID: id)
-                    .id(id)
             }
+        case .environment:
+            EnvironmentTabView(
+                workstreamID: workstreamID,
+                workingDirectory: workingDirectory,
+                projectName: projectName,
+                workstreamName: workstreamName,
+                scriptConfig: scriptConfig,
+                useTmux: useTmux,
+                environmentVars: terminalEnvVars
+            )
+        case .terminal(let id):
+            SingleTerminalView(
+                surfaceID: id,
+                workingDirectory: workingDirectory,
+                isFocused: true,
+                environmentVars: terminalEnvVars
+            )
+        case .browser(let id):
+            BrowserView(defaultURL: "http://localhost:\(workstreamPort)/", tabID: id)
+                .id(id)
+        }
+    }
+
+    private var mainContent: some View {
+        VStack(spacing: 0) {
+            tabBar
+            Divider()
+            tabContent
         }
         .onAppear {
             cachedClaudeCommand = buildClaudeCommand()
             scriptConfig = ScriptConfig.load(from: projectDirectory)
             surfaceCache.respawnableIDs.insert(claudeID)
-            runSetupIfNeeded()
+            if scriptConfig.hasAnyScript && !tabs.contains(.environment) {
+                tabs.insert(.environment, at: 2)
+            }
         }
         .onChange(of: tmuxMode) { _ in cachedClaudeCommand = buildClaudeCommand() }
         .onChange(of: bypassPermissions) { _ in cachedClaudeCommand = buildClaudeCommand() }
         .onChange(of: autoRenameBranch) { _ in cachedClaudeCommand = buildClaudeCommand() }
         .onReceive(appEnv.objectWillChange) { _ in cachedClaudeCommand = buildClaudeCommand() }
-        .onReceive(NotificationCenter.default.publisher(for: .toggleInfo)) { _ in
-            activeTab = .info
+        .onReceive(NotificationCenter.default.publisher(for: .toggleInfo)) { _ in activeTab = .info }
+        .onReceive(NotificationCenter.default.publisher(for: .focusAgent)) { _ in activeTab = .agent }
+        .onReceive(NotificationCenter.default.publisher(for: .toggleEnvironment)) { _ in
+            if tabs.contains(.environment) { activeTab = .environment }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .focusAgent)) { _ in
-            activeTab = .agent
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .toggleTerminal)) { _ in
-            addTerminal()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .toggleBrowser)) { _ in
-            addBrowser()
-        }
+        .onReceive(NotificationCenter.default.publisher(for: .toggleTerminal)) { _ in addTerminal() }
+        .onReceive(NotificationCenter.default.publisher(for: .toggleBrowser)) { _ in addBrowser() }
         .onReceive(NotificationCenter.default.publisher(for: .closeTerminal)) { _ in
-            if activeTab.isCloseable {
-                closeTab(activeTab)
-            }
+            if activeTab.isCloseable { closeTab(activeTab) }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .switchByNumber)) { notification in
+    }
+
+    var body: some View {
+        mainContent
+            .onReceive(NotificationCenter.default.publisher(for: .switchByNumber)) { notification in
             guard let n = notification.object as? Int, n >= 1 else { return }
-            // Cmd+1-9 maps to custom tabs (after Info and Agent)
-            let customTabs = Array(tabs.dropFirst(2))
+            // Cmd+1-9 maps to closeable tabs (terminals and browsers)
+            let customTabs = tabs.filter(\.isCloseable)
             guard n <= customTabs.count else { return }
             activeTab = customTabs[n - 1]
         }
@@ -294,6 +308,7 @@ struct TerminalContainerView: View {
         switch tab {
         case .info: return "Info"
         case .agent: return "Agent"
+        case .environment: return "Environment"
         case .terminal(let id):
             guard let title = terminalTitles[id], !title.isEmpty else { return nil }
             return title.count > 20 ? String(title.prefix(20)) + "..." : title
@@ -307,15 +322,24 @@ struct TerminalContainerView: View {
         switch tab {
         case .info: return "info.circle"
         case .agent: return "sparkle"
+        case .environment: return "gearshape.2"
         case .terminal: return "terminal"
         case .browser: return "globe"
         }
+    }
+
+    private func closeableTabShortcut(_ tab: WorkspaceTab) -> String? {
+        guard tab.isCloseable,
+              let idx = tabs.filter(\.isCloseable).firstIndex(of: tab),
+              idx < 9 else { return nil }
+        return "\(idx + 1)"
     }
 
     private func tabShortcut(_ tab: WorkspaceTab) -> String? {
         switch tab {
         case .info: return "I"
         case .agent: return "\u{21A9}"
+        case .environment: return "E"
         default: return nil
         }
     }
@@ -347,23 +371,6 @@ struct TerminalContainerView: View {
         if activeTab == tab {
             let newIndex = min(index, tabs.count - 1)
             activeTab = tabs[newIndex]
-        }
-    }
-
-    // MARK: - Lifecycle
-
-    private func runSetupIfNeeded() {
-        guard let setup = scriptConfig.setup else { return }
-        let dir = workingDirectory
-        Task.detached {
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/bin/sh")
-            process.arguments = ["-c", setup]
-            process.currentDirectoryURL = URL(fileURLWithPath: dir)
-            process.standardOutput = FileHandle.nullDevice
-            process.standardError = FileHandle.nullDevice
-            try? process.run()
-            process.waitUntilExit()
         }
     }
 
