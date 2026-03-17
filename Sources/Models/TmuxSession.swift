@@ -16,13 +16,13 @@ enum TmuxSession {
         set -g status off
         set -g prefix None
         unbind-key -a
-        set -g mouse on
-        # Disable mouse drag for selection (let ghostty handle it)
-        unbind -n MouseDrag1Pane
+        set -g mouse off
         set -g history-limit 50000
         set -g escape-time 0
         set -g allow-passthrough on
         set -g default-terminal "xterm-256color"
+        set -ga terminal-overrides ',*:smcup@:rmcup@'
+        set -g alternate-screen off
         set -g aggressive-resize on
         set -g window-size latest
         set -g remain-on-exit on
