@@ -1,0 +1,25 @@
+Sources/Views/EditorView.swift
+  a790a78f59b17bec 22,87,89-96
+Sources/Models/TerminalPalette.swift
+  a790a78f59b17bec 1-102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "e31749dc0ec65f70a8597b44a889ce9f44f00928",
+  "prompts": {
+    "a790a78f59b17bec": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2bafe0e8-a550-4a2d-b0c0-b295f1e48ace",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 115,
+      "total_deletions": 26,
+      "accepted_lines": 112,
+      "overriden_lines": 0
+    }
+  }
+}
