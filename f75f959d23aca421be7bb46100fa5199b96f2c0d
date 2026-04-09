@@ -1,0 +1,29 @@
+Sources/Models/FileTree.swift
+  a790a78f59b17bec 1-114
+Sources/Views/FileTreeView.swift
+  a790a78f59b17bec 1-73
+Sources/Views/TerminalContainerView.swift
+  a790a78f59b17bec 282-283,620-630,632,634,675,803,916-917,920,923-925,929,933-956,1010
+Sources/Views/EditorView.swift
+  a790a78f59b17bec 1-2,9-11,13,15-16,24-37,50-58,62-88,90-91,94,101-134,137-201,204-206,220-221,223
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "f75f959d23aca421be7bb46100fa5199b96f2c0d",
+  "prompts": {
+    "a790a78f59b17bec": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2bafe0e8-a550-4a2d-b0c0-b295f1e48ace",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 417,
+      "total_deletions": 54,
+      "accepted_lines": 412,
+      "overriden_lines": 0
+    }
+  }
+}
