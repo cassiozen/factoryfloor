@@ -1,0 +1,37 @@
+Sources/Views/TerminalContainerView.swift
+  a790a78f59b17bec 22,281,514-518,528,619-622,927-962,973,1195,1203-1207
+Sources/FF2App.swift
+  a790a78f59b17bec 315-319
+Localization/de.lproj/Localizable.strings
+  a790a78f59b17bec 41-44
+Localization/ca.lproj/Localizable.strings
+  a790a78f59b17bec 41-44
+Localization/es.lproj/Localizable.strings
+  a790a78f59b17bec 41-44
+Localization/en.lproj/Localizable.strings
+  a790a78f59b17bec 41-44
+Sources/Views/EditorView.swift
+  a790a78f59b17bec 10,13,55-60,68-70,77-85
+Localization/sv.lproj/Localizable.strings
+  a790a78f59b17bec 41-44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "cde07a69c21a3cb5588601ef4ef04cecaed75e55",
+  "prompts": {
+    "a790a78f59b17bec": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2bafe0e8-a550-4a2d-b0c0-b295f1e48ace",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 111,
+      "total_deletions": 13,
+      "accepted_lines": 102,
+      "overriden_lines": 0
+    }
+  }
+}
