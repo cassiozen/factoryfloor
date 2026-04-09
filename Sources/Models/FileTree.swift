@@ -72,8 +72,8 @@ final class DirectoryWatcher: @unchecked Sendable {
 
         let flags = UInt32(
             kFSEventStreamCreateFlagUseCFTypes |
-            kFSEventStreamCreateFlagFileEvents |
-            kFSEventStreamCreateFlagNoDefer
+                kFSEventStreamCreateFlagFileEvents |
+                kFSEventStreamCreateFlagNoDefer
         )
 
         guard let stream = FSEventStreamCreate(
