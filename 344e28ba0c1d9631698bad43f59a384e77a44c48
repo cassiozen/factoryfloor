@@ -1,0 +1,27 @@
+Sources/Views/TerminalContainerView.swift
+  e2ec50815ab4521e 1092,1096-1106
+editor/index.html
+  e2ec50815ab4521e 13
+Sources/Views/MonacoEditorView.swift
+  e2ec50815ab4521e 22,52,127,147,154,200-202,220-221,237,249-250
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.7",
+  "base_commit_sha": "344e28ba0c1d9631698bad43f59a384e77a44c48",
+  "prompts": {
+    "e2ec50815ab4521e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "571ce947-8716-477d-8ff0-46a8e21be3f4",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 28,
+      "total_deletions": 11,
+      "accepted_lines": 28,
+      "overriden_lines": 0
+    }
+  }
+}
