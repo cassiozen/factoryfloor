@@ -1,0 +1,27 @@
+Sources/Views/MonacoEditorView.swift
+  ec08c447e6bc5e37 8-70,135-142,146-148,150-151,249-252
+editor/src/main.js
+  ec08c447e6bc5e37 1-4,9-37,63-96,99-100,104-110,113-117
+editor/vite.config.js
+  ec08c447e6bc5e37 8-12,18-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.7",
+  "base_commit_sha": "b1707afbe05089c2cd185535d8f966ea3d7c39e1",
+  "prompts": {
+    "ec08c447e6bc5e37": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "be72e969-22bf-4b2f-a34f-c21f1d7bf290",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 400,
+      "total_deletions": 858,
+      "accepted_lines": 2570,
+      "overriden_lines": 0
+    }
+  }
+}
