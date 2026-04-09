@@ -1,49 +1,38 @@
 // ABOUTME: Embedded code editor with a file tree sidebar for navigating the worktree.
-// ABOUTME: Supports syntax highlighting for 41+ languages via tree-sitter, file save, and dirty state tracking.
+// ABOUTME: Uses Monaco editor in a shared WKWebView via MonacoEditorBridge for syntax highlighting.
 
-import CodeEditLanguages
-import CodeEditSourceEditor
 import SwiftUI
+import WebKit
 
 struct EditorView: View {
     let workingDirectory: String
     let fileTree: [FileNode]
     let initialFilePath: String?
+    let bridge: MonacoEditorBridge
+    let modelId: String
     var onDirtyChanged: ((Bool) -> Void)?
     var onFileChanged: ((String?) -> Void)?
 
     // Current file state
     @State private var currentFilePath: String?
-    @State private var text: String = ""
-    @State private var originalText: String = ""
-    @State private var editorState = SourceEditorState()
-    @State private var language: CodeLanguage = .default
+    @State private var isDirtyState = false
     @State private var fileLoaded = false
     @State private var loadError: String?
 
-    // File tree visibility
+    /// File tree visibility
     @State private var showFileTree = true
 
     // Save confirmation for file switching
     @State private var pendingFilePath: String?
     @State private var showSaveAlert = false
 
-    private var isDirty: Bool { text != originalText }
+    private var isDirty: Bool {
+        isDirtyState
+    }
 
     private var currentFileName: String {
         guard let path = currentFilePath else { return "file" }
         return (path as NSString).lastPathComponent
-    }
-
-    private var configuration: SourceEditorConfiguration {
-        SourceEditorConfiguration(
-            appearance: .init(
-                theme: Self.terminalTheme,
-                font: .monospacedSystemFont(ofSize: 13, weight: .regular),
-                wrapLines: true
-            ),
-            peripherals: .init(showMinimap: false)
-        )
     }
 
     var body: some View {
@@ -57,12 +46,13 @@ struct EditorView: View {
                 editorToolbar
                 editorPanel
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .clipped()
             }
         }
         .onAppear {
             if let initialFilePath, currentFilePath == nil {
                 navigateToFile(initialFilePath)
+            } else if fileLoaded {
+                bridge.switchModel(modelId: modelId)
             }
         }
         .alert(
@@ -73,11 +63,13 @@ struct EditorView: View {
             isPresented: $showSaveAlert
         ) {
             Button(NSLocalizedString("Save", comment: "")) {
-                saveFile()
-                if let pending = pendingFilePath {
-                    navigateToFile(pending)
+                Task {
+                    await saveFile()
+                    if let pending = pendingFilePath {
+                        navigateToFile(pending)
+                    }
+                    pendingFilePath = nil
                 }
-                pendingFilePath = nil
             }
             Button(NSLocalizedString("Don't Save", comment: ""), role: .destructive) {
                 if let pending = pendingFilePath {
@@ -91,11 +83,11 @@ struct EditorView: View {
         } message: {
             Text("Your changes will be lost if you don't save them.")
         }
-        .onChange(of: text) {
-            onDirtyChanged?(isDirty)
+        .onChange(of: isDirtyState) {
+            onDirtyChanged?(isDirtyState)
         }
         .onReceive(NotificationCenter.default.publisher(for: .saveEditor)) { _ in
-            saveFile()
+            Task { await saveFile() }
         }
     }
 
@@ -138,9 +130,28 @@ struct EditorView: View {
 
     // MARK: - Editor Panel
 
+    /// The editor panel uses a ZStack so that MonacoEditorView is ALWAYS in the tree
+    /// once a file path is set. This keeps its view identity stable — no makeNSView
+    /// re-calls, no WKWebView reparenting, no blinking. The placeholder and error
+    /// states are overlays on top.
     @ViewBuilder
     private var editorPanel: some View {
-        if currentFilePath == nil {
+        if currentFilePath != nil {
+            ZStack {
+                MonacoEditorView(bridge: bridge)
+                if let loadError {
+                    VStack(spacing: 12) {
+                        Image(systemName: "exclamationmark.triangle")
+                            .font(.system(size: 36))
+                            .foregroundStyle(.tertiary)
+                        Text(loadError)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(.background)
+                }
+            }
+        } else {
             VStack(spacing: 12) {
                 Image(systemName: "doc.text")
                     .font(.system(size: 36))
@@ -149,26 +160,6 @@ struct EditorView: View {
                     .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if let loadError {
-            VStack(spacing: 12) {
-                Image(systemName: "exclamationmark.triangle")
-                    .font(.system(size: 36))
-                    .foregroundStyle(.tertiary)
-                Text(loadError)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if fileLoaded {
-            SourceEditor(
-                $text,
-                language: language,
-                configuration: configuration,
-                state: $editorState
-            )
-            .id(currentFilePath)
-        } else {
-            ProgressView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 
@@ -186,12 +177,10 @@ struct EditorView: View {
     }
 
     private func navigateToFile(_ relativePath: String) {
-        // Reset editor state
-        text = ""
-        originalText = ""
-        editorState = SourceEditorState()
-        fileLoaded = false
+        // Don't toggle fileLoaded — MonacoEditorView must stay in the tree.
+        // Just clear errors and update the path; loadFile() will push new content.
         loadError = nil
+        isDirtyState = false
 
         currentFilePath = relativePath
         onFileChanged?(relativePath)
@@ -205,24 +194,29 @@ struct EditorView: View {
         guard let relativePath = currentFilePath else { return }
         let fullPath = (workingDirectory as NSString).appendingPathComponent(relativePath)
         let url = URL(fileURLWithPath: fullPath)
-        language = CodeLanguage.detectLanguageFrom(url: url)
 
         do {
             let content = try String(contentsOf: url, encoding: .utf8)
-            text = content
-            originalText = content
+            let fileName = (relativePath as NSString).lastPathComponent
+            let langId = Self.monacoLanguageId(for: fileName)
+            bridge.openFile(modelId: modelId, text: content, languageId: langId)
+            bridge.setTheme(Self.monacoTheme.toJSON())
+            isDirtyState = false
             fileLoaded = true
+            loadError = nil
         } catch {
             loadError = error.localizedDescription
         }
     }
 
-    private func saveFile() {
+    private func saveFile() async {
         guard let relativePath = currentFilePath, fileLoaded, isDirty else { return }
         let fullPath = (workingDirectory as NSString).appendingPathComponent(relativePath)
+        guard let content = await bridge.getContent(modelId: modelId) else { return }
         do {
-            try text.write(toFile: fullPath, atomically: true, encoding: .utf8)
-            originalText = text
+            try content.write(toFile: fullPath, atomically: true, encoding: .utf8)
+            bridge.markClean(modelId: modelId)
+            isDirtyState = false
             onDirtyChanged?(false)
         } catch {
             loadError = error.localizedDescription
@@ -231,27 +225,61 @@ struct EditorView: View {
 
     // MARK: - Theme
 
-    private static var terminalTheme: EditorTheme {
-        guard let config = TerminalApp.shared.config else { return fallbackTheme }
-        return TerminalPalette.from(config).editorTheme
+    private static var monacoTheme: MonacoTheme {
+        guard let config = TerminalApp.shared.config else {
+            return MonacoTheme.fallback
+        }
+        return TerminalPalette.from(config).monacoTheme
     }
 
-    private static let fallbackTheme = EditorTheme(
-        text: .init(color: NSColor(red: 0.83, green: 0.84, blue: 0.86, alpha: 1)),
-        insertionPoint: .white,
-        invisibles: .init(color: NSColor(white: 0.4, alpha: 1)),
-        background: NSColor(red: 0.11, green: 0.12, blue: 0.14, alpha: 1),
-        lineHighlight: NSColor(white: 1, alpha: 0.05),
-        selection: NSColor(red: 0.24, green: 0.34, blue: 0.56, alpha: 1),
-        keywords: .init(color: NSColor(red: 0.99, green: 0.37, blue: 0.53, alpha: 1)),
-        commands: .init(color: NSColor(red: 0.67, green: 0.44, blue: 0.77, alpha: 1)),
-        types: .init(color: NSColor(red: 0.39, green: 0.72, blue: 0.64, alpha: 1)),
-        attributes: .init(color: NSColor(red: 0.93, green: 0.64, blue: 0.36, alpha: 1)),
-        variables: .init(color: NSColor(red: 0.83, green: 0.84, blue: 0.86, alpha: 1)),
-        values: .init(color: NSColor(red: 0.42, green: 0.64, blue: 0.87, alpha: 1)),
-        numbers: .init(color: NSColor(red: 0.85, green: 0.73, blue: 0.42, alpha: 1)),
-        strings: .init(color: NSColor(red: 0.64, green: 0.83, blue: 0.41, alpha: 1)),
-        characters: .init(color: NSColor(red: 0.93, green: 0.64, blue: 0.36, alpha: 1)),
-        comments: .init(color: NSColor(white: 0.45, alpha: 1), italic: true)
-    )
+    // MARK: - Language Detection
+
+    private static func monacoLanguageId(for fileName: String) -> String {
+        let ext = (fileName as NSString).pathExtension.lowercased()
+        switch ext {
+        case "swift": return "swift"
+        case "js", "mjs", "cjs": return "javascript"
+        case "ts", "mts", "cts": return "typescript"
+        case "tsx": return "typescriptreact"
+        case "jsx": return "javascriptreact"
+        case "py": return "python"
+        case "rs": return "rust"
+        case "go": return "go"
+        case "rb": return "ruby"
+        case "json": return "json"
+        case "jsonc": return "jsonc"
+        case "yaml", "yml": return "yaml"
+        case "toml": return "toml"
+        case "md", "markdown": return "markdown"
+        case "html", "htm": return "html"
+        case "css": return "css"
+        case "scss": return "scss"
+        case "less": return "less"
+        case "sh", "bash", "zsh": return "shellscript"
+        case "xml", "plist": return "xml"
+        case "sql": return "sql"
+        case "c", "h": return "c"
+        case "cpp", "cc", "cxx", "hpp": return "cpp"
+        case "m": return "objective-c"
+        case "java": return "java"
+        case "kt", "kts": return "kotlin"
+        case "php": return "php"
+        case "r": return "r"
+        case "lua": return "lua"
+        case "dart": return "dart"
+        case "dockerfile": return "dockerfile"
+        case "diff", "patch": return "diff"
+        case "ini", "cfg": return "ini"
+        case "bat", "cmd": return "bat"
+        case "ps1": return "powershell"
+        case "graphql", "gql": return "graphql"
+        default:
+            let name = fileName.lowercased()
+            switch name {
+            case "makefile", "gnumakefile": return "makefile"
+            case "dockerfile": return "dockerfile"
+            default: return "plaintext"
+            }
+        }
+    }
 }

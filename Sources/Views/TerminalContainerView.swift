@@ -279,6 +279,7 @@ struct TerminalContainerView: View {
     @State private var terminalTitles: [UUID: String] = [:]
     @State private var editorFilePaths: [UUID: String] = [:]
     @State private var editorDirtyState: [UUID: Bool] = [:]
+    @State private var editorBridge: MonacoEditorBridge?
     @State private var fileTree: [FileNode] = []
     @State private var directoryWatcher: DirectoryWatcher?
     @State private var cachedClaudeCommand: String?
@@ -617,10 +618,13 @@ struct TerminalContainerView: View {
             BrowserView(defaultURL: browserDefaultURL, tabID: id, webView: surfaceCache.webView(for: id))
                 .id(id)
         case let .editor(id):
+            // editorBridge is guaranteed non-nil here — created in addEditor()
             EditorView(
                 workingDirectory: workingDirectory,
                 fileTree: fileTree,
-                initialFilePath: editorFilePaths[id]
+                initialFilePath: editorFilePaths[id],
+                bridge: editorBridge!,
+                modelId: id.uuidString
             ) { dirty in
                 editorDirtyState[id] = dirty
             } onFileChanged: { path in
@@ -631,7 +635,6 @@ struct TerminalContainerView: View {
                 }
                 saveTabSnapshot()
             }
-            .id(id)
         }
     }
 
@@ -918,6 +921,16 @@ struct TerminalContainerView: View {
     }
 
     private func addEditor(filePath: String? = nil) {
+        // Create bridge before adding the tab — never during body evaluation
+        if editorBridge == nil {
+            let bridge = MonacoEditorBridge()
+            bridge.onContentChanged = { [self] modelId, dirty in
+                if let uuid = UUID(uuidString: modelId) {
+                    editorDirtyState[uuid] = dirty
+                }
+            }
+            editorBridge = bridge
+        }
         editorCount += 1
         let id = derivedUUID(from: workstreamID, salt: "editor-\(editorCount)")
         if let filePath {
@@ -953,6 +966,7 @@ struct TerminalContainerView: View {
             directoryWatcher?.stop()
             directoryWatcher = nil
             fileTree = []
+            editorBridge = nil
         }
     }
 
@@ -980,9 +994,19 @@ struct TerminalContainerView: View {
         let response = alert.runModal()
         switch response {
         case .alertFirstButtonReturn:
-            // Save then close
-            NotificationCenter.default.post(name: .saveEditor, object: nil)
-            forceCloseTab(tab)
+            // Save then close — async to wait for bridge.getContent()
+            Task {
+                if let bridge = editorBridge,
+                   let relativePath = editorFilePaths[id]
+                {
+                    let fullPath = (workingDirectory as NSString)
+                        .appendingPathComponent(relativePath)
+                    if let content = await bridge.getContent(modelId: id.uuidString) {
+                        try? content.write(toFile: fullPath, atomically: true, encoding: .utf8)
+                    }
+                }
+                forceCloseTab(tab)
+            }
         case .alertSecondButtonReturn:
             // Don't save, just close
             forceCloseTab(tab)
@@ -1004,6 +1028,7 @@ struct TerminalContainerView: View {
         case let .editor(id):
             editorFilePaths.removeValue(forKey: id)
             editorDirtyState.removeValue(forKey: id)
+            editorBridge?.closeModel(modelId: id.uuidString)
         default:
             break
         }

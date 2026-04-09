@@ -1,11 +1,10 @@
-// ABOUTME: Reads the Ghostty terminal palette and derives an EditorTheme that matches the terminal colors.
+// ABOUTME: Reads the Ghostty terminal palette and derives a MonacoTheme that matches the terminal colors.
 // ABOUTME: Maps ANSI palette indices to syntax token types (keywords, strings, types, etc.).
 
 import Cocoa
-import CodeEditSourceEditor
 
 /// Reads foreground, background, and the 16-color ANSI palette from a Ghostty config
-/// and maps them to an `EditorTheme` for the source editor.
+/// and maps them to a `MonacoTheme` for the source editor.
 struct TerminalPalette {
     let foreground: NSColor
     let background: NSColor
@@ -33,7 +32,7 @@ struct TerminalPalette {
         // Swift imports C fixed-size arrays as tuples; use withUnsafePointer to iterate.
         let ansiColors: [NSColor] = withUnsafePointer(to: &palette.colors) { tuplePtr in
             tuplePtr.withMemoryRebound(to: ghostty_config_color_s.self, capacity: 16) { ptr in
-                (0..<16).map { i in
+                (0 ..< 16).map { i in
                     let c = ptr[i]
                     return NSColor(
                         red: CGFloat(c.r) / 255,
@@ -62,7 +61,8 @@ struct TerminalPalette {
         )
     }
 
-    // MARK: - ANSI → EditorTheme Mapping
+    // MARK: - ANSI → MonacoTheme Mapping
+
     //
     // Index | ANSI Name      | Token
     // ------|----------------|------------------
@@ -79,24 +79,95 @@ struct TerminalPalette {
     //   selection    = palette[4] (blue) at 40% alpha
     //   lineHighlight = foreground at 5% alpha
 
-    var editorTheme: EditorTheme {
-        EditorTheme(
-            text: .init(color: foreground),
-            insertionPoint: foreground,
-            invisibles: .init(color: ansi[8]),
-            background: background,
-            lineHighlight: foreground.withAlphaComponent(0.05),
-            selection: ansi[4].withAlphaComponent(0.40),
-            keywords: .init(color: ansi[1]),
-            commands: .init(color: ansi[5]),
-            types: .init(color: ansi[6]),
-            attributes: .init(color: ansi[9]),
-            variables: .init(color: foreground),
-            values: .init(color: ansi[4]),
-            numbers: .init(color: ansi[3]),
-            strings: .init(color: ansi[2]),
-            characters: .init(color: ansi[3]),
-            comments: .init(color: ansi[8], italic: true)
+    var monacoTheme: MonacoTheme {
+        MonacoTheme(
+            base: "vs-dark",
+            rules: [
+                // Keywords (ANSI Red)
+                ["token": "keyword", "foreground": hexString(ansi[1])],
+                ["token": "keyword.control", "foreground": hexString(ansi[1])],
+                ["token": "keyword.operator", "foreground": hexString(ansi[1])],
+                ["token": "tag", "foreground": hexString(ansi[1])],
+                // Strings (ANSI Green)
+                ["token": "string", "foreground": hexString(ansi[2])],
+                ["token": "string.escape", "foreground": hexString(ansi[3])],
+                ["token": "attribute.value", "foreground": hexString(ansi[2])],
+                // Numbers (ANSI Yellow)
+                ["token": "number", "foreground": hexString(ansi[3])],
+                ["token": "number.float", "foreground": hexString(ansi[3])],
+                ["token": "number.hex", "foreground": hexString(ansi[3])],
+                // Values / Functions (ANSI Blue)
+                ["token": "variable.predefined", "foreground": hexString(ansi[4])],
+                ["token": "constant", "foreground": hexString(ansi[4])],
+                ["token": "function", "foreground": hexString(ansi[4])],
+                ["token": "function.declaration", "foreground": hexString(ansi[4])],
+                // Commands / Annotations (ANSI Magenta)
+                ["token": "annotation", "foreground": hexString(ansi[5])],
+                ["token": "decorator", "foreground": hexString(ansi[5])],
+                ["token": "metatag", "foreground": hexString(ansi[5])],
+                // Types (ANSI Cyan)
+                ["token": "type", "foreground": hexString(ansi[6])],
+                ["token": "type.identifier", "foreground": hexString(ansi[6])],
+                ["token": "class", "foreground": hexString(ansi[6])],
+                ["token": "interface", "foreground": hexString(ansi[6])],
+                ["token": "enum", "foreground": hexString(ansi[6])],
+                ["token": "struct", "foreground": hexString(ansi[6])],
+                // Comments (ANSI Bright Black, italic)
+                ["token": "comment", "foreground": hexString(ansi[8]), "fontStyle": "italic"],
+                ["token": "comment.line", "foreground": hexString(ansi[8]), "fontStyle": "italic"],
+                ["token": "comment.block", "foreground": hexString(ansi[8]), "fontStyle": "italic"],
+                // Attributes (ANSI Bright Red)
+                ["token": "attribute.name", "foreground": hexString(ansi[9])],
+                ["token": "regexp", "foreground": hexString(ansi[9])],
+                // Plain text (foreground)
+                ["token": "variable", "foreground": hexString(foreground)],
+                ["token": "delimiter", "foreground": hexString(foreground)],
+                ["token": "operator", "foreground": hexString(foreground)],
+            ],
+            colors: [
+                "editor.background": hexColorString(background),
+                "editor.foreground": hexColorString(foreground),
+                "editor.lineHighlightBackground": hexColorString(foreground, alpha: 0.05),
+                "editor.lineHighlightBorder": "#00000000",
+                "editor.selectionBackground": hexColorString(ansi[4], alpha: 0.40),
+                "editorCursor.foreground": hexColorString(foreground),
+                "editorWhitespace.foreground": hexColorString(ansi[8]),
+                "editorLineNumber.foreground": hexColorString(ansi[8]),
+                "editorLineNumber.activeForeground": hexColorString(foreground),
+                "editorIndentGuide.background1": hexColorString(ansi[8], alpha: 0.15),
+                "editorWidget.background": hexColorString(background),
+            ]
+        )
+    }
+
+    // MARK: - Hex Conversion
+
+    private func hexString(_ color: NSColor) -> String {
+        guard let c = color.usingColorSpace(.sRGB) else { return "FFFFFF" }
+        return String(
+            format: "%02X%02X%02X",
+            Int(c.redComponent * 255),
+            Int(c.greenComponent * 255),
+            Int(c.blueComponent * 255)
+        )
+    }
+
+    private func hexColorString(_ color: NSColor, alpha: CGFloat = 1.0) -> String {
+        guard let c = color.usingColorSpace(.sRGB) else { return "#FFFFFF" }
+        if alpha < 1.0 {
+            return String(
+                format: "#%02X%02X%02X%02X",
+                Int(c.redComponent * 255),
+                Int(c.greenComponent * 255),
+                Int(c.blueComponent * 255),
+                Int(alpha * 255)
+            )
+        }
+        return String(
+            format: "#%02X%02X%02X",
+            Int(c.redComponent * 255),
+            Int(c.greenComponent * 255),
+            Int(c.blueComponent * 255)
         )
     }
 }
