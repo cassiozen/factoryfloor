@@ -1,0 +1,85 @@
+Tests/TerminalSessionModeTests.swift
+  031f73f13c9f30ec 5
+project.yml
+  031f73f13c9f30ec 110-112,158-169
+Sources/Views/MonacoEditorView.swift
+  031f73f13c9f30ec 1-222
+Sources/Models/Project.swift
+  031f73f13c9f30ec 6,36,60
+Sources/FF2App.swift
+  031f73f13c9f30ec 310-319
+Sources/Models/NameGenerator.swift
+  031f73f13c9f30ec 38
+AGENTS.md
+  031f73f13c9f30ec 15,93,96-97,178-179
+Sources/Models/FileTree.swift
+  031f73f13c9f30ec 1-114
+.gitignore
+  031f73f13c9f30ec 18-21,23
+Localization/de.lproj/Localizable.strings
+  031f73f13c9f30ec 41-44,76-78
+Localization/sv.lproj/Localizable.strings
+  031f73f13c9f30ec 41-44,76-78
+Sources/Views/TerminalContainerView.swift
+  031f73f13c9f30ec 21-22,36,132,137,147,151,156,169,173,196,200,276,280-284,316,319,347,517-521,531,620-637,676-678,806-810,855-859,870,890,919-939,942,944-970,974-1019,1028-1031,1035,1049,1053,1254,1262-1266,1855
+Tests/TerminalViewTests.swift
+  031f73f13c9f30ec 6
+Tests/WorkspaceTabStateTests.swift
+  031f73f13c9f30ec 19,23,46,50,70,74,90,94,112,116,133,137
+Sources/Views/HelpView.swift
+  031f73f13c9f30ec 95-96
+editor/index.html
+  031f73f13c9f30ec 1-25
+editor/package.json
+  031f73f13c9f30ec 1-20
+Localization/es.lproj/Localizable.strings
+  031f73f13c9f30ec 41-44,76-78
+Sources/Models/PortDetector.swift
+  031f73f13c9f30ec 16
+Localization/en.lproj/Localizable.strings
+  031f73f13c9f30ec 41-44,76-78
+Sources/Models/PathUtilities.swift
+  031f73f13c9f30ec 26-28,32-34
+Sources/Models/RunState.swift
+  031f73f13c9f30ec 5,7,14,22,27,46-48,58,75-76,86-87,110-111
+Sources/Models/TerminalPalette.swift
+  031f73f13c9f30ec 1-173
+Sources/Views/PoblenouSkyline.swift
+  031f73f13c9f30ec 88
+Sources/Models/MonacoTheme.swift
+  031f73f13c9f30ec 1-79
+editor/src/main.js
+  031f73f13c9f30ec 1-155
+editor/vite.config.js
+  031f73f13c9f30ec 1-29
+scripts/dev.sh
+  031f73f13c9f30ec 16,26-32,36,40,57,61,74,77-78,83,87
+Localization/ca.lproj/Localizable.strings
+  031f73f13c9f30ec 41-44,76-78
+Sources/Views/FileTreeView.swift
+  031f73f13c9f30ec 1-73
+scripts/build-editor.sh
+  031f73f13c9f30ec 1-44
+Sources/Views/EditorView.swift
+  031f73f13c9f30ec 1-285
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.7",
+  "base_commit_sha": "f4a3157daa62822bc7b0bac78ed3f880b92331eb",
+  "prompts": {
+    "031f73f13c9f30ec": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fb2ec583-6d61-4efd-9f80-c215e81f40f3",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 6655,
+      "total_deletions": 60,
+      "accepted_lines": 6627,
+      "overriden_lines": 0
+    }
+  }
+}
