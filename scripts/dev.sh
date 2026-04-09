@@ -28,6 +28,7 @@ case "${1:-build}" in
     xcodegen generate
     xcodebuild -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
       -derivedDataPath "$BUILD_DIR" -clonedSourcePackagesDirPath "$SPM_CACHE" \
+      -skipPackagePluginValidation \
       CURRENT_PROJECT_VERSION="$BRANCH" build
     ;;
   run)
@@ -47,6 +48,7 @@ case "${1:-build}" in
     xcodegen generate
     xcodebuild -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
       -derivedDataPath "$BUILD_DIR" -clonedSourcePackagesDirPath "$SPM_CACHE" \
+      -skipPackagePluginValidation \
       CURRENT_PROJECT_VERSION="$BRANCH" build
     pkill -xf ".*/Contents/MacOS/$APP_NAME" 2>/dev/null || true
     sleep 0.5
@@ -61,7 +63,8 @@ case "${1:-build}" in
     ensure_ghostty_resources
     xcodegen generate
     xcodebuild -project "$PROJECT" -scheme "$TEST_SCHEME" -configuration Debug \
-      -derivedDataPath "$BUILD_DIR" -clonedSourcePackagesDirPath "$SPM_CACHE" test
+      -derivedDataPath "$BUILD_DIR" -clonedSourcePackagesDirPath "$SPM_CACHE" \
+      -skipPackagePluginValidation test
     ;;
   release)
     RELEASE_DIR="build/release-local/derived"
@@ -69,6 +72,7 @@ case "${1:-build}" in
     xcodegen generate
     xcodebuild -project "$PROJECT" -scheme "$SCHEME" -configuration Release \
       -derivedDataPath "$RELEASE_DIR" -clonedSourcePackagesDirPath "$SPM_CACHE" \
+      -skipPackagePluginValidation \
       CODE_SIGN_IDENTITY="-" \
       CODE_SIGN_STYLE=Manual \
       ENABLE_HARDENED_RUNTIME=YES \

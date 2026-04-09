@@ -32,6 +32,9 @@ packages:
   Sparkle:
     url: https://github.com/sparkle-project/Sparkle
     from: "2.9.0"
+  CodeEditSourceEditor:
+    url: https://github.com/CodeEditApp/CodeEditSourceEditor
+    from: "0.15.2"
 
 targets:
   FactoryFloor:
@@ -152,6 +155,8 @@ targets:
         product: Sentry
       - package: Sparkle
         product: Sparkle
+      - package: CodeEditSourceEditor
+        product: CodeEditSourceEditor
     postBuildScripts:
       - script: |
           set -e
