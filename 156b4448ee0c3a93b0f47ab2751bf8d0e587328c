@@ -1,0 +1,23 @@
+Sources/Views/FileTreeView.swift
+  d0d8816cf9ae969e 1-2,11-12,14-25,27-28,30-35,38-46,55,58-60,65-74,82-110,112,121-138
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.7",
+  "base_commit_sha": "156b4448ee0c3a93b0f47ab2751bf8d0e587328c",
+  "prompts": {
+    "d0d8816cf9ae969e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d6f1d0d4-df53-4c0d-a734-5b47f4d56396",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 100,
+      "total_deletions": 31,
+      "accepted_lines": 98,
+      "overriden_lines": 0
+    }
+  }
+}
