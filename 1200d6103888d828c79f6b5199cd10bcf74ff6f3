@@ -1,0 +1,43 @@
+Localization/ca.lproj/Localizable.strings
+  a790a78f59b17bec 72-74
+Localization/en.lproj/Localizable.strings
+  a790a78f59b17bec 72-74
+scripts/dev.sh
+  a790a78f59b17bec 31,51,66-67,75
+Sources/FF2App.swift
+  a790a78f59b17bec 310-314
+project.yml
+  a790a78f59b17bec 35-37,158-159
+Localization/sv.lproj/Localizable.strings
+  a790a78f59b17bec 72-74
+Sources/Views/TerminalContainerView.swift
+  a790a78f59b17bec 21,35,131,136,146,150,155,168,172,195,199,275,279,311,314,342,609-613,652-655,782-787,831-835,846,866,895-915,925-926,943,947,1743
+Tests/WorkspaceTabStateTests.swift
+  a790a78f59b17bec 19,23,46,50,70,74,90,94,112,116,133,137
+Localization/de.lproj/Localizable.strings
+  a790a78f59b17bec 72-74
+Sources/Views/EditorView.swift
+  a790a78f59b17bec 1-107
+Localization/es.lproj/Localizable.strings
+  a790a78f59b17bec 72-74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "1200d6103888d828c79f6b5199cd10bcf74ff6f3",
+  "prompts": {
+    "a790a78f59b17bec": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2bafe0e8-a550-4a2d-b0c0-b295f1e48ace",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 213,
+      "overriden_lines": 0
+    }
+  }
+}
