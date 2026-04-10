@@ -1,0 +1,33 @@
+Sources/Views/FileTreeView.swift
+  fb4bdbe8e12d6b8f 2,9,24,57-71,76,85-86,98,111-113,136,145,152-153,161,166,176
+Sources/Models/GitOperations.swift
+  fb4bdbe8e12d6b8f 381-416
+Sources/Views/TerminalContainerView.swift
+  fb4bdbe8e12d6b8f 286,633,990,993,1010
+Sources/Views/EditorView.swift
+  fb4bdbe8e12d6b8f 10,127
+Sources/Models/FileTypeIcon.swift
+  fb4bdbe8e12d6b8f 1-97
+Sources/Models/FileGitStatus.swift
+  fb4bdbe8e12d6b8f 1-63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.7",
+  "base_commit_sha": "8f63a61f14cccc5a5c13d2695e0c74bf05a7c529",
+  "prompts": {
+    "fb4bdbe8e12d6b8f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "396ed903-dc5b-4b77-9db7-8439a114773d",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 879,
+      "total_deletions": 137,
+      "accepted_lines": 749,
+      "overriden_lines": 0
+    }
+  }
+}
