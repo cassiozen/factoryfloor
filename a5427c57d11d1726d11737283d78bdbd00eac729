@@ -1,0 +1,52 @@
+Sources/Views/TerminalContainerView.swift
+  6ee31c55840672fb 965,1008-1016,1031-1044,1168
+Localization/de.lproj/Localizable.strings
+  6ee31c55840672fb 80-81
+Sources/Models/FileTypeIcon.swift
+  6f3fc78221fcef85 44
+Sources/Models/FileGitStatus.swift
+  6f3fc78221fcef85 7-9,27,58
+Sources/Models/GitOperations.swift
+  6ee31c55840672fb 405,407
+Localization/ca.lproj/Localizable.strings
+  6ee31c55840672fb 80-81
+Localization/en.lproj/Localizable.strings
+  6ee31c55840672fb 80-81
+Localization/es.lproj/Localizable.strings
+  6ee31c55840672fb 80-81
+Localization/sv.lproj/Localizable.strings
+  6ee31c55840672fb 80-81
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.7",
+  "base_commit_sha": "a5427c57d11d1726d11737283d78bdbd00eac729",
+  "prompts": {
+    "6ee31c55840672fb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "99d12977-d57b-4f4e-9d69-774eac78453b",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 37,
+      "total_deletions": 28,
+      "accepted_lines": 37,
+      "overriden_lines": 0
+    },
+    "6f3fc78221fcef85": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "47366c54-96f7-4635-b2a6-469c749874ae",
+        "model": "unknown"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 6,
+      "total_deletions": 6,
+      "accepted_lines": 6,
+      "overriden_lines": 0
+    }
+  }
+}
