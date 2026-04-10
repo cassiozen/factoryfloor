@@ -1,0 +1,39 @@
+AGENTS.md
+  535ffa51a11080e3 180
+website/content/docs.md
+  535ffa51a11080e3 73,112,143-147,172-174,328
+website/i18n/en.toml
+  535ffa51a11080e3 160-165
+website/i18n/es.toml
+  535ffa51a11080e3 154-159
+README.md
+  535ffa51a11080e3 39,56,58,60,115-117
+website/i18n/ca.toml
+  535ffa51a11080e3 160-165
+website/i18n/de.toml
+  535ffa51a11080e3 160-165
+website/layouts/partials/shortcuts.html
+  535ffa51a11080e3 26-28
+website/i18n/sv.toml
+  535ffa51a11080e3 153-158
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "4cd56bd8198b75396fdb02f2211338d5cd15e30b",
+  "prompts": {
+    "535ffa51a11080e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "91eda66b-397e-4576-9b03-bf6a8d3dd28c",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 61,
+      "total_deletions": 11,
+      "accepted_lines": 610,
+      "overriden_lines": 2
+    }
+  }
+}
