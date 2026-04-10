@@ -1,0 +1,25 @@
+editor/src/main.js
+  a2fdda261786d80a 173-175,191-200,246-247,250,254-264
+Sources/Views/TerminalContainerView.swift
+  a2fdda261786d80a 648
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.7",
+  "base_commit_sha": "175c70a376d248dfe1a8616b685d178b7ce432b1",
+  "prompts": {
+    "a2fdda261786d80a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3133e378-0ff2-49de-9253-c3f88393e61b",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 29,
+      "total_deletions": 8,
+      "accepted_lines": 29,
+      "overriden_lines": 0
+    }
+  }
+}
