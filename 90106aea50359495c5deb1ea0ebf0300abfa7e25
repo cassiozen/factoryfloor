@@ -1,0 +1,27 @@
+Sources/Views/MonacoEditorView.swift
+  3b3425a2323e39a8 145
+editor/index.html
+  3b3425a2323e39a8 7-9,21-24,45
+editor/src/main.js
+  3b3425a2323e39a8 279-281
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.7",
+  "base_commit_sha": "90106aea50359495c5deb1ea0ebf0300abfa7e25",
+  "prompts": {
+    "3b3425a2323e39a8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1f4d07b1-6119-4598-9f7a-53e8e4f67391",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 56,
+      "total_deletions": 35,
+      "accepted_lines": 15,
+      "overriden_lines": 0
+    }
+  }
+}
