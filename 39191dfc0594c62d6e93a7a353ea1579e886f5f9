@@ -1,0 +1,25 @@
+Sources/Views/TerminalContainerView.swift
+  f757f47ad81a36fb 274,346-350,735,739,746,862,966-968,1156-1158
+Sources/FF2App.swift
+  f757f47ad81a36fb 158,272-277,279-282
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.7",
+  "base_commit_sha": "39191dfc0594c62d6e93a7a353ea1579e886f5f9",
+  "prompts": {
+    "f757f47ad81a36fb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ace24ff5-e59f-4cec-b18f-1af87d7db8c7",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 27,
+      "total_deletions": 9,
+      "accepted_lines": 27,
+      "overriden_lines": 0
+    }
+  }
+}
