@@ -1,0 +1,78 @@
+Sources/Models/GitOperations.swift
+  ee92d8c804f9aa95 17-31,432-554
+Sources/Views/TerminalContainerView.swift
+  ee92d8c804f9aa95 24,31,39-40,54-55,137,144,193-199,207,377,640-650,733-736,919,939,970-971
+Sources/Models/NameGenerator.swift
+  78c6826912410765 38
+Localization/de.lproj/Localizable.strings
+  ee92d8c804f9aa95 233-242
+Sources/Views/ChangesView.swift
+  ee92d8c804f9aa95 1-326
+Localization/ca.lproj/Localizable.strings
+  ee92d8c804f9aa95 233-242
+Localization/en.lproj/Localizable.strings
+  ee92d8c804f9aa95 233-242
+editor/src/main.js
+  ee92d8c804f9aa95 175-178,322-399
+Sources/Views/EditorView.swift
+  ee92d8c804f9aa95 252
+editor/index.html
+  ee92d8c804f9aa95 17,23-24,48
+Localization/sv.lproj/Localizable.strings
+  ee92d8c804f9aa95 233-242
+Sources/Models/PathUtilities.swift
+  78c6826912410765 26-28,32-34
+Sources/Models/PortDetector.swift
+  78c6826912410765 16
+Sources/Models/RunState.swift
+  78c6826912410765 5,7,14,22,27,46-48,58,75-76,86-87,110-111
+Tests/TerminalSessionModeTests.swift
+  78c6826912410765 5
+Tests/TerminalViewTests.swift
+  78c6826912410765 6
+Sources/Views/PoblenouSkyline.swift
+  78c6826912410765 88
+Sources/Models/Project.swift
+  78c6826912410765 6,36,60
+Sources/Views/HelpView.swift
+  ee92d8c804f9aa95 96
+Sources/FF2App.swift
+  ee92d8c804f9aa95 331-335
+Sources/Views/MonacoEditorView.swift
+  ee92d8c804f9aa95 84,230-262
+Localization/es.lproj/Localizable.strings
+  ee92d8c804f9aa95 233-242
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "b58dfa5af2ef2c224c8f95d09059315dc24415f5",
+  "prompts": {
+    "78c6826912410765": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "afbcd738-3c08-47f6-b37c-f4a7a4ac6b85",
+        "model": "unknown"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 29,
+      "total_deletions": 21,
+      "accepted_lines": 29,
+      "overriden_lines": 0
+    },
+    "ee92d8c804f9aa95": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a4373e80-04d9-4dd3-9961-8a71f4c334d4",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 2422,
+      "total_deletions": 129,
+      "accepted_lines": 1854,
+      "overriden_lines": 10
+    }
+  }
+}
