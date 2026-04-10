@@ -1,0 +1,23 @@
+Sources/Views/TerminalContainerView.swift
+  2883a89eace595ba 621-636,638-640,973,1097-1108
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.7",
+  "base_commit_sha": "895ba893b9a89de557b233b5b514b16c1ef672c5",
+  "prompts": {
+    "2883a89eace595ba": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "14bc0800-5688-4565-9a61-c4f9cf024bc5",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 358,
+      "total_deletions": 41,
+      "accepted_lines": 327,
+      "overriden_lines": 0
+    }
+  }
+}
