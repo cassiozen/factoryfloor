@@ -285,6 +285,7 @@ struct TerminalContainerView: View {
     @State private var fileTree: [FileNode] = []
     @State private var gitFileStatuses = GitFileStatusProvider()
     @State private var directoryWatcher: DirectoryWatcher?
+    @State private var refreshGeneration = 0
     @State private var cachedClaudeCommand: String?
     @State private var draggedCustomTab: WorkspaceTab?
     @StateObject private var portDetector: PortDetector
@@ -726,6 +727,9 @@ struct TerminalContainerView: View {
         }
         .onAppear {
             editorTabActive = isEditorTabActive
+            if tabs.contains(where: { if case .editor = $0 { return true } else { return false } }) {
+                startFileTreeWatcherIfNeeded()
+            }
         }
         .onDisappear {
             editorTabActive = false
@@ -979,6 +983,8 @@ struct TerminalContainerView: View {
     }
 
     private func refreshFileTree() {
+        refreshGeneration += 1
+        let gen = refreshGeneration
         let currentTree = fileTree
         DispatchQueue.global(qos: .userInitiated).async {
             let tree: [FileNode]
@@ -989,6 +995,7 @@ struct TerminalContainerView: View {
             }
             let statuses = GitOperations.fileStatuses(at: workingDirectory)
             DispatchQueue.main.async {
+                guard gen == refreshGeneration else { return }
                 fileTree = tree
                 gitFileStatuses = GitFileStatusProvider(fileStatuses: statuses)
             }
@@ -1004,6 +1011,7 @@ struct TerminalContainerView: View {
     private func stopFileTreeWatcherIfUnneeded() {
         let hasEditorTabs = tabs.contains { if case .editor = $0 { return true } else { return false } }
         if !hasEditorTabs {
+            refreshGeneration += 1
             directoryWatcher?.stop()
             directoryWatcher = nil
             fileTree = []
