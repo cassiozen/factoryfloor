@@ -283,6 +283,7 @@ struct TerminalContainerView: View {
     @State private var editorDirtyState: [UUID: Bool] = [:]
     @State private var editorBridge: MonacoEditorBridge?
     @State private var fileTree: [FileNode] = []
+    @State private var gitFileStatuses = GitFileStatusProvider()
     @State private var directoryWatcher: DirectoryWatcher?
     @State private var cachedClaudeCommand: String?
     @State private var draggedCustomTab: WorkspaceTab?
@@ -629,6 +630,7 @@ struct TerminalContainerView: View {
                 EditorView(
                     workingDirectory: workingDirectory,
                     fileTree: fileTree,
+                    gitStatus: gitFileStatuses,
                     initialFilePath: editorFilePaths[id],
                     bridge: bridge,
                     modelId: id.uuidString,
@@ -985,8 +987,10 @@ struct TerminalContainerView: View {
             } else {
                 tree = FileNode.refreshLoadedNodes(in: currentTree, rootPath: workingDirectory)
             }
+            let statuses = GitOperations.fileStatuses(at: workingDirectory)
             DispatchQueue.main.async {
                 fileTree = tree
+                gitFileStatuses = GitFileStatusProvider(fileStatuses: statuses)
             }
         }
     }
@@ -1003,6 +1007,7 @@ struct TerminalContainerView: View {
             directoryWatcher?.stop()
             directoryWatcher = nil
             fileTree = []
+            gitFileStatuses = GitFileStatusProvider()
             // Keep editorBridge alive — the WebView is expensive to recreate (~17 MB JS)
         }
     }
