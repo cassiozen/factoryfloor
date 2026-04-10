@@ -1,0 +1,29 @@
+editor/src/main.js
+  5de5761f75ebacf2 304-309
+Sources/Views/TerminalContainerView.swift
+  5de5761f75ebacf2 288,730-732,986-987,998,1014
+editor/index.html
+  5de5761f75ebacf2 33,38,41
+Sources/Views/MonacoEditorView.swift
+  5de5761f75ebacf2 116,164-177,190-197,214-220,225-226,233-248
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.7",
+  "base_commit_sha": "a5cdcc3f2b25e40005cd3ad541c66cbea26e61c1",
+  "prompts": {
+    "5de5761f75ebacf2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "999878a8-5c9a-4746-8b70-9a36b98aff47",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 77,
+      "total_deletions": 19,
+      "accepted_lines": 67,
+      "overriden_lines": 0
+    }
+  }
+}
