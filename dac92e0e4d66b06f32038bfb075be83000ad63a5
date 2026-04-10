@@ -1,0 +1,25 @@
+editor/index.html
+  fb8d21a11b3a4f72 19-35
+editor/src/main.js
+  fb8d21a11b3a4f72 162-163,165-169
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.7",
+  "base_commit_sha": "dac92e0e4d66b06f32038bfb075be83000ad63a5",
+  "prompts": {
+    "fb8d21a11b3a4f72": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ac66fa5d-bb9b-4615-8c18-5c0b9c610e80",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 74,
+      "total_deletions": 52,
+      "accepted_lines": 24,
+      "overriden_lines": 0
+    }
+  }
+}
