@@ -230,6 +230,15 @@
 /* Tab labels */
 "Info" = "Info";
 "Agent" = "Agent";
+"Changes" = "Ändringar";
+
+/* ChangesView */
+"%d file(s) changed" = "%d fil(er) ändrade";
+"No changes" = "Inga ändringar";
+"Loading changes..." = "Laddar ändringar...";
+"Refresh changes" = "Uppdatera ändringar";
+"Branch" = "Gren";
+"Uncommitted" = "Ej committade";
 
 /* ProjectSidebar - context menu */
 "New workstream (full permissions)" = "Nytt arbetsflöde (fulla behörigheter)";

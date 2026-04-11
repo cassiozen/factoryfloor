@@ -230,6 +230,15 @@
 /* Tab labels */
 "Info" = "Informació";
 "Agent" = "Agent";
+"Changes" = "Canvis";
+
+/* ChangesView */
+"%d file(s) changed" = "%d fitxer(s) modificat(s)";
+"No changes" = "Sense canvis";
+"Loading changes..." = "Carregant canvis...";
+"Refresh changes" = "Actualitzar canvis";
+"Branch" = "Branca";
+"Uncommitted" = "Sense confirmar";
 
 /* ProjectSidebar - context menu */
 "New workstream (full permissions)" = "Nou flux de treball (permisos complets)";

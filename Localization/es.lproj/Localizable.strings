@@ -230,6 +230,15 @@
 /* Tab labels */
 "Info" = "Información";
 "Agent" = "Agente";
+"Changes" = "Cambios";
+
+/* ChangesView */
+"%d file(s) changed" = "%d archivo(s) modificado(s)";
+"No changes" = "Sin cambios";
+"Loading changes..." = "Cargando cambios...";
+"Refresh changes" = "Actualizar cambios";
+"Branch" = "Rama";
+"Uncommitted" = "Sin confirmar";
 
 /* ProjectSidebar - context menu */
 "New workstream (full permissions)" = "Nuevo flujo de trabajo (permisos completos)";

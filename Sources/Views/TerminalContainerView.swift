@@ -21,12 +21,14 @@ extension Notification.Name {
     static let toggleEditor = Notification.Name("factoryfloor.toggleEditor")
     static let saveEditor = Notification.Name("factoryfloor.saveEditor")
     static let saveEditorAs = Notification.Name("factoryfloor.saveEditorAs")
+    static let toggleChanges = Notification.Name("factoryfloor.toggleChanges")
 }
 
 enum RestorableWorkspaceTab: String, Codable {
     case info
     case agent
     case environment
+    case changes
 
     init(activeTab: WorkspaceTab) {
         switch activeTab {
@@ -34,6 +36,8 @@ enum RestorableWorkspaceTab: String, Codable {
             self = .agent
         case .environment:
             self = .environment
+        case .changes:
+            self = .changes
         case .info, .terminal, .browser, .editor:
             self = .info
         }
@@ -47,6 +51,8 @@ enum RestorableWorkspaceTab: String, Codable {
             return .agent
         case .environment:
             return hasEnvironmentTab ? .environment : .info
+        case .changes:
+            return .changes
         }
     }
 }
@@ -128,13 +134,14 @@ enum WorkspaceTab: Hashable {
     case info
     case agent
     case environment
+    case changes
     case terminal(UUID)
     case browser(UUID)
     case editor(UUID)
 
     var isCloseable: Bool {
         switch self {
-        case .info, .agent, .environment: return false
+        case .info, .agent, .environment, .changes: return false
         case .terminal, .browser, .editor: return true
         }
     }
@@ -168,6 +175,7 @@ struct WorkspaceTabSnapshot {
             terminalCount: terminalCount,
             browserCount: browserCount,
             editorCount: editorCount,
+
             activeTab: resolvedActiveTab,
             browserTitles: browserTitles,
             terminalTitles: terminalTitles,
@@ -183,6 +191,13 @@ func startupWorkspaceTabState(snapshot: WorkspaceTabSnapshot?, savedTab: Restora
         if hasEnvironmentTab && !snapshot.tabs.contains(.environment) {
             snapshot.tabs.insert(.environment, at: min(2, snapshot.tabs.count))
         }
+        if !snapshot.tabs.contains(.changes) {
+            // Insert changes after environment (or after agent if no environment)
+            let insertIndex = snapshot.tabs.firstIndex(of: .environment).map { $0 + 1 }
+                ?? snapshot.tabs.firstIndex(of: .agent).map { $0 + 1 }
+                ?? min(2, snapshot.tabs.count)
+            snapshot.tabs.insert(.changes, at: insertIndex)
+        }
         return snapshot
     }
 
@@ -190,11 +205,13 @@ func startupWorkspaceTabState(snapshot: WorkspaceTabSnapshot?, savedTab: Restora
     if hasEnvironmentTab {
         tabs.append(.environment)
     }
+    tabs.append(.changes)
     return WorkspaceTabSnapshot(
         tabs: tabs,
         terminalCount: 0,
         browserCount: 0,
         editorCount: 0,
+
         activeTab: (savedTab ?? .info).workspaceTab(hasEnvironmentTab: hasEnvironmentTab),
         browserTitles: [:],
         terminalTitles: [:],
@@ -283,6 +300,7 @@ struct TerminalContainerView: View {
     @State private var editorFilePaths: [UUID: String] = [:]
     @State private var editorDirtyState: [UUID: Bool] = [:]
     @State private var editorBridge: MonacoEditorBridge?
+    @State private var diffBridge: MonacoDiffBridge?
     @State private var fileTree: [FileNode] = []
     @State private var gitFileStatuses = GitFileStatusProvider()
     @State private var directoryWatcher: DirectoryWatcher?
@@ -359,7 +377,7 @@ struct TerminalContainerView: View {
             }
             return [claudeID]
         case let .terminal(id): return [id]
-        case .info, .browser, .editor: return []
+        case .info, .browser, .editor, .changes: return []
         case .environment: return nil
         }
     }
@@ -662,6 +680,17 @@ struct TerminalContainerView: View {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+        case .changes:
+            if let bridge = diffBridge {
+                ChangesView(
+                    workingDirectory: workingDirectory,
+                    projectDirectory: projectDirectory,
+                    bridge: bridge
+                )
+            } else {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
         }
     }
 
@@ -704,6 +733,10 @@ struct TerminalContainerView: View {
                 guard isActive else { return }
                 openEditor()
             }
+            .onReceive(NotificationCenter.default.publisher(for: .toggleChanges)) { _ in
+                guard isActive else { return }
+                addChanges()
+            }
             .onReceive(NotificationCenter.default.publisher(for: .closeTerminal)) { _ in
                 guard isActive else { return }
                 if activeTab.isCloseable { closeTab(activeTab) }
@@ -737,6 +770,7 @@ struct TerminalContainerView: View {
             if tabs.contains(where: { if case .editor = $0 { return true } else { return false } }) {
                 startFileTreeWatcherIfNeeded()
             }
+            createDiffBridgeIfNeeded()
         }
         .onDisappear {
             editorTabActive = false
@@ -897,6 +931,8 @@ struct TerminalContainerView: View {
             guard let path = editorFilePaths[id] else { return nil }
             let name = (path as NSString).lastPathComponent
             return name.count > 20 ? String(name.prefix(20)) + "..." : name
+        case .changes:
+            return NSLocalizedString("Changes", comment: "")
         }
     }
 
@@ -908,6 +944,7 @@ struct TerminalContainerView: View {
         case .terminal: return "terminal"
         case .browser: return "globe"
         case .editor: return "doc.text"
+        case .changes: return "plus.forwardslash.minus"
         }
     }
 
@@ -931,6 +968,8 @@ struct TerminalContainerView: View {
             return id.uuidString
         case .info:
             return "info"
+        case .changes:
+            return "changes"
         case .agent:
             return "agent"
         case .environment:
@@ -973,6 +1012,15 @@ struct TerminalContainerView: View {
         activeTab = tab
         startFileTreeWatcherIfNeeded()
         saveTabSnapshot()
+    }
+
+    private func addChanges() {
+        activeTab = .changes
+    }
+
+    private func createDiffBridgeIfNeeded() {
+        guard diffBridge == nil else { return }
+        diffBridge = MonacoDiffBridge()
     }
 
     private func startFileTreeWatcherIfNeeded() {
@@ -1119,6 +1167,7 @@ struct TerminalContainerView: View {
             terminalCount: terminalCount,
             browserCount: browserCount,
             editorCount: editorCount,
+
             activeTab: activeTab,
             browserTitles: browserTitles,
             terminalTitles: terminalTitles,
@@ -1166,6 +1215,7 @@ struct TerminalContainerView: View {
         // an editor tab. The WKWebView is created lazily when MonacoEditorView
         // enters the tree (it needs a real container to avoid 0x0 initialization).
         createEditorBridgeIfNeeded()
+        createDiffBridgeIfNeeded()
         surfaceCache.updateOcclusion(visibleSurfaceIDs: visibleSurfaceIDs)
     }
 

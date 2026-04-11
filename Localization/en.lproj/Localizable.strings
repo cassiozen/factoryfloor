@@ -230,6 +230,15 @@
 /* Tab labels */
 "Info" = "Info";
 "Agent" = "Agent";
+"Changes" = "Changes";
+
+/* ChangesView */
+"%d file(s) changed" = "%d file(s) changed";
+"No changes" = "No changes";
+"Loading changes..." = "Loading changes...";
+"Refresh changes" = "Refresh changes";
+"Branch" = "Branch";
+"Uncommitted" = "Uncommitted";
 
 /* ProjectSidebar - context menu */
 "New workstream (full permissions)" = "New workstream (full permissions)";
