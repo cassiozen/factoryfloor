@@ -122,6 +122,11 @@
 "Choose base directory for projects" = "Välj baskatalog för projekt";
 "Default location when adding new projects." = "Standardplats när nya projekt läggs till.";
 "Branch prefix" = "Grenprefix";
+"Worktree base" = "Worktree-bas";
+"Latest remote" = "Senaste fjärr";
+"Local branch" = "Lokal gren";
+"Fetch and fast-forward the default branch before creating worktrees." = "Hämta och snabbspola standardgrenen innan worktrees skapas.";
+"Use the local default branch as-is. No network requests." = "Använd den lokala standardgrenen som den är. Inga nätverksförfrågningar.";
 "Theme" = "Tema";
 "System" = "System";
 "Light" = "Ljust";

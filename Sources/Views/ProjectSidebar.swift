@@ -392,6 +392,7 @@ struct ProjectSidebar: View {
 
     @AppStorage("factoryfloor.bypassPermissions") private var defaultBypass: Bool = false
     @AppStorage("factoryfloor.symlinkEnv") private var symlinkEnv: Bool = true
+    @AppStorage("factoryfloor.worktreeBase") private var worktreeBase: String = "remote"
 
     private func addWorkstream(for projectID: UUID, bypassPermissions: Bool? = nil) {
         logger.warning("[FF] addWorkstream called for projectID=\(projectID, privacy: .public)")
@@ -428,6 +429,7 @@ struct ProjectSidebar: View {
         let projectName = project.name
         let prefix = branchPrefix
         let symlink = symlinkEnv
+        let syncRemote = worktreeBase == "remote"
         let workstreamID = workstream.id
 
         DispatchQueue.global(qos: .userInitiated).async {
@@ -436,7 +438,8 @@ struct ProjectSidebar: View {
                 projectName: projectName,
                 workstreamName: name,
                 branchPrefix: prefix,
-                symlinkEnv: symlink
+                symlinkEnv: symlink,
+                syncRemote: syncRemote
             )
             DispatchQueue.main.async {
                 if let worktreePath {

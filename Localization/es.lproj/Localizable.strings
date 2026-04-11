@@ -122,6 +122,11 @@
 "Choose base directory for projects" = "Elige el directorio base para los proyectos";
 "Default location when adding new projects." = "Ubicación predeterminada al añadir nuevos proyectos.";
 "Branch prefix" = "Prefijo de rama";
+"Worktree base" = "Base del worktree";
+"Latest remote" = "Último remoto";
+"Local branch" = "Rama local";
+"Fetch and fast-forward the default branch before creating worktrees." = "Descarga y avanza la rama principal antes de crear worktrees.";
+"Use the local default branch as-is. No network requests." = "Usa la rama principal local tal cual. Sin peticiones de red.";
 "Theme" = "Tema";
 "System" = "Sistema";
 "Light" = "Claro";

@@ -122,6 +122,11 @@
 "Choose base directory for projects" = "Choose base directory for projects";
 "Default location when adding new projects." = "Default location when adding new projects.";
 "Branch prefix" = "Branch prefix";
+"Worktree base" = "Worktree base";
+"Latest remote" = "Latest remote";
+"Local branch" = "Local branch";
+"Fetch and fast-forward the default branch before creating worktrees." = "Fetch and fast-forward the default branch before creating worktrees.";
+"Use the local default branch as-is. No network requests." = "Use the local default branch as-is. No network requests.";
 "Theme" = "Theme";
 "System" = "System";
 "Light" = "Light";

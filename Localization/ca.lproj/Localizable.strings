@@ -122,6 +122,11 @@
 "Choose base directory for projects" = "Tria el directori base per als projectes";
 "Default location when adding new projects." = "Ubicació per defecte en afegir nous projectes.";
 "Branch prefix" = "Prefix de branca";
+"Worktree base" = "Base del worktree";
+"Latest remote" = "Últim remot";
+"Local branch" = "Branca local";
+"Fetch and fast-forward the default branch before creating worktrees." = "Descarrega i avança la branca principal abans de crear worktrees.";
+"Use the local default branch as-is. No network requests." = "Usa la branca principal local tal qual. Sense peticions de xarxa.";
 "Theme" = "Tema";
 "System" = "Sistema";
 "Light" = "Clar";

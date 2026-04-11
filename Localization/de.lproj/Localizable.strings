@@ -122,6 +122,11 @@
 "Choose base directory for projects" = "Basisverzeichnis für Projekte auswählen";
 "Default location when adding new projects." = "Standardort beim Hinzufügen neuer Projekte.";
 "Branch prefix" = "Branch-Präfix";
+"Worktree base" = "Worktree-Basis";
+"Latest remote" = "Neuester Remote";
+"Local branch" = "Lokaler Branch";
+"Fetch and fast-forward the default branch before creating worktrees." = "Standard-Branch vor dem Erstellen von Worktrees vom Remote abrufen und vorspulen.";
+"Use the local default branch as-is. No network requests." = "Lokalen Standard-Branch unverändert verwenden. Keine Netzwerkanfragen.";
 "Theme" = "Design";
 "System" = "System";
 "Light" = "Hell";

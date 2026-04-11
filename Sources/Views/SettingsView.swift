@@ -21,6 +21,7 @@ struct SettingsView: View {
     @AppStorage("factoryfloor.detailedLogging") private var detailedLogging: Bool = false
     @AppStorage("factoryfloor.quickActionDebug") private var quickActionDebug: Bool = false
     @AppStorage("factoryfloor.bleedingEdge") private var bleedingEdge: Bool = false
+    @AppStorage("factoryfloor.worktreeBase") private var worktreeBase: String = "remote"
     @AppStorage("factoryfloor.baseDirectory") private var baseDirectory: String = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first ?? ""
 
     @State private var launchAtLogin = LaunchAtLogin.isEnabled
@@ -139,6 +140,18 @@ struct SettingsView: View {
                     isOn: $symlinkEnv,
                     description: "Symlink .env and .env.local from the main repository into new worktrees."
                 )
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Picker("Worktree base", selection: $worktreeBase) {
+                        Text("Latest remote").tag("remote")
+                        Text("Local branch").tag("local")
+                    }
+                    Text(worktreeBase == "remote"
+                        ? "Fetch and fast-forward the default branch before creating worktrees."
+                        : "Use the local default branch as-is. No network requests.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
 
                 Picker("Theme", selection: $appearance) {
                     Text("System").tag("system")
