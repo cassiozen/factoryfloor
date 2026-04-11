@@ -1,0 +1,72 @@
+editor/src/shared-init.js
+  570b3ddfe5245c52 1-150
+editor/src/main.js
+  570b3ddfe5245c52 1
+Localization/es.lproj/Localizable.strings
+  570b3ddfe5245c52 233-241
+editor/vite.config.js
+  570b3ddfe5245c52 2,13-19
+Localization/ca.lproj/Localizable.strings
+  570b3ddfe5245c52 233-241
+Sources/Views/MonacoEditorView.swift
+  570b3ddfe5245c52 84
+Sources/Models/GitOperations.swift
+  570b3ddfe5245c52 417-544
+editor/src/diff.js
+  570b3ddfe5245c52 1-197
+Sources/Views/MonacoDiffView.swift
+  570b3ddfe5245c52 1-191
+Sources/Views/ChangesView.swift
+  570b3ddfe5245c52 1-157
+Sources/Views/HelpView.swift
+  570b3ddfe5245c52 96
+Sources/Views/EditorView.swift
+  570b3ddfe5245c52 201
+Localization/de.lproj/Localizable.strings
+  570b3ddfe5245c52 233-241
+Sources/Models/MonacoLanguage.swift
+  570b3ddfe5245c52 1-55
+editor/diff.html
+  570b3ddfe5245c52 1-140
+Sources/Views/TerminalContainerView.swift
+  570b3ddfe5245c52 24,31,39-40,54-55,137,144,178,194-200,208,214,303,380,683-693,736-739,773,934-935,947,971-972,1017-1025,1170,1218
+Localization/sv.lproj/Localizable.strings
+  570b3ddfe5245c52 233-241
+Sources/FF2App.swift
+  570b3ddfe5245c52 331-335
+Localization/en.lproj/Localizable.strings
+  570b3ddfe5245c52 233-241
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "6a5a4a69679d8b5e8b2c8a58b726ac4ff6cd05df",
+  "prompts": {
+    "535ffa51a11080e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "91eda66b-397e-4576-9b03-bf6a8d3dd28c",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 537,
+      "overriden_lines": 0
+    },
+    "570b3ddfe5245c52": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0f5928eb-a039-4cad-84bb-e3ed5354fdad",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 3592,
+      "total_deletions": 355,
+      "accepted_lines": 3487,
+      "overriden_lines": 0
+    }
+  }
+}
