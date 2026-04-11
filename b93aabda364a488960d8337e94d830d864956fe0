@@ -1,0 +1,27 @@
+Sources/Views/SettingsView.swift
+  570b3ddfe5245c52 24,144-155
+Sources/Views/ProjectSidebar.swift
+  570b3ddfe5245c52 395,432,441-442
+Sources/Models/GitOperations.swift
+  570b3ddfe5245c52 103,113-115
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "b93aabda364a488960d8337e94d830d864956fe0",
+  "prompts": {
+    "570b3ddfe5245c52": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0f5928eb-a039-4cad-84bb-e3ed5354fdad",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": null,
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 46,
+      "overriden_lines": 0
+    }
+  }
+}
