@@ -1,0 +1,21 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "a712efc5a7e19d1323b70d2142406783ecfb9cef",
+  "prompts": {
+    "0b0028935f8efc2f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "421a86ff-d2ce-47be-ac64-8b541b6166f9",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 31,
+      "total_deletions": 1,
+      "accepted_lines": 6201,
+      "overriden_lines": 0
+    }
+  }
+}
