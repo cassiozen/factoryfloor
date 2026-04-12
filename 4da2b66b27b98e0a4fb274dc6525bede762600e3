@@ -1,0 +1,55 @@
+Tests/LaunchLoggerTests.swift
+  0b0028935f8efc2f 37,131,183
+Localization/en.lproj/Localizable.strings
+  0b0028935f8efc2f 150-151
+Localization/de.lproj/Localizable.strings
+  0b0028935f8efc2f 150-151
+Sources/Views/SettingsView.swift
+  0b0028935f8efc2f 13,227-231
+Sources/Views/EnvironmentTabView.swift
+  0b0028935f8efc2f 262
+editor/src/diff.js
+  0b0028935f8efc2f 20-25,69-72,79,88-103,116-121,179,181-183,208-291
+Sources/Models/ReviewGuide.swift
+  0b0028935f8efc2f 1-40
+Localization/sv.lproj/Localizable.strings
+  0b0028935f8efc2f 150-151
+Sources/Models/GitOperations.swift
+  0b0028935f8efc2f 143-146
+Sources/Views/ChangesView.swift
+  0b0028935f8efc2f 126-168,191-197,201-206,210
+Sources/Views/TerminalContainerView.swift
+  0b0028935f8efc2f 289,434-436,493,711
+Sources/Models/LaunchLogger.swift
+  0b0028935f8efc2f 18
+Sources/Models/SystemPrompts.swift
+  0b0028935f8efc2f 18-47
+Localization/ca.lproj/Localizable.strings
+  0b0028935f8efc2f 150-151
+editor/diff.html
+  0b0028935f8efc2f 60-61,114-190
+Sources/Views/MonacoDiffView.swift
+  0b0028935f8efc2f 56-58,63-70
+Localization/es.lproj/Localizable.strings
+  0b0028935f8efc2f 150-151
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "4da2b66b27b98e0a4fb274dc6525bede762600e3",
+  "prompts": {
+    "0b0028935f8efc2f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "421a86ff-d2ce-47be-ac64-8b541b6166f9",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 6651,
+      "total_deletions": 654,
+      "accepted_lines": 6543,
+      "overriden_lines": 2
+    }
+  }
+}
