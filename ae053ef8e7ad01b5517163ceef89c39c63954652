@@ -1,0 +1,42 @@
+editor/src/diff.js
+  669d843ff13cb0bd 23-38,98-102,107,112-118,218-222,382,397
+Sources/Views/MonacoDiffView.swift
+  669d843ff13cb0bd 20-22,159-160
+editor/diff.html
+  669d843ff13cb0bd 19-20,29
+Sources/Views/ChangesView.swift
+  669d843ff13cb0bd 206-210
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "ae053ef8e7ad01b5517163ceef89c39c63954652",
+  "prompts": {
+    "0a92183901eb9ce4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2c46c339-9f5a-4bec-bb6d-62fa2698e468",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 14380,
+      "overriden_lines": 0
+    },
+    "669d843ff13cb0bd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "959b042a-d276-4ffb-8807-982fb02c29af",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 91,
+      "total_deletions": 32,
+      "accepted_lines": 91,
+      "overriden_lines": 0
+    }
+  }
+}
