@@ -1,0 +1,61 @@
+Sources/Views/TerminalContainerView.swift
+  0a92183901eb9ce4 23,30,36-37,49-50,131,138,183-188,190,193,272,288,365,414-416,473,669-679,718-721,899,910,936-937,978-986,1192
+Sources/Views/EnvironmentTabView.swift
+  0a92183901eb9ce4 262
+Localization/ca.lproj/Localizable.strings
+  0a92183901eb9ce4 145-146,235-243
+Sources/Models/LaunchLogger.swift
+  0a92183901eb9ce4 18
+Sources/Models/GitOperations.swift
+  0a92183901eb9ce4 138-141,431-558
+Sources/Views/SettingsView.swift
+  0a92183901eb9ce4 13,214-218
+editor/diff.html
+  0a92183901eb9ce4 1-218
+Localization/en.lproj/Localizable.strings
+  0a92183901eb9ce4 145-146,235-243
+editor/vite.config.js
+  0a92183901eb9ce4 2,13-19
+Sources/Views/HelpView.swift
+  0a92183901eb9ce4 89,95-96
+editor/src/main.js
+  0a92183901eb9ce4 1
+Localization/sv.lproj/Localizable.strings
+  0a92183901eb9ce4 145-146,235-243
+Localization/de.lproj/Localizable.strings
+  0a92183901eb9ce4 145-146,235-243
+editor/src/shared-init.js
+  0a92183901eb9ce4 1-150
+Sources/Models/SystemPrompts.swift
+  0a92183901eb9ce4 18-48
+editor/src/diff.js
+  0a92183901eb9ce4 1-365
+Tests/LaunchLoggerTests.swift
+  0a92183901eb9ce4 37,131,183
+Localization/es.lproj/Localizable.strings
+  0a92183901eb9ce4 145-146,235-243
+project.yml
+  0a92183901eb9ce4 167-168,170,174
+Sources/FF2App.swift
+  0a92183901eb9ce4 329-334
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "6f88e85c2b7c5b2da3bd433b0d3f7e8b9a04c56a",
+  "prompts": {
+    "0a92183901eb9ce4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2c46c339-9f5a-4bec-bb6d-62fa2698e468",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 15502,
+      "total_deletions": 251,
+      "accepted_lines": 1036,
+      "overriden_lines": 0
+    }
+  }
+}
