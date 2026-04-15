@@ -662,14 +662,17 @@ enum GitOperations {
         process.standardError = errPipe
         do {
             try process.run()
-            process.waitUntilExit()
+            // Read pipe data BEFORE waitUntilExit to prevent deadlock when
+            // output exceeds the ~64 KB macOS pipe buffer (e.g. git show on
+            // large files). The reads block until the process closes each fd.
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
             let errData = errPipe.fileHandleForReading.readDataToEndOfFile()
-            let errStr = String(data: errData, encoding: .utf8) ?? ""
+            process.waitUntilExit()
             guard process.terminationStatus == 0 else {
+                let errStr = String(data: errData, encoding: .utf8) ?? ""
                 logger.warning("[FF] git \(args.joined(separator: " "), privacy: .public) failed (exit \(process.terminationStatus, privacy: .public)): \(errStr, privacy: .public)")
                 return nil
             }
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
             return String(data: data, encoding: .utf8)
         } catch {
             logger.warning("[FF] git \(args.joined(separator: " "), privacy: .public) threw: \(error, privacy: .public)")
