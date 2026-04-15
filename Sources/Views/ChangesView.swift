@@ -69,10 +69,7 @@ struct ChangesView: View {
             .frame(width: 170)
             .opacity(0.85)
 
-            if isLoading {
-                ProgressView()
-                    .controlSize(.small)
-            } else if isRefreshing {
+            if isRefreshing {
                 ProgressView()
                     .controlSize(.small)
                 Text("Refreshing…")
