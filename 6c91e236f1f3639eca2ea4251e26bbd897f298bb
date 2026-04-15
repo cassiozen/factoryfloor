@@ -1,0 +1,23 @@
+Sources/Models/GitOperations.swift
+  32d5dbd1842785bb 665-668,670,672
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "6c91e236f1f3639eca2ea4251e26bbd897f298bb",
+  "prompts": {
+    "32d5dbd1842785bb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "da9b25d0-fda5-4954-b932-03595d7069ef",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 267,
+      "total_deletions": 19,
+      "accepted_lines": 263,
+      "overriden_lines": 0
+    }
+  }
+}
