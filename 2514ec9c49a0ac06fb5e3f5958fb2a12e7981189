@@ -1,0 +1,23 @@
+Sources/Models/TmuxSession.swift
+  fa2aaa6310097bff 36,38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "2514ec9c49a0ac06fb5e3f5958fb2a12e7981189",
+  "prompts": {
+    "fa2aaa6310097bff": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ac6d241c-8bf2-4fec-9cec-99e935123dd0",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}
