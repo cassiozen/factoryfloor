@@ -1,0 +1,33 @@
+website/i18n/de.toml
+  32d5dbd1842785bb 58-65,70-73
+website/i18n/es.toml
+  32d5dbd1842785bb 56-63,68-71
+website/i18n/sv.toml
+  32d5dbd1842785bb 55-62,67-70
+website/i18n/ca.toml
+  32d5dbd1842785bb 58-65,70-73
+website/i18n/en.toml
+  32d5dbd1842785bb 58-65,70-73
+website/layouts/partials/features.html
+  32d5dbd1842785bb 12,18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "1584be9db3d647df77e55d1c26fb5914827f9e7d",
+  "prompts": {
+    "32d5dbd1842785bb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "da9b25d0-fda5-4954-b932-03595d7069ef",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 267,
+      "total_deletions": 19,
+      "accepted_lines": 62,
+      "overriden_lines": 0
+    }
+  }
+}

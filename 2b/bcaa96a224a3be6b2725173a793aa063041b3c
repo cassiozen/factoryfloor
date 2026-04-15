@@ -1,0 +1,28 @@
+Sources/Views/ChangesView.swift
+  669d843ff13cb0bd 24,42-49,52-54,68-70,78-80,99,103,105,112-121,123-129,131,133-134,136,138-153,156-160,162-169,171,173-174,176-199,201-209,211-214,216-223,225-228,230-239,241-247,249-256,259-263,266-267,269-273,275-280,282-283
+Sources/Models/GitOperations.swift
+  669d843ff13cb0bd 559-584
+  32d5dbd1842785bb 665
+Sources/Views/MonacoDiffView.swift
+  669d843ff13cb0bd 23-36,76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "2bbcaa96a224a3be6b2725173a793aa063041b3c",
+  "prompts": {
+    "669d843ff13cb0bd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "959b042a-d276-4ffb-8807-982fb02c29af",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 232,
+      "total_deletions": 121,
+      "accepted_lines": 209,
+      "overriden_lines": 0
+    }
+  }
+}
