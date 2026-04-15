@@ -1,0 +1,25 @@
+.github/workflows/claude-code-review.yml
+  32d5dbd1842785bb 44
+.github/workflows/claude.yml
+  32d5dbd1842785bb 50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "aaebbc8080913014a84635d4815dd583a20d70be",
+  "prompts": {
+    "32d5dbd1842785bb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "da9b25d0-fda5-4954-b932-03595d7069ef",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Cassio Zen",
+      "messages": [],
+      "total_additions": 1176,
+      "total_deletions": 181,
+      "accepted_lines": 1176,
+      "overriden_lines": 0
+    }
+  }
+}
